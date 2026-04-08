@@ -1,0 +1,136 @@
+﻿@using DLDA.GUI.DTOs.Assessment
+@model List<AssessmentDto>
+
+@{
+    ViewData["Title"] = "Mina bedömningar";
+
+    var completed = Model
+        .Where(m => m.IsComplete)
+        .OrderBy(m => m.CreatedAt)
+        .ToList();
+
+    var completedCount = completed.Count;
+    var firstDefault = completed.FirstOrDefault()?.AssessmentID ?? 0;
+    var secondDefault = completed.LastOrDefault()?.AssessmentID ?? 0;
+}
+
+<link rel="stylesheet" href="~/css/PatientAssessment.css" asp-append-version="true" />
+
+<div class="container mt-5">
+    <h2 class="mb-4">Mina bedömningar</h2>
+
+    @if (completedCount >= 2)
+    {
+        <form asp-controller="PatientStatistics" asp-action="Compare" method="post" class="row g-2 mb-4 align-items-end" onsubmit="return validateDates()">
+            <div class="col-md-4">
+                <label class="form-label">Första bedömning</label>
+                <select name="firstId" id="firstSelect" class="form-select" required>
+                    @foreach (var item in completed)
+                    {
+                        var dateStr = item.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss");
+                        var selectedAttr = item.AssessmentID == firstDefault ? "selected" : "";
+                        @Html.Raw($"<option value=\"{item.AssessmentID}\" data-date=\"{dateStr}\" {selectedAttr}>{item.CreatedAt:yyyy-MM-dd} (ID: {item.AssessmentID})</option>")
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Andra bedömning</label>
+                <select name="secondId" id="secondSelect" class="form-select" required>
+                    @foreach (var item in completed)
+                    {
+                        var dateStr = item.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss");
+                        var selectedAttr = item.AssessmentID == secondDefault ? "selected" : "";
+                        @Html.Raw($"<option value=\"{item.AssessmentID}\" data-date=\"{dateStr}\" {selectedAttr}>{item.CreatedAt:yyyy-MM-dd} (ID: {item.AssessmentID})</option>")
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-success w-100">
+                    📈 Jämför förbättring över tid
+                </button>
+            </div>
+
+            <div class="col-12 mt-2">
+                <div id="dateError" class="text-danger" style="display: none;">
+                    ❗ Första bedömningen måste vara äldre än den andra. Justera urvalet.
+                </div>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="mb-4 text-muted">
+            📈 Minst två avslutade bedömningar krävs för att kunna jämföra förbättring över tid.
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p>Du har ännu inte påbörjat någon bedömning.</p>
+    }
+    else
+    {
+        <table class="table table-bordered table-patient">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Datum</th>
+                    <th>Skattningsskala</th>
+                    <th>Status</th>
+                    <th>Åtgärd</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.AssessmentID</td>
+                        <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td>@item.ScaleType</td>
+                        <td>
+                            @if (item.IsComplete)
+                            {
+                                <span class="text-success fw-semibold">Klar</span>
+                            }
+                            else
+                            {
+                                <span class="status-ongoing">
+                                    Pågående – @item.AnsweredCount av @item.TotalQuestions frågor
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            @if (!item.IsComplete)
+                            {
+                                var action = item.HasStarted ? "Fortsätt" : "Starta";
+                                var btnClass = item.HasStarted ? "btn-warning btn-continue" : "btn-primary btn-start";
+                                <a class="btn btn-sm @btnClass"
+                                   asp-controller="PatientQuiz"
+                                   asp-action="Info"
+                                   asp-route-id="@item.AssessmentID">@action</a>
+                            }
+                            else
+                            {
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a class="btn btn-sm btn-visa"
+                                       asp-controller="PatientResult"
+                                       asp-action="Index"
+                                       asp-route-assessmentId="@item.AssessmentID">Visa</a>
+
+                                    <a class="btn btn-sm btn-outline-success"
+                                       asp-controller="PatientStatistics"
+                                       asp-action="Overview"
+                                       asp-route-assessmentId="@item.AssessmentID">
+                                        📊 Statistik
+                                    </a>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

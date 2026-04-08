@@ -1,0 +1,31 @@
+﻿@using DLDA.GUI.DTOs.Question
+@model Question
+
+@{
+    ViewData["Title"] = "Bekräfta borttagning";
+}
+
+
+<link rel="stylesheet" href="~/css/adminquestion.css" asp-append-version="true" />
+
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-danger text-center">🗑️ Bekräfta borttagning</h2>
+
+    <div class="question-panel">
+        <p class="text-center">Är du säker på att du vill ta bort följande fråga?</p>
+
+        <ul class="text-start">
+            <li><strong>Frågetext:</strong> @Model.QuestionText</li>
+            <li><strong>Kategori:</strong> @Model.Category</li>
+            <li><strong>Aktiv:</strong> @(Model.IsActive ? "✅" : "❌")</li>
+        </ul>
+
+        <div class="d-flex justify-content-center gap-2">
+            <form asp-action="DeleteConfirmed" asp-route-id="@Model.QuestionID" method="post">
+                <button type="submit" class="btn btn-danger">🗑 Ta bort</button>
+            </form>
+            <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
+        </div>
+    </div>
+</div>

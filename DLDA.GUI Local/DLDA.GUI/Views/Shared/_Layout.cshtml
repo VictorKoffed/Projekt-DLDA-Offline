@@ -1,0 +1,130 @@
+﻿@{
+    var isLoggedIn = Context.Session.GetInt32("UserID").HasValue;
+    var username = Context.Session.GetString("Username");
+    var role = Context.Session.GetString("Role");
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DLDA.GUI</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/DLDA.GUI.styles.css" asp-append-version="true" />
+</head>
+@{
+        var roleClass = role switch
+        {
+                "patient" => "patient",
+                "staff" => "staff",
+                "admin" => "admin",
+                _ => ""
+        };
+}
+<body id="@ViewData["BodyId"]" class="@roleClass">
+    <nav class="navbar navbar-expand-sm navbar-light custom-navbar shadow-sm mb-3">
+        <div class="container-fluid">
+            <div class="navbar-brand d-flex align-items-center">
+                <img src="~/images/dlda_logo.png" alt="DLDA logotyp" style="height: 36px;" />
+            </div>
+
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNav">
+                <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                    @if (isLoggedIn)
+                    {
+                        if (role == "patient")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "PatientAssessment" ? "active" : "")"
+                                   asp-controller="PatientAssessment" asp-action="Index">Mina bedömningar</a>
+                            </li>
+                        }
+                        else if (role == "staff")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "StaffAssessment" ? "active" : "")"
+                                   asp-controller="StaffAssessment" asp-action="Index">Patientlista</a>
+                            </li>
+                        }
+                        else if (role == "admin")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "Admin" ? "active" : "")"
+                                   asp-controller="Admin" asp-action="Index">Adminpanel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "AdminUser" ? "active" : "")"
+                                   asp-controller="AdminUser" asp-action="Index">Användare</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(currentController == "AdminQuestion" ? "active" : "")"
+                                   asp-controller="AdminQuestion" asp-action="Index">Frågor</a>
+                            </li>
+                        }
+                    }
+                </ul>
+
+                <ul class="navbar-nav">
+                    @if (isLoggedIn)
+                    {
+                        <li class="nav-item d-flex align-items-center me-3">
+                            <span class="navbar-text user-info text-dark rounded px-3 py-1 shadow-sm">
+                                👤 Inloggad som <strong>@username</strong>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-danger btn-sm rounded-pill">Logga ut</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            <div class="container mt-3">
+                @await Html.PartialAsync("_AlertPartial")
+            </div>
+            @RenderSection("Styles", required: false)
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - DLDA.GUI - <a asp-controller="Account" asp-action="Info">Information om DLDA</a>
+        </div>
+    </footer>
+
+    <!-- Ikoner -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+
+
+    <script src="~/lib/html2canvas/html2canvas.min.js"></script>
+    <script src="~/lib/jspdf/jspdf.umd.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

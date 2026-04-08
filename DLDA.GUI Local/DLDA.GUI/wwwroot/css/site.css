@@ -1,0 +1,137 @@
+﻿html {
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .navbar-collapse {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .navbar-text,
+    .navbar-nav .nav-item {
+        margin-bottom: 0.5rem;
+    }
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+/* Fokus-effekter */
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+/* Placeholder-justering i formulär */
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--bs-secondary-color);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* NAVBAR */
+.custom-navbar {
+    background-color: #e6f2fd; /* Ljusblå navbar som matchar loggan */
+}
+
+.navbar-nav .nav-item {
+    margin-right: 12px;
+}
+
+    .navbar-nav .nav-item:first-child {
+        margin-left: 16px;
+    }
+
+.navbar-nav .nav-link {
+    color: #333 !important;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+/* Inloggningsruta */
+.navbar-text {
+    font-size: 0.9rem;
+    background-color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Logout-knapp */
+.btn-logout {
+    background-color: #dc3545;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-logout:hover {
+        background-color: #b02a37;
+    }
+
+/* -------------------------------- */
+/* Färgvariationer per användarroll */
+/* -------------------------------- */
+
+/* 🎨 Patient: Grön */
+body.patient .navbar-nav .nav-link:hover,
+body.patient .navbar-nav .nav-link.active,
+body.patient .navbar-nav .nav-link.active:focus {
+    background-color: #BDD9C4;
+    color: #000 !important;
+}
+
+/* 🎨 Personal: Blå */
+body.staff .navbar-nav .nav-link:hover,
+body.staff .navbar-nav .nav-link.active,
+body.staff .navbar-nav .nav-link.active:focus {
+    background-color: #A7C7E7;
+    color: #000 !important;
+}
+
+/* 🎨 Admin: Röd */
+body.admin .navbar-nav .nav-link:hover,
+body.admin .navbar-nav .nav-link.active,
+body.admin .navbar-nav .nav-link.active:focus {
+    background-color: #F5B7B1;
+    color: #000 !important;
+}
+
+/* 🔄 Rollbaserad bakgrund för inloggningsrutan */
+body.patient .navbar-text {
+    background-color: #BDD9C4; /* Grön */
+    color: #000;
+}
+
+body.staff .navbar-text {
+    background-color: #A7C7E7; /* Blå */
+    color: #000;
+}
+
+body.admin .navbar-text {
+    background-color: #F5B7B1; /* Röd */
+    color: #000;
+}

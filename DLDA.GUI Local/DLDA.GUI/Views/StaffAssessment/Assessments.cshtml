@@ -1,0 +1,162 @@
+﻿@using DLDA.GUI.DTOs.Assessment
+@model List<AssessmentDto>
+
+@{
+    ViewData["Title"] = "Bedömningar för patient";
+    var completed = Model
+        .Where(m => m.IsStaffComplete)
+        .OrderBy(m => m.CreatedAt)
+        .ToList();
+
+    var completedStaffCount = completed.Count;
+    var firstDefault = completed.FirstOrDefault()?.AssessmentID ?? 0;
+    var secondDefault = completed.LastOrDefault()?.AssessmentID ?? 0;
+}
+
+<link rel="stylesheet" href="~/css/StaffAssessment.css" asp-append-version="true" />
+
+<div class="container mt-5">
+    <h3 class="mb-4">Bedömningar för patient</h3>
+    <p><strong>👤 Användare:</strong> @ViewBag.Username (ID: @ViewBag.UserId)</p>
+
+    @if (completedStaffCount >= 2)
+    {
+        <form asp-controller="StaffStatistics" asp-action="Compare" method="post" class="row g-2 mb-4 align-items-end" onsubmit="return validateDates()">
+            <input type="hidden" name="userId" value="@ViewBag.UserId" />
+
+            <div class="col-md-4">
+                <label class="form-label">Första bedömning</label>
+                <select name="firstId" id="firstSelect" class="form-select" required>
+                    @foreach (var item in completed)
+                    {
+                        var dateStr = item.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss");
+                        var selectedAttr = item.AssessmentID == firstDefault ? "selected" : "";
+                        @Html.Raw($"<option value=\"{item.AssessmentID}\" data-date=\"{dateStr}\" {selectedAttr}>{item.CreatedAt:yyyy-MM-dd} (ID: {item.AssessmentID})</option>")
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label">Andra bedömning</label>
+                <select name="secondId" id="secondSelect" class="form-select" required>
+                    @foreach (var item in completed)
+                    {
+                        var dateStr = item.CreatedAt.ToString("yyyy-MM-ddTHH:mm:ss");
+                        var selectedAttr = item.AssessmentID == secondDefault ? "selected" : "";
+                        @Html.Raw($"<option value=\"{item.AssessmentID}\" data-date=\"{dateStr}\" {selectedAttr}>{item.CreatedAt:yyyy-MM-dd} (ID: {item.AssessmentID})</option>")
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-success w-100">📈 Jämför förändring över tid</button>
+            </div>
+
+            <div class="col-12 mt-2">
+                <div id="dateError" class="text-danger" style="display: none;">
+                    ❗ Första bedömningen måste vara äldre än den andra. Justera urvalet.
+                </div>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="mb-4 text-muted">
+            📈 Minst två avslutade personalbedömningar krävs för att jämföra över tid.
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p>Inga bedömningar har ännu genomförts.</p>
+    }
+    else
+    {
+        <table class="table table-bordered table-staff">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Datum</th>
+                    <th>Skattningsskala</th>
+                    <th>Status</th>
+                    <th>Åtgärd</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.AssessmentID</td>
+                        <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                        <td>@item.ScaleType</td>
+                        <td>
+                            <div><strong>Patient:</strong> @(item.IsComplete ? "Klar" : "Pågående")</div>
+                            <div><strong>Personal:</strong> @(item.IsStaffComplete ? "Klar" : "Pågående")</div>
+                        </td>
+                        <td class="d-flex flex-wrap gap-2">
+                            @if (!item.IsStaffComplete)
+                            {
+                                var quizStarted = item.AnsweredCount > 0;
+                                var quizLabel = quizStarted ? "⏩ Fortsätt quiz" : "▶ Starta quiz";
+                                var quizClass = quizStarted ? "btn-continue" : "btn-start";
+
+                                <a class="btn btn-sm @quizClass"
+                                   asp-controller="StaffQuiz"
+                                   asp-action="Resume"
+                                   asp-route-assessmentId="@item.AssessmentID">
+                                    @quizLabel
+                                </a>
+
+                                <a class="btn btn-sm btn-visa"
+                                   asp-controller="StaffResult"
+                                   asp-action="Index"
+                                   asp-route-id="@item.AssessmentID">
+                                    📄 Visa resultat
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-sm btn-visa"
+                                   asp-controller="StaffResult"
+                                   asp-action="Index"
+                                   asp-route-id="@item.AssessmentID">
+                                    📊 Översikt
+                                </a>
+                            }
+
+                            @if (item.IsComplete && item.IsStaffComplete)
+                            {
+                                <a class="btn btn-sm btn-statistik"
+                                   asp-controller="StaffStatistics"
+                                   asp-action="Comparison"
+                                   asp-route-assessmentId="@item.AssessmentID">
+                                    📊 Statistik
+                                </a>
+                            }
+
+                            <a class="btn btn-sm btn-delete"
+                               asp-controller="StaffAssessment"
+                               asp-action="Delete"
+                               asp-route-id="@item.AssessmentID">
+                                🗑 Ta bort
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <div class="mt-4 d-flex gap-2 flex-wrap">
+        <form asp-controller="StaffAssessment" asp-action="CreateForPatient" method="post" class="d-inline">
+            <input type="hidden" name="userId" value="@ViewBag.UserId" />
+            <button type="submit" class="btn btn-outline-success btn-sm">➕ Ny bedömning</button>
+        </form>
+
+        <a class="btn btn-outline-secondary btn-sm"
+           asp-controller="StaffAssessment"
+           asp-action="Index">
+            ⬅ Tillbaka till patientlista
+        </a>
+    </div>
+</div>

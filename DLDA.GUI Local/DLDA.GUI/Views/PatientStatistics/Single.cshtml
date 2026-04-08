@@ -1,0 +1,103 @@
+﻿@using System.Text.Json
+@using DLDA.GUI.DTOs.Patient
+@model PatientSingleSummaryDto
+@{
+    ViewData["Title"] = "Egenbedömning – sammanställning";
+    ViewData["BodyId"] = "patient-summary-single";
+
+    var utanProblem = Model.Answers.Count(a => a.Answer is 0 or 1);
+    var måttligtProblem = Model.Answers.Count(a => a.Answer == 2);
+    var hoppadeÖver = Model.Answers.Count(a => a.Answer == null);
+    var total = utanProblem + måttligtProblem + hoppadeÖver;
+
+    var bästaOmråden = Model.Answers
+        .Where(a => a.Answer is 0 or 1)
+        .OrderBy(a => a.Answer)
+        .Take(5)
+        .Select(a => a.QuestionText)
+        .ToList();
+}
+
+<link rel="stylesheet" href="~/css/pdf.css" asp-append-version="true" />
+
+<div id="pdf-content" class="container mt-4">
+
+    <!-- Navigering och PDF-knapp -->
+    <div class="d-flex justify-content-between align-items-start mb-3 no-print">
+        <a class="btn btn-secondary mt-2" asp-controller="PatientAssessment" asp-action="Index">
+            ⬅ Tillbaka till mina bedömningar
+        </a>
+        <button class="btn btn-outline-dark mt-2" id="downloadPdfBtn">
+            📄 Exportera som PDF
+        </button>
+    </div>
+
+    <h2 class="mb-4">🟢 Sammanställning av egenbedömning</h2>
+    <p><strong>Datum:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd")</p>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <canvas id="resultPie"></canvas>
+        </div>
+
+        <div class="col-md-6">
+            <h5 class="mb-3">📝 Återkoppling</h5>
+            <ul>
+                <li><strong>@utanProblem</strong> frågor markerades som <span class="text-success">utan problem</span>.</li>
+                <li><strong>@måttligtProblem</strong> frågor skattades som <span class="text-warning">måttligt problem</span>.</li>
+                <li><strong>@hoppadeÖver</strong> frågor <span class="text-muted">hoppades över</span>.</li>
+            </ul>
+
+            <div class="mt-3">
+                @if (utanProblem == 0 && måttligtProblem == 0 && hoppadeÖver > 0)
+                {
+                    <p class="alert alert-info">Du har valt att hoppa över alla frågor i denna bedömning.</p>
+                }
+                else if (total > 0 && (utanProblem * 100.0 / total) >= 70)
+                {
+                    <p class="alert alert-success">Din egenbedömning visar att de flesta områden fungerar bra för dig.</p>
+                }
+                else if (total > 0 && (utanProblem * 100.0 / total) >= 40)
+                {
+                    <p class="alert alert-info">Det finns flera områden som fungerar bra för dig.</p>
+                }
+                else
+                {
+                    <p class="alert alert-secondary">Bedömningen visar att du identifierar flera områden som kan behöva stöd – det är ett viktigt steg mot förbättring.</p>
+                }
+            </div>
+
+            @if (bästaOmråden.Any())
+            {
+                <div class="mt-4">
+                    <h6>✅ Områden du skattade som fungerande</h6>
+                    <ul>
+                        @foreach (var fråga in bästaOmråden)
+                        {
+                            <li>@fråga</li>
+                        }
+                    </ul>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Sekundär navigering -->
+    <div class="mt-5 no-print">
+        <a class="btn btn-secondary" asp-controller="PatientAssessment" asp-action="Index">
+            ⬅ Tillbaka till mina bedömningar
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const labels = ['Utan problem (0–1)', 'Måttligt problem (2)', 'Hoppad över'];
+            const data = [@utanProblem, @måttligtProblem, @hoppadeÖver];
+            renderPatientSinglePieChart(labels, data); // Funktionen finns i site.js
+        });
+    </script>
+}

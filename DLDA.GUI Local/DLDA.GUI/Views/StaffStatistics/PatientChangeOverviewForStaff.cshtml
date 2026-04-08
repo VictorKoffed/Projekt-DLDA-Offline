@@ -1,0 +1,203 @@
+﻿@using DLDA.GUI.DTOs.Staff
+@model PatientChangeOverviewForStaffDto
+
+@{
+    ViewData["Title"] = "Förändringar över tid (patientens svar)";
+    ViewData["BodyId"] = "staff-patient-change-page";
+
+    var förbättringar = Model.Förbättringar;
+    var försämringar = Model.Försämringar;
+    var hoppade = Model.Hoppade;
+
+    var förbättradeKategorier = förbättringar
+        .Where(f => !string.IsNullOrWhiteSpace(f.Category))
+        .Select(f => f.Category!.Trim())
+        .Distinct()
+        .OrderBy(k => k)
+        .ToList();
+
+    var försämradeKategorier = försämringar
+        .Where(f => !string.IsNullOrWhiteSpace(f.Category))
+        .Select(f => f.Category!.Trim())
+        .Distinct()
+        .OrderBy(k => k)
+        .ToList();
+
+    var allLabels = förbättringar.Concat(försämringar).Select(f => f.Question).ToList();
+    var previousData = förbättringar.Concat(försämringar).Select(f => f.Previous).ToList();
+    var currentData = förbättringar.Concat(försämringar).Select(f => f.Current).ToList();
+
+    var labelsJson = System.Text.Json.JsonSerializer.Serialize(allLabels);
+    var previousJson = System.Text.Json.JsonSerializer.Serialize(previousData);
+    var currentJson = System.Text.Json.JsonSerializer.Serialize(currentData);
+
+    string FormatScore(int val) => val switch
+    {
+        0 => "Inget problem",
+        1 => "Litet problem",
+        2 => "Måttligt problem",
+        3 => "Stort problem",
+        4 => "Mycket stort problem",
+        _ => "Okänt"
+    };
+
+    string FormatChange(int prev, int curr) => curr < prev ? "✅ Förbättring" : curr > prev ? "❗ Försämring" : "Oförändrat";
+}
+
+<link rel="stylesheet" href="~/css/pdf.css" asp-append-version="true" />
+
+<div id="pdf-content" class="container mt-2">
+    <div class="d-flex justify-content-between align-items-start mb-3 no-print">
+        <a class="btn btn-secondary mt-2" asp-controller="StaffAssessment" asp-action="Assessments" asp-route-userId="@ViewBag.UserId">
+            ⬅ Tillbaka till bedömningar
+        </a>
+        <button class="btn btn-outline-dark mt-2" id="downloadPdfBtn">
+            📄 Exportera som PDF
+        </button>
+    </div>
+
+    <h2 class="mb-3">📈 Förändringar över tid</h2>
+    <div class="alert alert-success">
+        Du tittar just nu på <strong>patientens egna svar</strong> över tid.
+    </div>
+    <p>
+        👤 <strong>Patient:</strong> @Model.Username<br />
+        📅 <strong>@Model.PreviousDate.ToString("yyyy-MM-dd")</strong> och <strong>@Model.CurrentDate.ToString("yyyy-MM-dd")</strong>
+    </p>
+
+    <div class="d-flex flex-wrap gap-2 mb-4 no-print">
+        <div class="dropdown">
+            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filter
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="filterData('all')">Visa allt</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterData('improvement')">Förbättringar</a></li>
+                <li><a class="dropdown-item" href="#" onclick="filterData('deterioration')">Försämringar</a></li>
+            </ul>
+        </div>
+        <form asp-controller="StaffStatistics" asp-action="Compare" method="post" class="d-inline">
+            <input type="hidden" name="userId" value="@ViewBag.UserId" />
+            <input type="hidden" name="firstId" value="@ViewBag.FirstId" />
+            <input type="hidden" name="secondId" value="@ViewBag.SecondId" />
+            <button class="btn btn-outline-primary">
+                🔄 Visa förändringar i personalens svar
+            </button>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-0 shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-muted" id="chartFilterLabel">📊 Visar alla resultat</h5>
+                    <div style="height: 500px;">
+                        <canvas id="improvementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 no-print">
+                <button class="btn btn-outline-secondary" onclick="toggleDetailsStaff()" id="toggleButton">
+                    🔍 Visa detaljer
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-3">📋 Återkoppling</h5>
+                    <ul class="list-unstyled">
+                        <li><strong>@förbättringar.Count</strong> frågor visade förbättring.</li>
+                        <li><strong>@försämringar.Count</strong> frågor visade försämring.</li>
+                        <li><strong>@hoppade.Count</strong> obesvarade frågor.</li>
+                    </ul>
+
+                    @if (förbättradeKategorier.Any())
+                    {
+                        <div id="feedbackImprovementNote" class="alert alert-success p-2">Flera förbättringar har noterats.</div>
+                        <div id="feedbackImprovement">
+                            <h6 class="text-success">✅ Förbättrade kategorier</h6>
+                            <ul>
+                                @foreach (var cat in förbättradeKategorier)
+                                {
+                                    <li>@cat</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    @if (försämradeKategorier.Any())
+                    {
+                        <div id="feedbackDeteriorationNote" class="alert alert-danger p-2 mt-3">Vissa områden har skattats sämre.</div>
+                        <div id="feedbackDeterioration">
+                            <h6 class="text-danger">❗ Försämrade kategorier</h6>
+                            <ul>
+                                @foreach (var cat in försämradeKategorier)
+                                {
+                                    <li>@cat</li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="detailsSection" style="display: none;" class="mt-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                @if (!förbättringar.Any() && !försämringar.Any())
+                {
+                    <div class="alert alert-warning">⚠ Inga förändringar att visa.</div>
+                }
+                else
+                {
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Fråga</th>
+                                <th>Kategori</th>
+                                <th>Tidigare</th>
+                                <th>Nuvarande</th>
+                                <th>Förändring</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var f in förbättringar.Concat(försämringar))
+                            {
+                                var rowClass = f.Current < f.Previous ? "table-success" : f.Current > f.Previous ? "table-danger" : "";
+                                <tr class="@rowClass">
+                                    <td>@f.QuestionId</td>
+                                    <td>@f.Question</td>
+                                    <td>@f.Category</td>
+                                    <td>@(f.SkippedPrevious ? "Hoppad över" : FormatScore(f.Previous))<br /><small class="text-muted">(@f.Previous)</small></td>
+                                    <td>@(f.SkippedCurrent ? "Hoppad över" : FormatScore(f.Current))<br /><small class="text-muted">(@f.Current)</small></td>
+                                    <td>@FormatChange(f.Previous, f.Current)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div style="padding-bottom: 80px;"></div>
+
+    <a class="btn btn-secondary mt-4 no-print" asp-controller="StaffAssessment" asp-action="Assessments" asp-route-userId="@ViewBag.UserId">
+        ⬅ Tillbaka till bedömningar
+    </a>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const rawLabels = @Html.Raw(labelsJson);
+        const rawPrevious = @Html.Raw(previousJson);
+        const rawCurrent = @Html.Raw(currentJson);
+    </script>
+    <script src="/js/site.js" asp-append-version="true"></script>
+}

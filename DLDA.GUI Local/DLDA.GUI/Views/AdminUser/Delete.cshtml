@@ -1,0 +1,29 @@
+﻿@using DLDA.GUI.DTOs.User
+@model UserDto
+
+@{
+    ViewData["Title"] = "Bekräfta borttagning";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/adminuser.css" asp-append-version="true" />
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-danger">🗑️ Bekräfta borttagning</h2>
+
+    <p>Är du säker på att du vill ta bort följande användare?</p>
+
+    <ul>
+        <li><strong>Användarnamn:</strong> @Model.Username</li>
+        <li><strong>E-post:</strong> @Model.Email</li>
+        <li><strong>Roll:</strong> @Model.Role</li>
+    </ul>
+
+    <form asp-action="DeleteUserConfirmed" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="UserID" />
+        <button type="submit" class="btn btn-danger">🗑 Ta bort</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Avbryt</a>
+    </form>
+</div>

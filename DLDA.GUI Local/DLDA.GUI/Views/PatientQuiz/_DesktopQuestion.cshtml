@@ -1,0 +1,101 @@
+﻿@model DLDA.GUI.DTOs.Question.Question
+@{
+    var assessmentId = ViewBag.AssessmentId as int? ?? 0;
+    var scaleType = (Model.ScaleType ?? "Numerisk").ToLower();
+    var prefix = scaleType == "smiley" ? "Smiley" : "Number";
+
+    string GetLabel(int value) => value switch
+    {
+        0 => "Inget problem",
+        1 => "Litet problem",
+        2 => "Måttligt problem",
+        3 => "Stort problem",
+        4 => "Mycket stort problem",
+        _ => ""
+    };
+}
+
+<link rel="stylesheet" href="~/css/PatientQuestion.css" asp-append-version="true" />
+
+<div class="d-flex justify-content-end mb-2">
+    <span class="text-muted fw-semibold">
+        Fråga @(@Model.Order + 1) av @(ViewBag.TotalQuestions ?? 0)
+    </span>
+</div>
+
+<div class="info-alert">
+    <strong>ℹ️ Information:</strong> Frågorna handlar om din vardag. När du svarat kommer personalen att kunna prata med dig om hur stödet kan planeras på bästa sätt.<br />
+    Känn dig fri att hoppa över frågor som känns svåra att svara på.<br />
+    <em>Tänk på hur det varit den senaste veckan.</em>
+</div>
+
+<div class="question-box">
+    <small class="text-muted">Fråga @(@Model.Order + 1)</small>
+    <h5 class="fw-semibold mt-2 mb-1">Hur bedömer du din:</h5>
+    <h4>@Model.QuestionText</h4>
+</div>
+
+<form asp-action="SubmitAnswer" method="post">
+    <input type="hidden" name="itemId" value="@Model.AssessmentItemID" />
+    <input type="hidden" name="assessmentId" value="@assessmentId" />
+
+    <div class="mb-4">
+        <label class="form-label fw-semibold">Bedömning</label>
+        <div class="d-flex gap-3 flex-wrap justify-content-start">
+            @for (int i = 0; i <= 4; i++)
+            {
+                var inputId = $"a{i}";
+                var imagePath = Url.Content($"~/Images/{prefix} {i}.png");
+
+                <div class="form-check text-center">
+                    <input type="radio" class="btn-check" name="answer" id="@inputId" value="@i"
+                           @(Model.PatientAnswer == i ? "checked=\"checked\"" : "") required />
+                    <label class="btn" for="@inputId">
+                        <img src="@imagePath" alt="@prefix @i" width="60" />
+                        <div class="small mt-1 fw-bold">@i</div>
+                        <div class="small text-muted">@GetLabel(i)</div>
+                    </label>
+                </div>
+            }
+        </div>
+
+        <div class="form-text text-muted mt-2">
+            Du kan också välja att <strong>hoppa över frågan</strong> med knappen nedanför om du inte vill svara just nu.
+        </div>
+    </div>
+
+    <!-- Rad 1: Stor grön huvudknapp -->
+    <div class="d-flex justify-content-start mb-3">
+        <button type="submit" class="btn btn-next-main">💾 Nästa fråga</button>
+    </div>
+    
+</form>
+
+<!-- Rad 2: Övriga knappar horisontellt -->
+<div class="d-flex flex-wrap gap-2 question-buttons">
+    <form asp-action="Previous" method="post">
+        <input type="hidden" name="assessmentId" value="@assessmentId" />
+        <input type="hidden" name="currentOrder" value="@Model.Order" />
+        <button type="submit" class="btn btn-outline-secondary">⬅ Föregående</button>
+    </form>
+
+    <form asp-action="SkipQuestion" method="post">
+        <input type="hidden" name="itemId" value="@Model.AssessmentItemID" />
+        <input type="hidden" name="assessmentId" value="@assessmentId" />
+        <button type="submit" class="btn btn-secondary">⏭ Hoppa över</button>
+    </form>
+
+    <form asp-action="Pause" method="post">
+        <input type="hidden" name="assessmentId" value="@assessmentId" />
+        <button type="submit" class="btn btn-pause">⏸ Pausa</button>
+    </form>
+
+    <form asp-action="ScaleSelect" asp-route-id="@assessmentId" method="get">
+        <button type="submit" class="btn btn-outline-info">🔁 Byt skattningsskala</button>
+    </form>
+</div>
+
+<div class="mb-4 mt-4">
+    <label for="comment" class="form-label">Kommentar (frivilligt)</label>
+    <textarea class="form-control" name="comment" rows="3">@Model.PatientComment</textarea>
+</div>

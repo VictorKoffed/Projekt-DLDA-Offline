@@ -1,0 +1,27 @@
+﻿@{
+    ViewData["Title"] = "Adminpanel";
+}
+
+<link rel="stylesheet" href="~/css/Admin.css" asp-append-version="true" />
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">Inloggad som admin</h2>
+
+    <div class="admin-panel-box mx-auto">
+        <h5 class="alert-heading">ℹ️ Adminpanel</h5>
+        <p>
+            Du är inloggad som administratör och har tillgång till att hantera användare och systemets frågor.
+            Härifrån kan du:
+        </p>
+
+        <div class="d-flex flex-column gap-3 align-items-center mt-4">
+            <a class="btn btn-primary admin-btn" asp-controller="AdminQuestion" asp-action="Index">
+                📂 Gå till frågor översikten
+            </a>
+
+            <a class="btn btn-mint admin-btn" asp-controller="AdminUser" asp-action="Index">
+                ➕ Lägg till ny användare (personal eller patient)
+            </a>
+        </div>
+    </div>
+</div>

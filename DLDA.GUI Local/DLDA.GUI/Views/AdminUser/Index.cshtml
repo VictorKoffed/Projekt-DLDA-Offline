@@ -1,0 +1,47 @@
+﻿@using DLDA.GUI.DTOs.User
+@model List<UserDto>
+
+@{
+    ViewData["Title"] = "Alla användare";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/adminuser.css" asp-append-version="true" />
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">👥 Alla användare</h2>
+
+    <div class="user-table-panel p-4">
+        <a asp-action="Create" class="btn btn-success mb-3">➕ Skapa ny användare</a>
+
+        <div class="table-responsive">
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Användarnamn</th>
+                        <th>E-post</th>
+                        <th>Roll</th>
+                        <th>Åtgärder</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        <tr>
+                            <td>@user.UserID</td>
+                            <td>@user.Username</td>
+                            <td>@user.Email</td>
+                            <td>@user.Role</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@user.UserID" class="btn btn-sm btn-primary">✏ Redigera</a>
+                                <a asp-action="Delete" asp-route-id="@user.UserID" class="btn btn-sm btn-danger">🗑 Ta bort</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

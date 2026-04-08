@@ -1,0 +1,40 @@
+﻿@using DLDA.GUI.DTOs.Question
+@model Question
+
+@{
+    ViewData["Title"] = "Skapa ny fråga";
+}
+
+
+<link rel="stylesheet" href="~/css/adminquestion.css" asp-append-version="true" />
+
+
+<div class="container mt-5">
+    <h2 class="mb-4">➕ Skapa ny fråga</h2>
+
+    <div class="question-panel">
+        <form asp-action="Create" method="post">
+            <div class="mb-3 text-start">
+                <label asp-for="QuestionText" class="form-label">Frågetext</label>
+                <input asp-for="QuestionText" class="form-control" />
+                <span asp-validation-for="QuestionText" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3 text-start">
+                <label asp-for="Category" class="form-label">Kategori</label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+
+            <div class="form-check mb-3 text-start">
+                <input asp-for="IsActive" class="form-check-input" />
+                <label asp-for="IsActive" class="form-check-label">Aktiv</label>
+            </div>
+
+            <div class="d-flex justify-content-center gap-2">
+                <button type="submit" class="btn btn-primary">💾 Skapa fråga</button>
+                <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
+            </div>
+        </form>
+    </div>
+</div>
