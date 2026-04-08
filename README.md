@@ -153,6 +153,22 @@ Projektet implementerar ett robust säkerhetstänk för att skydda känslig data
 
 ---
 
+---
+
+## 🖼️ Skärmbilder
+
+- **DLDA – Bedömning för patient (Översikt)** ![Patient Bedömning](Pictures/BedomingForPatientOversikt.png)
+
+- **DLDA – Förändring över tid** ![Förändring över tid](Pictures/ForandringOverTid.png)
+
+- **DLDA – Patientöversikt** ![Patientöversikt](Pictures/PatientOversikt.png)
+
+- **DLDA – Quiz-gränssnitt** ![Quiz](Pictures/Quiz.png)
+
+- **DLDA – Jämförelse: Patient vs Personal** ![Skillnad Svar](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
+
+---
+
 ## 👥 Projektgrupp & Kontext
 
 Detta projekt utvecklades som en del av kursen:
