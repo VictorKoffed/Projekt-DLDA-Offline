@@ -161,7 +161,7 @@ Projektet implementerar ett robust säkerhetstänk för att skydda känslig data
 
 - **DLDA – Förändring över tid** ![Förändring över tid](Pictures/ForandringOverTid.png)
 
-- **DLDA – Patientöversikt** ![Patientöversikt](Pictures/PatientOversikt.png)
+- **DLDA – Patient Lista översikt** ![Patientöversikt](Pictures/PatientOversikt.png)
 
 - **DLDA – Quiz-gränssnitt** ![Quiz](Pictures/Quiz.png)
 
