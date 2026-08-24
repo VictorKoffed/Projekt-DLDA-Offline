@@ -1,19 +1,25 @@
 # 🌐 Projekt DLDA Offline (MVC + API)
 
-[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4)](https://dotnet.microsoft.com/)
+[![Docker](https://img.shields.io/badge/Docker-DevContainers-2496ED)](https://www.docker.com/)
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-MVC-brightgreen)](#-arkitektur)
-[![Entity Framework](https://img.shields.io/badge/EF%20Core-SQL%20Server-blue)](#-databashantering)
+[![Entity Framework](https://img.shields.io/badge/EF%20Core-SQL%20Server-blue)](#-tekniska-koncept-som-används)
 [![Säkerhet](https://img.shields.io/badge/Security-RBAC%20%26%20BCrypt-red)](#-användarroller--säkerhet)
 
 ## 📝 Introduktion
+
 Detta projekt är en digitalisering av det psykiatriska skattningsverktyget **DLDA**. Verktyget är utformat för att hjälpa patienter och vårdpersonal att utvärdera vardagsfunktioner genom strukturerade frågor inom områden som hygien, hälsa och dagliga aktiviteter.
 
 ### Syfte och Begränsningar
-Projektet fungerar som en prototyp för att demonstrera hur en övergång från pappersbaserade verktyg till en digital lösning kan effektivisera vården. Målet är att visa hur digitaliseringen kan ge vårdpersonal bättre förutsättningar att assistera patienter och förstärka deras utveckling genom tydligare uppföljning och datavisualisering.
+
+Projektet fungerar som en prototyp för att undersöka hur ett pappersbaserat skattningsverktyg kan digitaliseras. Målet är att göra skattningarna mer lättillgängliga och samtidigt ge vårdpersonal bättre möjligheter att följa upp resultat och förändringar över tid.
+
+Projektet är utvecklat som en prototyp och ska därför inte betraktas som ett färdigt vårdsystem. Funktioner, säkerhet och datalagring är anpassade efter projektets tekniska och utbildningsmässiga förutsättningar.
 
 ---
 
 ## Innehåll
+
 - [Projektstruktur](#-projektstruktur)
 - [Mappstruktur](#-mappstruktur)
 - [Kom igång (Build & Run)](#-kom-igång-build--run)
@@ -21,18 +27,20 @@ Projektet fungerar som en prototyp för att demonstrera hur en övergång från 
 - [Funktioner](#-funktioner)
 - [Arkitektur](#-arkitektur)
 - [Tekniska koncept som används](#-tekniska-koncept-som-används)
-- [Katalog över viktiga filer](#-katalog-över-viktiga-filer)
+- [Projektgrupp & Kontext](#-projektgrupp--kontext)
+- [AI-assistans](#-ai-assistans)
+- [Skärmbilder](#-skärmbilder)
 
 ---
 
 ## 📁 Projektstruktur
 
-Lösningen är uppdelad i två samverkande huvudprojekt för att främja Separation of Concerns:
+Lösningen är uppdelad i två samverkande huvudprojekt. Projekten körs i separata utvecklingscontainrar för att hålla utvecklingsmiljöerna isolerade och reproducerbara.
 
 | Projekt | Typ | Syfte |
 |:---|:---|:---|
-| **DLDA.API** | Web API | Hanterar affärslogik, databasåtkomst via EF Core och säker autentisering. |
-| **DLDA.GUI** | MVC Web App | Webbgränssnitt som konsumerar API:et och hanterar användarsessioner. |
+| **DLDA.API** | Web API | Hanterar affärslogik, databasåtkomst via EF Core, autentisering och API-endpoints. |
+| **DLDA.GUI** | MVC Web App | Webbgränssnitt som kommunicerar med API:et och hanterar användarflöden och sessioner. |
 
 ---
 
@@ -41,82 +49,149 @@ Lösningen är uppdelad i två samverkande huvudprojekt för att främja Separat
 ```text
 Projekt-DLDA-Offline/
 ├─ DLDA.API/
+│  ├─ .devcontainer/           # Konfiguration för isolerad Docker-utvecklingsmiljö
 │  ├─ Controllers/             # API-endpoints (Assessment, Auth, User, m.fl.)
 │  ├─ Data/                    # AppDbContext för SQL Server-koppling
-│  ├─ DTOs/                    # Data Transfer Objects för säker dataöverföring
+│  ├─ DTOs/                    # Data Transfer Objects för dataöverföring
 │  └─ Models/                  # Datamodeller (User, Question, Assessment)
 ├─ DLDA.GUI/
+│  ├─ .devcontainer/           # Konfiguration för isolerad Docker-utvecklingsmiljö
 │  ├─ Authorization/           # RoleAuthorizeAttribute för RBAC-logik
 │  ├─ Controllers/             # MVC-logik för Patient, Staff och Admin
 │  ├─ Services/                # API-klienter (AccountService, QuizService, etc.)
 │  ├─ Views/                   # Razor-vyer (HTML/C#)
-│  └─ wwwroot/                 # CSS, JS och Bilder
-└─ Projekt DLDA Offline.sln    # Solution-fil
-
+│  └─ wwwroot/                 # CSS, JS och bilder
+└─ docker-compose.yml          # Docker-konfiguration
 ```
 
 ---
 
 ## 🚀 Kom igång (Build & Run)
 
+Projektet använder **Docker DevContainers** för utvecklingsmiljön. Det innebär att .NET-miljön körs i isolerade containrar istället för direkt på den lokala datorn.
+
 ### Förutsättningar
-- .NET 8 SDK  
-- SQL Server  
-- Visual Studio 2022 (rekommenderas)  
 
-### Installera och kör
+- Docker Desktop
+- JetBrains Rider (rekommenderas) eller Visual Studio Code
+- SQL Server, exempelvis via Docker eller Portainer
 
-1. Klona arkivet till din lokala maskin  
-2. Öppna lösningen i Visual Studio:  
-   `Projekt DLDA Offline.sln`  
-3. Kontrollera anslutningssträngen i:  
-   `DLDA.API/appsettings.json`  
-4. Högerklicka på solution → **Set Startup Projects**  
-5. Välj:
-   - Multiple startup projects  
-   - Starta både **DLDA.API** och **DLDA.GUI**  
-6. Tryck **F5**
+### Starta utvecklingsmiljön
 
-👉 Applikationen startar på inloggningssidan.
+1. Klona arkivet till din lokala maskin.
+2. Öppna mappen `DLDA.API` som ett separat projekt i Rider eller Visual Studio Code.
+3. Välj **Reopen in Container** / **Start DevContainer**.
+4. Kontrollera anslutningssträngen i:
+
+   `DLDA.API/appsettings.json`
+
+5. Kontrollera att `ConnectionStrings` pekar mot rätt SQL Server-instans.
+6. Kör API-projektet.
+
+API:et och Swagger startar på:
+
+```text
+http://localhost:5001/swagger
+```
+
+7. Öppna mappen `DLDA.GUI` som ett separat projekt i en ny fönsterinstans.
+8. Välj **Reopen in Container** / **Start DevContainer**.
+9. Kör GUI-projektet.
+
+Webbapplikationen startar på:
+
+```text
+http://localhost:5000
+```
+
+### Skapa testdata
+
+När API:et är igång kan Swagger användas för att skapa grundläggande testdata.
+
+Följande utvecklings-endpoints kan användas:
+
+```text
+POST /api/Auth/dev-update-admin
+POST /api/Auth/dev-seed-questions
+POST /api/Auth/dev-seed-users
+```
+
+Endpoints används för att bland annat skapa en administratör, lägga in skattningsfrågor samt skapa testpatient och testpersonal.
+
+> **Obs:** Dessa endpoints är avsedda för utvecklingsmiljön och bör inte exponeras i en produktionsmiljö.
 
 ---
 
 ## 🔐 Användarroller & Säkerhet
 
-Projektet implementerar ett robust säkerhetstänk för att skydda känslig data:
+Projektet använder rollbaserad åtkomst för att skilja mellan olika typer av användare.
+
+### Roller
+
+- **Admin** – Hanterar användare och skattningsfrågor.
+- **Staff** – Kan arbeta med patienter och följa deras skattningar.
+- **Patient** – Kan genomföra sina egna skattningar.
+
+### Säkerhetslösningar
 
 - **RBAC (Role-Based Access Control)**  
-  En anpassad `RoleAuthorizeAttribute` styr åtkomst till:
-  - Admin  
-  - Staff  
-  - Patient  
+  En anpassad `RoleAuthorizeAttribute` styr åtkomst baserat på användarens roll:
+  - Admin
+  - Staff
+  - Patient
 
 - **Lösenordssäkerhet**  
-  Använder **BCrypt.Net** för hashing och verifiering  
+  Använder **BCrypt.Net** för hashing och verifiering av lösenord.
 
 - **Session State**  
-  Användar-ID och roll lagras säkert i session  
+  Användar-ID och roll används i sessionen för att hantera den inloggade användaren.
 
 - **CORS-policy**  
-  API:et tillåter endast anrop från GUI-applikationen  
+  API:et är konfigurerat för att begränsa vilka klienter som får kommunicera med API:et.
 
 ---
 
 ## ⚙️ Funktioner
 
-- **Inloggningssystem** – Säker autentisering och rollhantering  
-- **Digitala formulär** – Interaktiva skattningsformulär (quiz)  
-- **Statistik & uppföljning** – Visualisering av förändring över tid  
-- **Administrationspanel** – Hantering av användare och frågor (CRUD)  
-- **Responsiv design** – Fungerar på både mobil och desktop  
+- **Inloggningssystem** – Autentisering och rollhantering.
+- **Digitala formulär** – Interaktiva skattningsformulär för DLDA.
+- **Patientöversikt** – Personal kan se och följa patienters resultat.
+- **Statistik & uppföljning** – Visualisering av förändringar över tid.
+- **Jämförelse mellan patient och personal** – Visar skillnader mellan skattningar.
+- **Administrationspanel** – Hantering av användare och frågor (CRUD).
+- **Responsiv design** – Anpassat för både mobil och desktop.
 
 ---
 
 ## 🧱 Arkitektur
 
-- **Separerad frontend/backend** – MVC konsumerar API  
-- **IHttpClientFactory** – Effektiv hantering av HTTP-anrop  
-- **Session-baserad autentisering** – Enkel men säker lösning för prototyp  
+Projektet består av en separat MVC-applikation och ett Web API.
+
+```text
+┌─────────────────┐
+│    DLDA.GUI     │
+│   ASP.NET MVC   │
+└────────┬────────┘
+         │
+         │ HTTP
+         ▼
+┌─────────────────┐
+│    DLDA.API     │
+│  ASP.NET Core   │
+└────────┬────────┘
+         │
+         │ EF Core
+         ▼
+┌─────────────────┐
+│    SQL Server   │
+└─────────────────┘
+```
+
+- **DLDA.GUI** – Ansvarar för presentation, användarflöden och kommunikation med API:et.
+- **DLDA.API** – Ansvarar för API-endpoints, autentisering, affärslogik och databaskommunikation.
+- **SQL Server** – Används för lagring av användare, frågor och skattningsresultat.
+
+Kommunikationen mellan GUI och API sker via `HttpClient`. Dataåtkomst i API:et hanteras med Entity Framework Core.
 
 ---
 
@@ -124,48 +199,15 @@ Projektet implementerar ett robust säkerhetstänk för att skydda känslig data
 
 | Område | Implementation | Förklaring |
 |:---|:---|:---|
-| **Security** | RBAC & BCrypt | Hanterar roller och säkra lösenord |
-| **API Communication** | HttpClient / Async | Icke-blockerande anrop till API |
-| **Data Access** | EF Core / SQL Server | ORM för databasinteraktion |
-| **Architecture** | MVC + API | Tydlig separation mellan lager |
-
----
-
-## 📚 Katalog över viktiga filer
-
-<details>
-<summary><strong>Kärnfiler</strong></summary>
-
-- `Program.cs` – Konfiguration av middleware och services  
-- `AppDbContext.cs` – Databasstruktur via EF Core  
-- `appsettings.json` – Konfiguration (t.ex. connection strings)  
-
-</details>
-
-<details>
-<summary><strong>Logik & Controllers</strong></summary>
-
-- `AuthController` – Hanterar inloggning  
-- `AssessmentController` – Hanterar formulärdata  
-- `UserController` – CRUD för användare  
-
-</details>
-
----
-
----
-
-## 🖼️ Skärmbilder
-
-- **DLDA – Bedömning för patient (Översikt)** ![Patient Bedömning](Pictures/BedomingForPatientOversikt.png)
-
-- **DLDA – Förändring över tid** ![Förändring över tid](Pictures/ForandringOverTid.png)
-
-- **DLDA – Patient Lista översikt** ![Patientöversikt](Pictures/PatientOversikt.png)
-
-- **DLDA – Quiz-gränssnitt** ![Quiz](Pictures/Quiz.png)
-
-- **DLDA – Jämförelse: Patient vs Personal** ![Skillnad Svar](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
+| **Framework** | .NET 9 / ASP.NET Core | Grund för API och webbapplikation |
+| **Frontend** | ASP.NET Core MVC / Razor | Webbgränssnitt och användarflöden |
+| **Backend** | ASP.NET Core Web API | API och backendlogik |
+| **Development Environment** | Docker / DevContainers | Isolerade och reproducerbara utvecklingsmiljöer |
+| **Security** | RBAC & BCrypt | Hanterar roller och lösenord |
+| **API Communication** | HttpClient / Async | Kommunikation mellan GUI och API |
+| **Data Access** | EF Core / SQL Server | ORM och databashantering |
+| **API Documentation** | Swagger | Dokumentation och testning av API-endpoints |
+| **Architecture** | MVC + API | Separation mellan presentation och backend |
 
 ---
 
@@ -176,26 +218,29 @@ Detta projekt utvecklades som en del av kursen:
 **Projektarbete och projektmetodik (7,5 hp)**  
 (*Work and Project Methodology, 7.5 credits*)
 
-Projektet genomfördes i en grupp om sju studenter med fokus på att tillämpa projektmetodik i praktiken, där vi tillsammans planerade, genomförde och levererade en fungerande prototyp.
+Projektet genomfördes i en grupp om sju studenter med fokus på att kombinera teknisk utveckling med projektmetodik. Gruppen planerade, utvecklade och levererade tillsammans en fungerande prototyp.
 
 ### 🎯 Fokus i projektet
 
 Arbetet inkluderade:
 
-- Planering och strukturering av projekt (projektdirektiv, tidsplan)  
-- Riskanalys och hantering av potentiella problem  
-- Samarbete i grupp mot gemensamma mål  
-- Löpande uppföljning och iteration av lösningen  
-- Dokumentation, presentation och slutleverans  
+- Planering och strukturering av projektet.
+- Framtagning av projektdirektiv och tidsplan.
+- Riskanalys och hantering av potentiella problem.
+- Samarbete och ansvarsfördelning inom gruppen.
+- Löpande uppföljning och iteration av lösningen.
+- Dokumentation, presentation och slutleverans.
 
 ### 🧠 Lärandeperspektiv
 
 Projektet gav praktisk erfarenhet inom:
 
-- Projektarbete som arbetsform inom IT  
-- Gruppdynamik och samarbete  
-- Problemlösning i komplexa system  
-- Koppling mellan teknisk utveckling och verksamhetsbehov  
+- Projektarbete som arbetsform inom IT.
+- Utveckling av system med separerad frontend och backend.
+- Hybridutveckling med Docker och DevContainers.
+- API-baserad kommunikation.
+- Gruppdynamik och problemlösning.
+- Koppling mellan teknisk utveckling och verksamhetsbehov.
 
 ---
 
@@ -204,16 +249,49 @@ Projektet gav praktisk erfarenhet inom:
 Delar av denna kodbas har utvecklats med stöd av AI-verktyg.
 
 ### Verktyg som använts
-- ChatGPT – arkitektur, struktur och dokumentation  
-- Gemini – felsökning och förbättring av kod  
+
+- **ChatGPT** – idéarbete, arkitektur, struktur, felsökning och dokumentation.
+- **Gemini** – felsökning, refaktorisering och förbättring av kod.
 
 ### Omfattning
 
-AI har använts för:
-- Strukturering av backend-arkitektur  
-- Implementation av rollbaserad säkerhet  
-- Refaktorisering och förbättrad kodläsbarhet  
+AI har bland annat använts som stöd för:
+
+- Strukturering av backend-arkitektur.
+- Konfiguration av DevContainers.
+- Implementation av rollbaserad säkerhet.
+- Felsökning.
+- Refaktorisering och förbättring av kodläsbarhet.
+- Dokumentation.
 
 ### Mänsklig granskning
 
-All AI-genererad kod har granskats, testats och validerats manuellt för att säkerställa korrekt funktion och uppfyllande av säkerhetskrav.
+AI har använts som ett stöd i utvecklingsprocessen och inte som en ersättning för utvecklingsarbetet.
+
+AI-genererad kod har granskats, anpassats och testats manuellt innan den inkluderats i projektet. Projektgruppen ansvarar för den slutliga implementationen och funktionaliteten.
+
+---
+
+## 🖼️ Skärmbilder
+
+### DLDA – Bedömning för patient
+
+![Patient Bedömning](Pictures/BedomingForPatientOversikt.png)
+
+### DLDA – Förändring över tid
+
+![Förändring över tid](Pictures/ForandringOverTid.png)
+
+### DLDA – Patientöversikt
+
+![Patientöversikt](Pictures/PatientOversikt.png)
+
+### DLDA – Quiz-gränssnitt
+
+![Quiz](Pictures/Quiz.png)
+
+### DLDA – Jämförelse mellan patient och personal
+
+![Skillnad mellan patient och personal](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
+
+---
