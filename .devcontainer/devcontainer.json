@@ -1,19 +1,13 @@
 {
-  "name": "DLDA Fullstack Environment",
+  "name": "DLDA Fullstack Dev",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "api",
-  "workspaceFolder": "/src",
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "editor.formatOnSave": true
-      },
-      "extensions": [
-        "ms-dotnettools.csharp",
-        "ms-dotnettools.csdevkit"
-      ]
-    }
-  },
+  "workspaceFolder": "/workspace",
   "forwardPorts": [5000, 5001, 1433],
-  "remoteUser": "root"
+  "remoteUser": "root",
+  "customizations": {
+    "jetbrains": {
+      "backend": "Rider"
+    }
+  }
 }
