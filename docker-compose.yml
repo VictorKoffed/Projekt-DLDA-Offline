@@ -14,7 +14,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: "DLDA.API.Local/DLDA.API/Dockerfile"
+      dockerfile: DLDA.API.Local/DLDA.API/Dockerfile
     environment:
       - ConnectionStrings__LocalConnection=Server=db;Database=DLDADb;User Id=sa;Password=SuperStrongPassword123!;TrustServerCertificate=True;
     ports:
@@ -25,7 +25,7 @@ services:
   gui:
     build:
       context: .
-      dockerfile: "DLDA.GUI.Local/DLDA.GUI/Dockerfile"
+      dockerfile: DLDA.GUI.Local/DLDA.GUI/Dockerfile
     environment:
       - ApiBaseUrl=http://api:8080/api/
     ports:
