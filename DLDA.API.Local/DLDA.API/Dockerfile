@@ -6,10 +6,10 @@ EXPOSE 8080
 # Steg 2: Bygg-miljön 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY ["DLDA.API Local/DLDA.API/DLDA.API.csproj", "DLDA.API Local/DLDA.API/"]
+COPY ["DLDA.API.Local/DLDA.API/DLDA.API.csproj", "DLDA.API.Local/DLDA.API/"]
 RUN dotnet restore "DLDA.API Local/DLDA.API/DLDA.API.csproj"
 COPY . .
-WORKDIR "/src/DLDA.API Local/DLDA.API"
+WORKDIR "/src/DLDA.API.Local/DLDA.API"
 RUN dotnet build "DLDA.API.csproj" -c Release -o /app/build
 
 # Steg 3: Publicera
