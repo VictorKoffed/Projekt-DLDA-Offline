@@ -5,7 +5,7 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=DittSuperHemligaLosenord123!
+      - SA_PASSWORD=SuperStrongPassword123!
     ports:
       - "1433:1433"
     volumes:
@@ -16,8 +16,7 @@ services:
       context: .
       dockerfile: "DLDA.API Local/DLDA.API/Dockerfile"
     environment:
-      # Skriver över ConnectionString inuti containern så den pekar på "db"
-      - ConnectionStrings__LocalConnection=Server=db;Database=DLDADb;User Id=sa;Password=DittSuperHemligaLosenord123!;TrustServerCertificate=True;
+      - ConnectionStrings__LocalConnection=Server=db;Database=DLDADb;User Id=sa;Password=SuperStrongPassword123!;TrustServerCertificate=True;
     ports:
       - "5001:8080"
     depends_on:
