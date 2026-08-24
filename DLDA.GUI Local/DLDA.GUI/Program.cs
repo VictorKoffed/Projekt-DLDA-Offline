@@ -13,10 +13,13 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Hämta URL från appsettings.json ELLER från Docker-miljövariabeln
+var apiBaseUrl = builder.Configuration["ApiBaseUrl"];
+
 // Registrera namngiven HttpClient för API-kommunikation
 builder.Services.AddHttpClient("DLDA", client =>
 {
-    client.BaseAddress = new Uri("https://localhost:7166/api/");
+    client.BaseAddress = new Uri(apiBaseUrl!);
 });
 
 // Registrera alla services som använder IHttpClientFactory
