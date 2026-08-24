@@ -27,7 +27,7 @@ services:
       context: .
       dockerfile: "DLDA.GUI Local/DLDA.GUI/Dockerfile"
     environment:
-      - ApiBaseUrl=http://api:8080 
+      - ApiBaseUrl=http://api:8080/api/
     ports:
       - "5000:8080"
     depends_on:
