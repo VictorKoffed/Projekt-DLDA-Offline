@@ -5,7 +5,7 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // ========================
-// ? Tj�nsteregistrering
+// ? Tjänsteregistrering
 // ========================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -48,15 +48,37 @@ app.UseAuthorization();
 app.MapControllers();
 
 // ========================
-// ? Swagger-konfiguration (fungerar p� server med subpath)
+// ? Swagger-konfiguration (fungerar på server med subpath)
 // ========================
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    // OBS: Absolut URL till swagger.json � inte relativ!
+    // OBS: Absolut URL till swagger.json – inte relativ!
     c.SwaggerEndpoint("v1/swagger.json", "DLDA API v1");
-    c.RoutePrefix = "swagger"; // s� /DLDA.API/swagger visar UI:t
+    c.RoutePrefix = "swagger"; // så /DLDA.API/swagger visar UI:t
 });
 
+// ========================
+// ? Automatisk Databasmigrering & Seeding
+// ========================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<AppDbContext>();
+        
+        // 1. Applicerar alla migreringar och skapar databasen om den inte finns
+        context.Database.Migrate();
+
+        // 2. Om du har en extern metod för att lägga till testanvändare, anropa den här!
+        // Exempel: DbInitializer.Initialize(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ett fel uppstod vid migrering av databasen.");
+    }
+}
 
 app.Run();
