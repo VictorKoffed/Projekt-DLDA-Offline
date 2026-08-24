@@ -14,8 +14,8 @@ namespace DLDA.API.Models
         // Grupp/kategori för frågan (t.ex. SelfCare, Mobility)
         public string? Category { get; set; } = string.Empty;
 
-        // Om frågan är aktiv
-        public bool IsActive { get; set; }
+        // Om frågan är aktiv, sätt true som standardvärde
+        public bool IsActive { get; set; } = true;
 
         // När frågan skapades
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
