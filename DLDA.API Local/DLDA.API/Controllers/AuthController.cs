@@ -160,4 +160,3 @@ public IActionResult SeedQuestions()
     return Ok($"✅ {questions.Count} DLDA-frågor har skapats i databasen.");
 }
 
-}
