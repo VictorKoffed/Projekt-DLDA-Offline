@@ -272,6 +272,10 @@ AI-genererad kod har granskats, anpassats och testats manuellt innan den inklude
 
 ---
 
+### 🎬 Demo
+Lägga till
+---
+
 ## 🖼️ Skärmbilder
 
 ### DLDA – Bedömning för patient
@@ -293,5 +297,7 @@ AI-genererad kod har granskats, anpassats och testats manuellt innan den inklude
 ### DLDA – Jämförelse mellan patient och personal
 
 ![Skillnad mellan patient och personal](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
+
+### Lägga till bild på quiz körandes på mobil
 
 ---
