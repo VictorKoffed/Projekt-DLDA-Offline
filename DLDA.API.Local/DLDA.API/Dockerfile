@@ -7,7 +7,8 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["DLDA.API.Local/DLDA.API/DLDA.API.csproj", "DLDA.API.Local/DLDA.API/"]
-RUN dotnet restore "DLDA.API Local/DLDA.API/DLDA.API.csproj"
+# HÄR ÄR FIXEN (Punkt istället för mellanslag):
+RUN dotnet restore "DLDA.API.Local/DLDA.API/DLDA.API.csproj"
 COPY . .
 WORKDIR "/src/DLDA.API.Local/DLDA.API"
 RUN dotnet build "DLDA.API.csproj" -c Release -o /app/build
