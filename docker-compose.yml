@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=DittSuperHemligaLosenord123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+
+  api:
+    build:
+      context: .
+      dockerfile: "DLDA.API Local/DLDA.API/Dockerfile"
+    environment:
+      # Skriver över ConnectionString inuti containern så den pekar på "db"
+      - ConnectionStrings__LocalConnection=Server=db;Database=DLDADb;User Id=sa;Password=DittSuperHemligaLosenord123!;TrustServerCertificate=True;
+    ports:
+      - "5001:8080"
+    depends_on:
+      - db
+
+  gui:
+    build:
+      context: .
+      dockerfile: "DLDA.GUI Local/DLDA.GUI/Dockerfile"
+    environment:
+      - ApiBaseUrl=http://api:8080 
+    ports:
+      - "5000:8080"
+    depends_on:
+      - api
+
+volumes:
+  sqldata:
