@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  api:
+    # Eftersom vi utvecklar behöver vi hela .NET SDK:t
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    # Mappar in hela din kodmapp i containern så ändringar slår igenom direkt
+    volumes:
+      - ..:/workspace:cached
+    # Håller containern vid liv så att du kan starta API:et inifrån VS Code
+    command: /bin/sh -c "while sleep 1000; do :; done"
+
+  gui:
+    image: mcr.microsoft.com/dotnet/sdk:9.0
+    volumes:
+      - ..:/workspace:cached
+    command: /bin/sh -c "while sleep 1000; do :; done"
