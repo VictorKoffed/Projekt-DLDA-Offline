@@ -281,24 +281,25 @@ AI-genererad kod har granskats, anpassats och testats manuellt innan den inklude
 
 ### 💻 Webbgränssnitt (Desktop)
 
-**DLDA – Bedömning för patient**
+**DLDA – Bedömning för patient**  
 ![Patient Bedömning](Pictures/BedomingForPatientOversikt.png)
 
-**DLDA – Förändring över tid**
+**DLDA – Förändring över tid**  
 ![Förändring över tid](Pictures/ForandringOverTid.png)
 
-**DLDA – Patientöversikt & Jämförelse**
+**DLDA – Patientöversikt**  
 ![Patientöversikt](Pictures/PatientOversikt.png)
-![Skillnad mellan patient och personal](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
+
+**DLDA – Quiz-gränssnitt**  
+![Quiz](Pictures/Quiz.png)
+
 
 ### 📱 Responsiv design (Mobilvy)
 
 Gränssnittet är fullt anpassat för att vårdpersonal och patienter ska kunna använda systemet on-the-go.
 
-| Patientöversikt | Bedömning | Förändring | Quiz-gränssnitt |
-| :---: | :---: | :---: | :---: |
-| <img src="Pictures/PatientOversikt_Mobil.png" alt="Patientöversikt Mobil" width="220"/> | <img src="Pictures/BedomingForPatientOversikt_Mobil.png" alt="Bedömning Mobil" width="220"/> | <img src="Pictures/ForandringOverTid_Mobil.png" alt="Förändring Mobil" width="220"/> | <img src="Pictures/Quiz_Mobil.png" alt="Quiz Mobil" width="220"/> |
-
----
+| Översikt | Bedömning | Förändring | Quiz | Jämförelse |
+| :---: | :---: | :---: | :---: | :---: |
+| <img src="Pictures/PatientOversikt_Mobil.png" alt="Patientöversikt Mobil" width="160"/> | <img src="Pictures/BedomingForPatientOversikt_Mobil.png" alt="Bedömning Mobil" width="160"/> | <img src="Pictures/ForandringOverTid_Mobil.png" alt="Förändring Mobil" width="160"/> | <img src="Pictures/Quiz_Mobil.png" alt="Quiz Mobil" width="160"/> | <img src="Pictures/SkillnadMellanPatientOchPersonalSvar_Mobil.png" alt="Skillnad Mobil" width="160"/> |
 
 ---
