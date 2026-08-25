@@ -281,8 +281,7 @@ public class QuestionController : ControllerBase
             .Include(ai => ai.Question)
             .Where(ai =>
                 ai.AssessmentID == assessmentId &&
-                ai.StaffAnswer == null &&
-                ai.AnsweredAt == null)
+                ai.StaffAnswer == null) 
             .OrderBy(ai => ai.Order)
             .FirstOrDefaultAsync();
 
