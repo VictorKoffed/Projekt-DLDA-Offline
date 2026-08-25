@@ -230,7 +230,7 @@ public class AuthController : ControllerBase
         var random = new Random(42); // Samma "slump" varje gång för stabila grafer
 
         // ---------------------------------------------------------
-        // BEDÖMNING 1: För 30 dagar sedan (Sämre mående)
+        // BEDÖMNING 1: För 30 dagar sedan 
         // ---------------------------------------------------------
         var oldAssessment = new Assessment
         {
@@ -267,16 +267,19 @@ public class AuthController : ControllerBase
                 item.PatientComment = "Sover max 2 timmar per natt.";
             } else if (q.Category != null && q.Category.Contains("Substansbruk")) {
                 item.SkippedByPatient = true; item.PatientAnswer = null; item.StaffAnswer = 2; item.Flag = true;
+            } else if (q.Category != null && q.Category.Contains("Hemliv")) {
+                // Hemlivet fungerade jättebra för en månad sen!
+                item.PatientAnswer = 0; item.StaffAnswer = 0; 
             } else {
-                item.PatientAnswer = random.Next(2, 5); // Resultat 2-4 (Mycket problem)
-                item.StaffAnswer = item.PatientAnswer == 4 ? 3 : item.PatientAnswer;
+                item.PatientAnswer = random.Next(2, 5); 
+                item.StaffAnswer = item.PatientAnswer == 4 ? 3 : item.PatientAnswer; // Små åsiktsskillnader
             }
             oldItems.Add(item);
         }
         _context.AssessmentItems.AddRange(oldItems);
 
         // ---------------------------------------------------------
-        // BEDÖMNING 2: För 2 dagar sedan (Förbättrat mående)
+        // BEDÖMNING 2: För 2 dagar sedan 
         // ---------------------------------------------------------
         var newAssessment = new Assessment
         {
@@ -305,17 +308,22 @@ public class AuthController : ControllerBase
                 AnsweredAt = newAssessment.CreatedAt.Value.AddMinutes(order2 * 2)
             };
 
-            // Vi sänker poängen för att visa en tydlig förbättring i statistiken!
             if (q.Category != null && q.Category.Contains("Mellanmänskliga")) {
-                item.PatientAnswer = 2; item.StaffAnswer = 2; // Minskning från 4
+                item.PatientAnswer = 2; item.StaffAnswer = 2; // Tydlig FÖRBÄTTRING
                 item.StaffComment = "Börjat sitta med i dagrummet korta stunder. Tydlig förbättring.";
             } else if (q.QuestionText != null && q.QuestionText.Contains("sömn")) {
-                item.PatientAnswer = 1; item.StaffAnswer = 1; // Minskning från 4
+                item.PatientAnswer = 1; item.StaffAnswer = 1; // Tydlig FÖRBÄTTRING
                 item.PatientComment = "Melatoninet fungerar jättebra nu.";
             } else if (q.Category != null && q.Category.Contains("Substansbruk")) {
                 item.PatientAnswer = 0; item.StaffAnswer = 0; item.Flag = false; 
+            } else if (q.Category != null && q.Category.Contains("Hemliv")) {
+                // Tydlig FÖRSÄMRING + ÅSIKTSSKILLNAD
+                // Patienten tycker det funkar okej (2), personalen ser att det är kaos (4)
+                item.PatientAnswer = 2; item.StaffAnswer = 4; 
+                item.StaffComment = "Har slutat städa helt. Diskberget växer och patienten slänger sopor på golvet.";
+                item.Flag = true;
             } else {
-                item.PatientAnswer = random.Next(0, 3); // Resultat 0-2 (Mindre problem)
+                item.PatientAnswer = random.Next(0, 3); 
                 item.StaffAnswer = item.PatientAnswer == 2 ? 1 : item.PatientAnswer;
             }
             newItems.Add(item);
