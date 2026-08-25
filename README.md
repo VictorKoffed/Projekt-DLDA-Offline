@@ -273,7 +273,8 @@ AI-genererad kod har granskats, anpassats och testats manuellt innan den inklude
 ---
 
 ### 🎬 Demo
-Lägga till
+[Screencast_20260825_111134.webm](https://github.com/user-attachments/assets/7ad0865f-3987-4fe5-b5c5-7c3d60af3725)
+
 ---
 
 ## 🖼️ Skärmbilder
@@ -298,6 +299,7 @@ Lägga till
 
 ![Skillnad mellan patient och personal](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
 
-### Lägga till bild på quiz körandes på mobil
+### DLDA – Quiz körandes på mobiltelefon
+![Mobilvy](Pictures/länktillbild.png)
 
 ---
