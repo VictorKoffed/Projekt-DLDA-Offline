@@ -300,6 +300,6 @@ AI-genererad kod har granskats, anpassats och testats manuellt innan den inklude
 ![Skillnad mellan patient och personal](Pictures/SkillnadMellanPatientOchPersonalSvar.png)
 
 ### DLDA – Quiz körandes på mobiltelefon
-![Mobilvy](Pictures/länktillbild.png)
+![Mobilvy](Pictures/MobilVy.png)
 
 ---
