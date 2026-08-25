@@ -214,4 +214,97 @@ public class AuthController : ControllerBase
 
         return Ok("✅ Testanvändare (patient/staff) fanns redan i databasen.");
     }
+
+    // ==========================================
+    // 5. DEV-VERKTYG: Skapa realistisk mock-bedömning
+    // ==========================================
+    [HttpPost("dev-seed-mock-assessment")]
+    public IActionResult SeedMockAssessment()
+    {
+        var patient = _context.Users.FirstOrDefault(u => u.Username == "patient");
+        var questions = _context.Questions.OrderBy(q => q.QuestionID).ToList();
+
+        if (patient == null || !questions.Any())
+            return BadRequest("❌ Se till att köra dev-seed-users och dev-seed-questions först!");
+
+        // 1. Skapa själva bedömningen (Assessment)
+        var assessment = new Assessment
+        {
+            UserId = patient.UserID,
+            ScaleType = "DLDA",
+            IsComplete = true,
+            IsStaffComplete = true,
+            CreatedAt = DateTime.UtcNow.AddDays(-2), // Låtsas att den gjordes för 2 dagar sen
+            UpdatedAt = DateTime.UtcNow.AddDays(-2)
+        };
+        
+        _context.Assessments.Add(assessment);
+        _context.SaveChanges(); // Sparar för att få ett AssessmentID
+
+        // 2. Loopa igenom frågorna och skapa svar (AssessmentItems)
+        var items = new List<AssessmentItem>();
+        int order = 1;
+        var random = new Random(42); // Samma "slump" varje gång så koden är förutsägbar
+
+        foreach (var q in questions)
+        {
+            var item = new AssessmentItem
+            {
+                AssessmentID = assessment.AssessmentID, 
+                QuestionID = q.QuestionID,
+                Order = order++,
+                SkippedByPatient = false,
+                Flag = false,
+                AnsweredAt = assessment.CreatedAt.Value.AddMinutes(order * 2) // Låtsas att det tog 2 min per fråga
+            };
+
+            // --- REALISTISKT SCENARIO: Patient med social ångest & sömnproblem ---
+
+            if (q.Category != null && (q.Category.Contains("Mellanmänskliga") || q.Category.Contains("Samhällsgemenskap")))
+            {
+                // Patienten tycker sociala situationer är extremt jobbiga (4).
+                // Personalen märker det, men skattar det aningen mildare (3).
+                item.PatientAnswer = 4; 
+                item.StaffAnswer = 3;
+                item.StaffComment = "Patienten undviker gemensamma utrymmen.";
+            }
+            else if (q.QuestionText != null && q.QuestionText.Contains("sömn"))
+            {
+                // Båda är överens om grava sömnproblem
+                item.PatientAnswer = 4;
+                item.StaffAnswer = 4;
+                item.PatientComment = "Kan inte sova alls på nätterna.";
+            }
+            else if (q.Category != null && q.Category.Contains("Substansbruk"))
+            {
+                // EDGE CASE: Patienten vill inte svara (hoppar över). 
+                // Personalen fyller i att det finns lätta problem (1) och flaggar för samtal!
+                item.SkippedByPatient = true;
+                item.PatientAnswer = null;
+                item.StaffAnswer = 1; 
+                item.Flag = true; 
+                item.StaffComment = "Vill inte prata om alkoholvanor, bör tas upp nästa vecka.";
+            }
+            else if (q.QuestionText != null && (q.QuestionText.Contains("hygien") || q.QuestionText.Contains("klädsel")))
+            {
+                // Båda överens om att detta fungerar felfritt
+                item.PatientAnswer = 0;
+                item.StaffAnswer = 0;
+            }
+            else
+            {
+                // Resterande frågor: Lätta till måttliga problem (1 eller 2).
+                // Vi skapar en liten differens mellan patient och personal för att få en bra graf.
+                item.PatientAnswer = random.Next(1, 3);
+                item.StaffAnswer = item.PatientAnswer == 1 ? 2 : 1; 
+            }
+
+            items.Add(item);
+        }
+
+        _context.AssessmentItems.AddRange(items);
+        _context.SaveChanges();
+
+        return Ok($"✅ Realistisk mock-bedömning skapad! {items.Count} svar inlagda för patienten. Öppna graferna i GUI:t för att se resultatet.");
+    }
 }
