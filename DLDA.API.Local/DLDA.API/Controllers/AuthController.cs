@@ -216,7 +216,7 @@ public class AuthController : ControllerBase
     }
 
     // ==========================================
-    // 5. DEV-VERKTYG: Skapa realistisk mock-bedömning
+    // 5. DEV-VERKTYG: Skapa två realistiska mock-bedömningar (Tidslinje)
     // ==========================================
     [HttpPost("dev-seed-mock-assessment")]
     public IActionResult SeedMockAssessment()
@@ -227,84 +227,103 @@ public class AuthController : ControllerBase
         if (patient == null || !questions.Any())
             return BadRequest("❌ Se till att köra dev-seed-users och dev-seed-questions först!");
 
-        // 1. Skapa själva bedömningen (Assessment)
-        var assessment = new Assessment
+        var random = new Random(42); // Samma "slump" varje gång för stabila grafer
+
+        // ---------------------------------------------------------
+        // BEDÖMNING 1: För 30 dagar sedan (Sämre mående)
+        // ---------------------------------------------------------
+        var oldAssessment = new Assessment
         {
             UserId = patient.UserID,
             ScaleType = "DLDA",
             IsComplete = true,
             IsStaffComplete = true,
-            CreatedAt = DateTime.UtcNow.AddDays(-2), // Låtsas att den gjordes för 2 dagar sen
-            UpdatedAt = DateTime.UtcNow.AddDays(-2)
+            CreatedAt = DateTime.UtcNow.AddDays(-30),
+            UpdatedAt = DateTime.UtcNow.AddDays(-30)
         };
         
-        _context.Assessments.Add(assessment);
-        _context.SaveChanges(); // Sparar för att få ett AssessmentID
+        _context.Assessments.Add(oldAssessment);
+        _context.SaveChanges(); 
 
-        // 2. Loopa igenom frågorna och skapa svar (AssessmentItems)
-        var items = new List<AssessmentItem>();
-        int order = 1;
-        var random = new Random(42); // Samma "slump" varje gång så koden är förutsägbar
-
+        var oldItems = new List<AssessmentItem>();
+        int order1 = 1;
         foreach (var q in questions)
         {
             var item = new AssessmentItem
             {
-                AssessmentID = assessment.AssessmentID, 
+                AssessmentID = oldAssessment.AssessmentID, 
                 QuestionID = q.QuestionID,
-                Order = order++,
+                Order = order1++,
                 SkippedByPatient = false,
                 Flag = false,
-                AnsweredAt = assessment.CreatedAt.Value.AddMinutes(order * 2) // Låtsas att det tog 2 min per fråga
+                AnsweredAt = oldAssessment.CreatedAt.Value.AddMinutes(order1 * 2)
             };
 
-            // --- REALISTISKT SCENARIO: Patient med social ångest & sömnproblem ---
-
-            if (q.Category != null && (q.Category.Contains("Mellanmänskliga") || q.Category.Contains("Samhällsgemenskap")))
-            {
-                // Patienten tycker sociala situationer är extremt jobbiga (4).
-                // Personalen märker det, men skattar det aningen mildare (3).
-                item.PatientAnswer = 4; 
-                item.StaffAnswer = 3;
-                item.StaffComment = "Patienten undviker gemensamma utrymmen.";
+            if (q.Category != null && q.Category.Contains("Mellanmänskliga")) {
+                item.PatientAnswer = 4; item.StaffAnswer = 4;
+                item.StaffComment = "Patienten drar sig undan och isolerar sig mycket på rummet.";
+            } else if (q.QuestionText != null && q.QuestionText.Contains("sömn")) {
+                item.PatientAnswer = 4; item.StaffAnswer = 4;
+                item.PatientComment = "Sover max 2 timmar per natt.";
+            } else if (q.Category != null && q.Category.Contains("Substansbruk")) {
+                item.SkippedByPatient = true; item.PatientAnswer = null; item.StaffAnswer = 2; item.Flag = true;
+            } else {
+                item.PatientAnswer = random.Next(2, 5); // Resultat 2-4 (Mycket problem)
+                item.StaffAnswer = item.PatientAnswer == 4 ? 3 : item.PatientAnswer;
             }
-            else if (q.QuestionText != null && q.QuestionText.Contains("sömn"))
-            {
-                // Båda är överens om grava sömnproblem
-                item.PatientAnswer = 4;
-                item.StaffAnswer = 4;
-                item.PatientComment = "Kan inte sova alls på nätterna.";
-            }
-            else if (q.Category != null && q.Category.Contains("Substansbruk"))
-            {
-                // EDGE CASE: Patienten vill inte svara (hoppar över). 
-                // Personalen fyller i att det finns lätta problem (1) och flaggar för samtal!
-                item.SkippedByPatient = true;
-                item.PatientAnswer = null;
-                item.StaffAnswer = 1; 
-                item.Flag = true; 
-                item.StaffComment = "Vill inte prata om alkoholvanor, bör tas upp nästa vecka.";
-            }
-            else if (q.QuestionText != null && (q.QuestionText.Contains("hygien") || q.QuestionText.Contains("klädsel")))
-            {
-                // Båda överens om att detta fungerar felfritt
-                item.PatientAnswer = 0;
-                item.StaffAnswer = 0;
-            }
-            else
-            {
-                // Resterande frågor: Lätta till måttliga problem (1 eller 2).
-                // Vi skapar en liten differens mellan patient och personal för att få en bra graf.
-                item.PatientAnswer = random.Next(1, 3);
-                item.StaffAnswer = item.PatientAnswer == 1 ? 2 : 1; 
-            }
-
-            items.Add(item);
+            oldItems.Add(item);
         }
+        _context.AssessmentItems.AddRange(oldItems);
 
-        _context.AssessmentItems.AddRange(items);
+        // ---------------------------------------------------------
+        // BEDÖMNING 2: För 2 dagar sedan (Förbättrat mående)
+        // ---------------------------------------------------------
+        var newAssessment = new Assessment
+        {
+            UserId = patient.UserID,
+            ScaleType = "DLDA",
+            IsComplete = true,
+            IsStaffComplete = true,
+            CreatedAt = DateTime.UtcNow.AddDays(-2),
+            UpdatedAt = DateTime.UtcNow.AddDays(-2)
+        };
+        
+        _context.Assessments.Add(newAssessment);
+        _context.SaveChanges(); 
+
+        var newItems = new List<AssessmentItem>();
+        int order2 = 1;
+        foreach (var q in questions)
+        {
+            var item = new AssessmentItem
+            {
+                AssessmentID = newAssessment.AssessmentID, 
+                QuestionID = q.QuestionID,
+                Order = order2++,
+                SkippedByPatient = false,
+                Flag = false,
+                AnsweredAt = newAssessment.CreatedAt.Value.AddMinutes(order2 * 2)
+            };
+
+            // Vi sänker poängen för att visa en tydlig förbättring i statistiken!
+            if (q.Category != null && q.Category.Contains("Mellanmänskliga")) {
+                item.PatientAnswer = 2; item.StaffAnswer = 2; // Minskning från 4
+                item.StaffComment = "Börjat sitta med i dagrummet korta stunder. Tydlig förbättring.";
+            } else if (q.QuestionText != null && q.QuestionText.Contains("sömn")) {
+                item.PatientAnswer = 1; item.StaffAnswer = 1; // Minskning från 4
+                item.PatientComment = "Melatoninet fungerar jättebra nu.";
+            } else if (q.Category != null && q.Category.Contains("Substansbruk")) {
+                item.PatientAnswer = 0; item.StaffAnswer = 0; item.Flag = false; 
+            } else {
+                item.PatientAnswer = random.Next(0, 3); // Resultat 0-2 (Mindre problem)
+                item.StaffAnswer = item.PatientAnswer == 2 ? 1 : item.PatientAnswer;
+            }
+            newItems.Add(item);
+        }
+        _context.AssessmentItems.AddRange(newItems);
+
         _context.SaveChanges();
 
-        return Ok($"✅ Realistisk mock-bedömning skapad! {items.Count} svar inlagda för patienten. Öppna graferna i GUI:t för att se resultatet.");
+        return Ok($"✅ Tidslinje skapad! Två bedömningar (en från en månad sedan, en från nyligen) är inlagda för patienten.");
     }
 }
