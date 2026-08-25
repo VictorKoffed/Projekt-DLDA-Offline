@@ -296,7 +296,7 @@ AI-genererad kod har granskats, anpassats och testats manuellt innan den inklude
 
 ### 📱 Responsiv design (Mobilvy)
 
-Gränssnittet är fullt anpassat för att vårdpersonal och patienter ska kunna använda systemet on-the-go.
+Gränssnittet är fullt anpassat för att vårdpersonal och patienter ska kunna använda systemet på olika enheter.
 
 | Översikt | Bedömning | Förändring | Quiz | Jämförelse |
 | :---: | :---: | :---: | :---: | :---: |
