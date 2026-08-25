@@ -8,13 +8,22 @@
 
 ## 📝 Introduktion
 
-Detta projekt är en digitalisering av det psykiatriska skattningsverktyget **DLDA**. Verktyget är utformat för att hjälpa patienter och vårdpersonal att utvärdera vardagsfunktioner genom strukturerade frågor inom områden som hygien, hälsa och dagliga aktiviteter.
+Det här projektet handlar om att digitalisera det psykiatriska skattningsverktyget **DLDA (Daily Life Dialogue Assessment in Psychiatric Care)**.
 
-### Syfte och Begränsningar
+## Vad är DLDA?
 
-Projektet fungerar som en prototyp för att undersöka hur ett pappersbaserat skattningsverktyg kan digitaliseras. Målet är att göra skattningarna mer lättillgängliga och samtidigt ge vårdpersonal bättre möjligheter att följa upp resultat och förändringar över tid.
+DLDA är ett bedömningsverktyg som bygger på Världshälsoorganisationens (WHO) ICF-klassifikation, som används för att beskriva funktionstillstånd, funktionshinder och hälsa. Verktyget används inom psykiatrin för att tillsammans med patienten och vårdpersonalen få en bild av hur olika delar av vardagen fungerar.
 
-Projektet är utvecklat som en prototyp och ska därför inte betraktas som ett färdigt vårdsystem. Funktioner, säkerhet och datalagring är anpassade efter projektets tekniska och utbildningsmässiga förutsättningar.
+Bedömningen består av frågor inom nio olika områden, bland annat personlig vård, kommunikation, hemliv och relationer till andra. Både patienten och vårdpersonalen gör en egen skattning på en skala från 0 till 4, där 0 betyder att det inte finns något problem och 4 att problemet är mycket stort. Resultaten kan sedan användas som utgångspunkt för samtal om patientens behov och fortsatt vård.
+
+## Syfte och begränsningar
+
+Syftet med projektet är att undersöka hur DLDA skulle kunna fungera i en digital miljö istället för på papper.
+
+Digitaliseringen ska framför allt göra det enklare för patienten att genomföra sin skattning och ge vårdpersonalen en tydligare bild av resultaten. Tanken är bland annat att kunna jämföra patientens och personalens skattningar, visualisera resultat och följa förändringar över tid.
+
+Det här projektet är en prototyp som har tagits fram i utbildningssyfte. Det är alltså inte ett färdigt vårdsystem och ska inte användas i klinisk verksamhet. Funktioner, säkerhet och datalagring är anpassade efter projektets tekniska förutsättningar.
+
 
 ---
 
