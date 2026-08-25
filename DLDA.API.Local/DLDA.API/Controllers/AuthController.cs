@@ -105,62 +105,62 @@ public class AuthController : ControllerBase
         var questions = new List<Question>
         {
             // 1. Lärande och att tillämpa kunskap
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att se?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att höra?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att läsa?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att skriva?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att räkna?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att lära sig nya saker?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens koncentrationsförmåga?" },
-            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Hur bedömer du personens förmåga att lösa problem i vardagen?" },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att se", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att höra", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att läsa", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att skriva", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att räkna", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att lära sig nya saker", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Koncentrationsförmåga", IsActive = true },
+            new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att lösa problem i vardagen", IsActive = true },
 
             // 2. Allmänna krav i vardagen
-            new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Hur bedömer du personens förmåga att göra vardagliga sysslor?" },
-            new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Hur bedömer du personens förmåga att arbeta i grupp?" },
-            new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Hur bedömer du personens förmåga att hantera stress?" },
+            new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Förmåga att göra vardagliga sysslor", IsActive = true },
+            new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Förmåga att arbeta i grupp", IsActive = true },
+            new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Förmåga att hantera stress", IsActive = true },
 
             // 3. Kommunikation
-            new Question { Category = "3. Kommunikation", QuestionText = "Hur bedömer du personens förmåga att prata med andra?" },
-            new Question { Category = "3. Kommunikation", QuestionText = "Hur bedömer du personens förmåga att kommunicera med andra genom att skriva?" },
-            new Question { Category = "3. Kommunikation", QuestionText = "Hur bedömer du personens förmåga att använda telefon genom att ringa?" },
-            new Question { Category = "3. Kommunikation", QuestionText = "Hur bedömer du personens förmåga att använda appar?" },
-            new Question { Category = "3. Kommunikation", QuestionText = "Hur bedömer du personens förmåga att använda dator?" },
+            new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att prata med andra", IsActive = true },
+            new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att kommunicera med andra genom att skriva", IsActive = true },
+            new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att använda telefon genom att ringa", IsActive = true },
+            new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att använda appar", IsActive = true },
+            new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att använda dator", IsActive = true },
 
             // 4. Förflyttning
-            new Question { Category = "4. Förflyttning", QuestionText = "Hur bedömer du personens förmåga att gå och förflytta sig mellan olika platser?" },
-            new Question { Category = "4. Förflyttning", QuestionText = "Hur bedömer du personens förmåga att använda transportmedel som passagerare? (t ex. bil, buss, taxi, färdtjänst)" },
+            new Question { Category = "4. Förflyttning", QuestionText = "Förmåga att gå och förflytta sig mellan olika platser", IsActive = true },
+            new Question { Category = "4. Förflyttning", QuestionText = "Förmåga att använda transportmedel som passagerare (t.ex. bil, buss, taxi, färdtjänst)", IsActive = true },
 
             // 5a. Personlig vård
-            new Question { Category = "5a. Personlig vård", QuestionText = "Hur bedömer du personens förmåga att sköta sin hygien?" },
-            new Question { Category = "5a. Personlig vård", QuestionText = "Hur bedömer du personens förmåga att sköta sin tandvård?" },
-            new Question { Category = "5a. Personlig vård", QuestionText = "Hur bedömer du personens förmåga att sköta sina läkemedel?" },
-            new Question { Category = "5a. Personlig vård", QuestionText = "Hur bedömer du personens förmåga att sköta sin klädsel?" },
-            new Question { Category = "5a. Personlig vård", QuestionText = "Hur bedömer du personens förmåga att tillgodose sitt behov av motion?" },
-            new Question { Category = "5a. Personlig vård", QuestionText = "Hur bedömer du personens förmåga att tillgodose sitt behov av sömn?" },
+            new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sin hygien", IsActive = true },
+            new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sin tandvård", IsActive = true },
+            new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sina läkemedel", IsActive = true },
+            new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sin klädsel", IsActive = true },
+            new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att tillgodose sitt behov av motion", IsActive = true },
+            new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att tillgodose sitt behov av sömn", IsActive = true },
 
             // 5b. Substansbruk
-            new Question { Category = "5b. Substansbruk", QuestionText = "Hur bedömer du personens användande av tobak?" },
-            new Question { Category = "5b. Substansbruk", QuestionText = "Hur bedömer du personens användande av alkohol?" },
-            new Question { Category = "5b. Substansbruk", QuestionText = "Hur bedömer du personens användande av droger?" },
+            new Question { Category = "5b. Substansbruk", QuestionText = "Användande av tobak", IsActive = true },
+            new Question { Category = "5b. Substansbruk", QuestionText = "Användande av alkohol", IsActive = true },
+            new Question { Category = "5b. Substansbruk", QuestionText = "Användande av droger", IsActive = true },
 
             // 6. Hemliv
-            new Question { Category = "6. Hemliv", QuestionText = "Hur bedömer du personens förmåga att planera och laga måltider?" },
-            new Question { Category = "6. Hemliv", QuestionText = "Hur bedömer du personens förmåga att sköta sin bostad?" },
+            new Question { Category = "6. Hemliv", QuestionText = "Förmåga att planera och laga måltider", IsActive = true },
+            new Question { Category = "6. Hemliv", QuestionText = "Förmåga att sköta sin bostad", IsActive = true },
 
             // 7. Mellanmänskliga relationer
-            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Hur bedömer du personens förmåga till kontakter med vänner, grannar, bekanta?" },
-            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Hur bedömer du personens förmåga till kontakter med arbetsgivare, vård och sociala myndigheter?" },
-            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Hur bedömer du personens förmåga till familjerelationer? (t ex. föräldrar, barn, syskon, släkt)" },
-            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Hur bedömer du personens förmåga till känslomässiga relationer? (t ex. personliga, romantiska, äktenskapliga, sexuella)" },
+            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till kontakter med vänner, grannar, bekanta", IsActive = true },
+            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till kontakter med arbetsgivare, vård och sociala myndigheter", IsActive = true },
+            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till familjerelationer (t.ex. föräldrar, barn, syskon, släkt)", IsActive = true },
+            new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till känslomässiga relationer (t.ex. personliga, romantiska, äktenskapliga, sexuella)", IsActive = true },
 
             // 8. Viktiga livsområden
-            new Question { Category = "8. Viktiga livsområden", QuestionText = "Hur bedömer du personens förmåga att genomföra studier?" },
-            new Question { Category = "8. Viktiga livsområden", QuestionText = "Hur bedömer du personens förmåga att arbeta?" },
-            new Question { Category = "8. Viktiga livsområden", QuestionText = "Hur bedömer du personens förmåga att sköta sin ekonomi?" },
+            new Question { Category = "8. Viktiga livsområden", QuestionText = "Förmåga att genomföra studier", IsActive = true },
+            new Question { Category = "8. Viktiga livsområden", QuestionText = "Förmåga att arbeta", IsActive = true },
+            new Question { Category = "8. Viktiga livsområden", QuestionText = "Förmåga att sköta sin ekonomi", IsActive = true },
 
             // 9. Samhällsgemenskap
-            new Question { Category = "9. Samhällsgemenskap", QuestionText = "Hur bedömer du personens förmåga att delta i aktiviteter på fritiden?" },
-            new Question { Category = "9. Samhällsgemenskap", QuestionText = "Hur bedömer du personens förmåga att tillfredsställa andliga behov? (t ex. känna välbefinnande genom: tro, religion, fridfulla naturupplevelser etc.)" }
+            new Question { Category = "9. Samhällsgemenskap", QuestionText = "Förmåga att delta i aktiviteter på fritiden", IsActive = true },
+            new Question { Category = "9. Samhällsgemenskap", QuestionText = "Förmåga att tillfredsställa andliga behov (t.ex. känna välbefinnande genom tro, religion, fridfulla naturupplevelser etc.)", IsActive = true }
         };
 
         _context.Questions.AddRange(questions);
