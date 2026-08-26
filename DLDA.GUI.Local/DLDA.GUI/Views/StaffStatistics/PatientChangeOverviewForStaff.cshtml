@@ -1,6 +1,14 @@
 ﻿@using DLDA.GUI.DTOs.Staff
 @model PatientChangeOverviewForStaffDto
 
+@*
+/// <summary>
+/// Staff-facing view for visualizing the patient's self-assessed longitudinal changes.
+/// This allows clinicians to analyze the trajectory of the patient's self-perception over time, 
+/// independent of the staff's clinical evaluation, which is vital for understanding patient self-awareness.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Förändringar över tid (patientens svar)";
     ViewData["BodyId"] = "staff-patient-change-page";
@@ -76,6 +84,8 @@
                 <li><a class="dropdown-item" href="#" onclick="filterData('deterioration')">Försämringar</a></li>
             </ul>
         </div>
+        
+        <!-- Toggle view state to analyze the staff's clinical observations for the same time period. -->
         <form asp-controller="StaffStatistics" asp-action="Compare" method="post" class="d-inline">
             <input type="hidden" name="userId" value="@ViewBag.UserId" />
             <input type="hidden" name="firstId" value="@ViewBag.FirstId" />

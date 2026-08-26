@@ -1,4 +1,14 @@
 ﻿@model List<StaffStatistics>
+
+@*
+/// <summary>
+/// Core analytical dashboard for the DLDA framework, presenting the discrepancy analysis 
+/// between a patient's self-assessment and the clinician's parallel observation.
+/// This view serves as the primary tool for clinical triage, surfacing "blind spots" 
+/// (where the patient and clinician strongly disagree) to drive the follow-up dialogue.
+/// </summary>
+*@
+
 @{
     ViewData["BodyId"] = "comparison-page";
 }
@@ -8,6 +18,8 @@
 @{
     ViewData["Title"] = "Jämförelse av skattningar";
 
+    // Categorization logic implements the DLDA difference-threshold business rules.
+    // >1 point difference constitutes a "strong-diff" requiring mandatory discussion.
     var match = Model.Where(m => m.Classification == "match").ToList();
     var mild = Model.Where(m => m.Classification == "mild-diff").ToList();
     var strong = Model.Where(m => m.Classification == "strong-diff").ToList();
@@ -18,6 +30,8 @@
     var labelsJson = JsonSerializer.Serialize(new[] { "❗ Stor skillnad", "⚠ Mindre skillnad", "✅ Match", "🚩 Obesvarad" });
     var valuesJson = JsonSerializer.Serialize(new[] { strong.Count, mild.Count, match.Count, skipped.Count });
 
+    // Grouping by category helps clinicians identify broader thematic patterns in the patient's condition,
+    // moving beyond isolated question-level discrepancies.
     var topMatchCategories = match
         .Where(m => !string.IsNullOrWhiteSpace(m.Category))
         .GroupBy(m => m.Category.Trim())
@@ -39,7 +53,6 @@
 
 <div id="pdf-content" class="container mt-2">
 
-    <!-- 🧭 Översta navigering -->
     <div class="d-flex justify-content-between align-items-start mb-3 no-print">
         <a class="btn btn-secondary mt-2" asp-controller="StaffAssessment" asp-action="Assessments" asp-route-userId="@ViewBag.UserId">
             ⬅ Tillbaka till bedömningar
@@ -66,7 +79,6 @@
         <strong>🗓️ Bedömningsdatum:</strong> @ViewBag.AssessmentDate?.ToString("yyyy-MM-dd")
     </p>
 
-    <!-- 🟣 Pie + kategorier -->
     <div class="row mt-4">
         <div class="col-md-6">
             <canvas id="comparisonPie" style="max-height: 500px;"></canvas>
@@ -111,7 +123,8 @@
         </div>
     </div>
 
-    <!-- 🔍 Filter och tabell -->
+    <!-- Client-side filtering allows clinicians to dynamically isolate specific discrepancy types 
+         during the live patient consultation without requiring disruptive server roundtrips. -->
     <div class="mb-3 d-flex flex-wrap gap-2 no-print">
         <button class="btn btn-outline-secondary" onclick="toggleComparisonTable()">🔍 Visa/dölj frågetabell</button>
         <select class="form-select w-auto" onchange="applyComparisonFilters()" id="filterSelector">

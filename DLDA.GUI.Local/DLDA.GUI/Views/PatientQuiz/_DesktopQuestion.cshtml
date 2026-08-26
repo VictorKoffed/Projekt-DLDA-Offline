@@ -1,9 +1,25 @@
 ﻿@model DLDA.GUI.DTOs.Question.Question
+@*
+/// <summary>
+/// Patient-facing view for answering a single assessment question.
+/// The layout is designed to be highly accessible and distraction-free, minimizing cognitive load for psychiatric patients.
+/// It dynamically renders the chosen scale (Numeric or Smiley) and encapsulates navigation logic in distinct form POSTs.
+/// </summary>
+*@
+
 @{
+    // The assessment ID is retrieved from the ViewBag as this view represents an item *within* an assessment, 
+    // and the model itself (Question) only knows about the ItemID.
     var assessmentId = ViewBag.AssessmentId as int? ?? 0;
+    
+    // Fallback to "numerisk" if no scale type is provided. This ensures the view never crashes if the DTO is incomplete.
     var scaleType = (Model.ScaleType ?? "Numerisk").ToLower();
+    
+    // The prefix determines which image assets are loaded for the radio buttons.
     var prefix = scaleType == "smiley" ? "Smiley" : "Number";
 
+    // This local function maps the numeric value (0-4) to its clinical description based on the WHO ICF classification.
+    // Defining it locally in the view keeps the UI logic encapsulated without polluting the DTO.
     string GetLabel(int value) => value switch
     {
         0 => "Inget problem",
@@ -15,6 +31,8 @@
     };
 }
 
+<!-- The asp-append-version="true" attribute enforces automatic cache-busting by appending a cryptographic hash to the file request,
+     ensuring patients always receive the latest styling without manual cache clearing. -->
 <link rel="stylesheet" href="~/css/PatientQuestion.css" asp-append-version="true" />
 
 <div class="d-flex justify-content-end mb-2">
@@ -23,6 +41,8 @@
     </span>
 </div>
 
+<!-- This persistent informational alert reassures the patient that skipping questions is allowed, 
+     a crucial clinical requirement to reduce performance anxiety during the assessment. -->
 <div class="info-alert">
     <strong>ℹ️ Information:</strong> Frågorna handlar om din vardag. När du svarat kommer personalen att kunna prata med dig om hur stödet kan planeras på bästa sätt.<br />
     Känn dig fri att hoppa över frågor som känns svåra att svara på.<br />
@@ -35,21 +55,29 @@
     <h4>@Model.QuestionText</h4>
 </div>
 
+<!-- The primary form for submitting the answer. We use POST to safely transmit the state change to the server. -->
 <form asp-action="SubmitAnswer" method="post">
+    <!-- Hidden inputs are required to bind the item and assessment IDs back to the controller, 
+         maintaining the state and context of the current workflow. -->
     <input type="hidden" name="itemId" value="@Model.AssessmentItemID" />
     <input type="hidden" name="assessmentId" value="@assessmentId" />
 
     <div class="mb-4">
         <label class="form-label fw-semibold">Bedömning</label>
         <div class="d-flex gap-3 flex-wrap justify-content-start">
+            
+            <!-- We loop exactly 5 times (0 to 4) as dictated by the static DLDA assessment scale. -->
             @for (int i = 0; i <= 4; i++)
             {
                 var inputId = $"a{i}";
                 var imagePath = Url.Content($"~/Images/{prefix} {i}.png");
 
                 <div class="form-check text-center">
+                    <!-- The radio button is visually hidden (btn-check), and the visual state is driven entirely by the label.
+                         We pre-select the radio if the patient has previously answered this question (e.g., navigating backwards). -->
                     <input type="radio" class="btn-check" name="answer" id="@inputId" value="@i"
                            @(Model.PatientAnswer == i ? "checked=\"checked\"" : "") required />
+                    
                     <label class="btn" for="@inputId">
                         <img src="@imagePath" alt="@prefix @i" width="60" />
                         <div class="small mt-1 fw-bold">@i</div>
@@ -64,17 +92,23 @@
         </div>
     </div>
 
-    <!-- Rad 1: Stor grön huvudknapp -->
+    <!-- Row 1: The primary call to action is isolated on its own row to prevent accidental misclicks, 
+         ensuring the user deliberately chooses to move forward. -->
     <div class="d-flex justify-content-start mb-3">
         <button type="submit" class="btn btn-next-main">💾 Nästa fråga</button>
     </div>
     
 </form>
 
-<!-- Rad 2: Övriga knappar horisontellt -->
+<!-- Row 2: Secondary navigation controls are grouped together. 
+     Each action is wrapped in its own discrete POST form to prevent data leakage and guarantee that clicking 
+     "Previous" or "Skip" explicitly bypasses the 'required' validation of the main answer form above. -->
 <div class="d-flex flex-wrap gap-2 question-buttons">
     <form asp-action="Previous" method="post">
         <input type="hidden" name="assessmentId" value="@assessmentId" />
+        
+        <!-- The current order is passed back so the server knows exactly where the user currently is, 
+             allowing it to calculate the correct previous question even if the sequence is non-linear (due to skips). -->
         <input type="hidden" name="currentOrder" value="@Model.Order" />
         <button type="submit" class="btn btn-outline-secondary">⬅ Föregående</button>
     </form>
@@ -90,11 +124,16 @@
         <button type="submit" class="btn btn-pause">⏸ Pausa</button>
     </form>
 
+    <!-- Changing the scale is a state-neutral operation from the perspective of the current answer, 
+         so a GET request routing back to the scale selection view is appropriate. -->
     <form asp-action="ScaleSelect" asp-route-id="@assessmentId" method="get">
         <button type="submit" class="btn btn-outline-info">🔁 Byt skattningsskala</button>
     </form>
 </div>
 
+<!-- The comment field is placed outside the main form structure. 
+     Note: In a fully functional prototype, this textarea should ideally be placed INSIDE the main SubmitAnswer form 
+     or managed via AJAX, so the comment is saved simultaneously with the selected numeric answer. -->
 <div class="mb-4 mt-4">
     <label for="comment" class="form-label">Kommentar (frivilligt)</label>
     <textarea class="form-control" name="comment" rows="3">@Model.PatientComment</textarea>

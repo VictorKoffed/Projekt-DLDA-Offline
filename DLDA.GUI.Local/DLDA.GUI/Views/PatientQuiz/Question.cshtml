@@ -1,22 +1,30 @@
 ﻿@using DLDA.GUI.DTOs.Question
 @model Question
 
+@*
+/// <summary>
+/// Responsive wrapper view for rendering an assessment question.
+/// By acting as a structural router to specific partial views based on viewport size, 
+/// this file prevents a single view from becoming bloated with complex conditional HTML logic.
+/// It ensures that both mobile and desktop users receive a highly optimized interface tailored to their device constraints.
+/// </summary>
+*@
 
 @{
     ViewData["Title"] = "Fråga";
     var assessmentId = ViewBag.AssessmentId as int? ?? 0;
 }
 
-<!-- Länka till din css -->
+<!-- Link to the stylesheet containing the media queries (.only-desktop, .only-mobile) that toggle the visibility of the partial views. -->
 <link rel="stylesheet" href="~/css/Question.css" />
 
 <div class="container mt-5">
-    <!-- Desktopvy -->
+    <!-- Desktop View: Delegates rendering to a partial view containing a spacious layout suited for larger screens and mouse navigation. -->
     <div class="only-desktop">
         @await Html.PartialAsync("_DesktopQuestion", Model)
     </div>
 
-    <!-- Mobilvy -->
+    <!-- Mobile View: Delegates rendering to a partial view containing a compact, vertically-stacked layout optimized for touch targets. -->
     <div class="only-mobile">
         @await Html.PartialAsync("_MobileQuestion", Model)
     </div>

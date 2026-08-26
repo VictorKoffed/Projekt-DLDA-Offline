@@ -1,24 +1,40 @@
 ﻿@using DLDA.GUI.DTOs.Question
 @model Question
 
+@*
+/// <summary>
+/// Administrator view for editing an existing assessment question.
+/// Utilizes strongly-typed model binding and ASP.NET Core Tag Helpers to map UI inputs directly to the underlying DTO.
+/// This declarative approach ensures type safety and delegates data binding securely to the framework.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Redigera fråga";
 }
 
-
+<!-- Utilizing asp-append-version="true" ensures automatic cache-busting by appending a cryptographic hash to the URL.
+     This guarantees administrators always receive the latest stylesheet immediately after deployments without requiring manual browser cache clearing. -->
 <link rel="stylesheet" href="~/css/adminquestion.css" asp-append-version="true" />
-
 
 <div class="container mt-5">
     <h2 class="mb-4">✏ Redigera fråga</h2>
 
+    <!-- TempData is used here instead of ViewBag because it is specifically designed to survive a single HTTP redirect. 
+         This makes it ideal for the Post-Redirect-Get (PRG) pattern, allowing the controller to safely pass error messages 
+         back to the view if a form submission fails downstream without losing the message during the redirect cycle. -->
     @if (TempData["Error"] != null)
     {
         <div class="alert alert-danger">@TempData["Error"]</div>
     }
 
     <div class="question-panel">
+        <!-- The POST method is strictly enforced here to comply with HTTP semantics for state-mutating operations, 
+             ensuring that data modification payloads are securely encapsulated within the request body rather than exposed in the URL. -->
         <form asp-action="Edit" asp-route-id="@Model.QuestionID" method="post">
+            
+            <!-- A hidden input field is strictly required to bind the entity's primary key (QuestionID) back to the DTO during the POST request. 
+                 Without this, the backend controller would receive a model with a default/empty ID, completely losing the context of WHICH database record it is supposed to update. -->
             <input type="hidden" asp-for="QuestionID" />
 
             <div class="mb-3 text-start">
@@ -32,12 +48,17 @@
             </div>
 
             <div class="form-check mb-3 text-start">
+                <!-- Tag helpers for checkboxes automatically generate a supplementary hidden field to ensure 
+                     that an unchecked state explicitly transmits a "false" value back to the server, preventing null-binding issues. -->
                 <input asp-for="IsActive" class="form-check-input" />
                 <label asp-for="IsActive" class="form-check-label">Aktiv</label>
             </div>
 
             <div class="d-flex justify-content-center gap-2">
                 <button type="submit" class="btn btn-primary">💾 Spara ändringar</button>
+                
+                <!-- Providing an explicit cancel route acts as a safe escape hatch, 
+                     allowing the administrator to gracefully abort the editing process without executing a partial or accidental change. -->
                 <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
             </div>
         </form>

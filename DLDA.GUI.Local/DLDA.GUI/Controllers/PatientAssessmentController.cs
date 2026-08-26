@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DLDA.GUI.Controllers
 {
     /// <summary>
-    /// Controller för att visa patientens egna bedömningar.
+    /// Manages patient-facing assessment overview dashboards, secured exclusively 
+    /// for users holding the patient security role clearance.
     /// </summary>
     [RoleAuthorize("patient")]
     public class PatientAssessmentController : Controller
@@ -21,11 +22,12 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Visar en lista med alla patientens tidigare bedömningar.
+        /// Renders an index listing of all historical and active assessments belonging to the authenticated patient session.
         /// </summary>
         public async Task<IActionResult> Index()
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
+            // Validates active session context presence to prevent unauthorized unlinked requests
             if (userId == null)
             {
                 _logger.LogWarning("Ingen inloggad användare – redirect till login.");

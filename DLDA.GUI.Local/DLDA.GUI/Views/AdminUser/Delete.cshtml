@@ -1,10 +1,23 @@
 ﻿@using DLDA.GUI.DTOs.User
 @model UserDto
 
+@*
+/// <summary>
+/// Administrator view for confirming the deletion of a user profile.
+/// Implementing an explicit confirmation step (interstitial view) acts as a crucial UX friction point, 
+/// mitigating the risk of accidental data loss caused by fatigue or misclicks during administrative tasks.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Bekräfta borttagning";
 }
 
+@* 
+// Utilizing the @section directive ensures that view-specific CSS is injected directly into the layout's <head>.
+// The asp-append-version="true" attribute enforces automatic cache-busting by appending a cryptographic hash to the file request,
+// ensuring administrators always receive the latest styles without needing to clear browser caches. 
+*@
 @section Styles {
     <link rel="stylesheet" href="~/css/adminuser.css" asp-append-version="true" />
 }
@@ -14,16 +27,30 @@
 
     <p>Är du säker på att du vill ta bort följande användare?</p>
 
+    <!-- Displaying the exact entity attributes prior to deletion provides immediate contextual verification.
+         This ensures the administrator can confidently verify they are destroying the correct user record before proceeding. -->
     <ul>
         <li><strong>Användarnamn:</strong> @Model.Username</li>
         <li><strong>E-post:</strong> @Model.Email</li>
         <li><strong>Roll:</strong> @Model.Role</li>
     </ul>
 
+    <!-- Deletion MUST always be executed via an HTTP POST request rather than a GET link to prevent 
+         accidental triggering by web crawlers, browser pre-fetching, or accidental navigation. -->
     <form asp-action="DeleteUserConfirmed" method="post">
+        
+        <!-- Explicitly injecting the Anti-Forgery Token provides critical protection against Cross-Site Request Forgery (CSRF) attacks.
+             It guarantees that this highly privileged, destructive action genuinely originated from an authorized session within our application. -->
         @Html.AntiForgeryToken()
+        
+        <!-- A hidden input field is strictly required to bind the entity's primary key (UserID) back to the controller during the POST request. 
+             Without this, the backend would receive an empty ID and lose the context of WHICH database record it is supposed to delete. -->
         <input type="hidden" asp-for="UserID" />
+        
         <button type="submit" class="btn btn-danger">🗑 Ta bort</button>
+        
+        <!-- Providing an explicit cancel route acts as a safe escape hatch, 
+             instilling confidence in the user by making it easy to abort the destructive workflow. -->
         <a asp-action="Index" class="btn btn-secondary ms-2">Avbryt</a>
     </form>
 </div>

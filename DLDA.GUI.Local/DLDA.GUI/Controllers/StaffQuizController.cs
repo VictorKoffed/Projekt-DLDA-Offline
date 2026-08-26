@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DLDA.GUI.Controllers
 {
     /// <summary>
-    /// Controller för personalens frågeflöde under bedömning.
+    /// Manages the healthcare professional interactive review wizard workflow, 
+    /// enabling clinical evaluation scoring, risk flagging, commentary inputs, and questionnaire navigation.
     /// </summary>
     [RoleAuthorize("staff")]
     public class StaffQuizController : Controller
@@ -19,7 +20,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Återupptar personalens bedömning – visar nästa fråga.
+        /// Resumes the professional evaluation wizard by fetching the next pending item or routing 
+        /// to the final results summary if all questions have been reviewed.
         /// </summary>
         [HttpGet("StaffQuiz/Resume")]
         public async Task<IActionResult> Resume(int assessmentId, int userId)
@@ -42,7 +44,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Skickar in personalens svar, kommentar och flagga för en fråga.
+        /// Submits the professional evaluation rating score, clinical commentary, and risk flag 
+        /// for a specific assessment line item, then advances the review wizard.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SubmitAnswer(int itemId, int assessmentId, int answer, string? comment, bool flag, int userId)
@@ -63,7 +66,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Hämtar föregående fråga i personalens frågeflöde.
+        /// Retrieves and renders the preceding question within the professional review sequence 
+        /// to allow clinicians to inspect or modify prior evaluations.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Previous(int assessmentId, int currentOrder, int userId)
@@ -87,7 +91,8 @@ namespace DLDA.GUI.Controllers
 
 
         /// <summary>
-        /// Pausar bedömningen och går tillbaka till översikten.
+        /// Temporarily halts the professional review session and returns the clinician 
+        /// to the patient assessment list dashboard.
         /// </summary>
         [HttpPost("StaffQuiz/Pause")]
         public IActionResult Pause(int assessmentId, int userId)
@@ -97,7 +102,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Hoppar över aktuell fråga i personalens bedömning.
+        /// Bypasses the current questionnaire item while preserving any associated clinical commentary or risk flags.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> SkipQuestion(int itemId, int assessmentId, string? comment, bool flag, int userId)

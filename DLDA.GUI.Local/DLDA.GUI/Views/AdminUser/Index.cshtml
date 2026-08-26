@@ -1,10 +1,24 @@
 ﻿@using DLDA.GUI.DTOs.User
 @model List<UserDto>
 
+@*
+/// <summary>
+/// Administrator dashboard for managing the system's user directory.
+/// By binding strongly to a List of UserDto objects, this view guarantees compile-time safety 
+/// and eliminates runtime errors associated with dynamic ViewBag/ViewData rendering.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Alla användare";
 }
 
+@* 
+// Utilizing the @section directive ensures that view-specific CSS is injected directly into the layout's <head>.
+// The asp-append-version="true" attribute acts as an automatic cache-buster. 
+// It appends a unique cryptographic hash to the file request, ensuring administrators 
+// always see the most recent styling updates immediately following a new deployment without needing to clear browser caches. 
+*@
 @section Styles {
     <link rel="stylesheet" href="~/css/adminuser.css" asp-append-version="true" />
 }
@@ -15,6 +29,9 @@
     <div class="user-table-panel p-4">
         <a asp-action="Create" class="btn btn-success mb-3">➕ Skapa ny användare</a>
 
+        <!-- Wrapping the table in a 'table-responsive' div is crucial for mobile accessibility.
+             It allows the data grid to scroll horizontally on smaller screens (like tablets used by staff) 
+             without breaking the page's overall responsive layout. -->
         <div class="table-responsive">
             <table class="table table-bordered mb-0">
                 <thead>
@@ -35,6 +52,9 @@
                             <td>@user.Email</td>
                             <td>@user.Role</td>
                             <td>
+                                <!-- Using Tag Helpers (asp-action, asp-route-id) instead of standard hrefs securely couples the UI directly to the application's routing table.
+                                     This ensures the target controller action knows exactly which database record to act upon, 
+                                     and guarantees these links won't break if the underlying route templates are modified. -->
                                 <a asp-action="Edit" asp-route-id="@user.UserID" class="btn btn-sm btn-primary">✏ Redigera</a>
                                 <a asp-action="Delete" asp-route-id="@user.UserID" class="btn btn-sm btn-danger">🗑 Ta bort</a>
                             </td>

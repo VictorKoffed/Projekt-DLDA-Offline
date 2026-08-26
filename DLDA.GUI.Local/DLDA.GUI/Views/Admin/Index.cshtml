@@ -1,12 +1,25 @@
-﻿@{
+﻿@*
+/// <summary>
+/// Administrator dashboard acting as the central navigation hub for privileged operations.
+/// This view serves as the entry point for system configuration, specifically managing the dynamic questionnaire structure and user access (RBAC).
+/// By isolating these routes to specific admin controllers, we enforce a strict boundary between clinical operations and system management.
+/// </summary>
+*@
+@{
     ViewData["Title"] = "Adminpanel";
 }
 
+<!-- We utilize asp-append-version="true" for automatic cache-busting. 
+     This appends a cryptographic hash of the file to the URL, guaranteeing that administrators 
+     always receive the latest styling updates without needing to manually clear browser caches after a deployment. -->
 <link rel="stylesheet" href="~/css/Admin.css" asp-append-version="true" />
 
 <div class="container mt-5">
     <h2 class="mb-4 text-center">Inloggad som admin</h2>
 
+    <!-- Explicitly displaying the active role serves as a crucial UX principle, 
+         preventing cognitive dissonance and ensuring the user is constantly aware of their privileged context 
+         before making destructive or system-wide changes. -->
     <div class="admin-panel-box mx-auto">
         <h5 class="alert-heading">ℹ️ Adminpanel</h5>
         <p>
@@ -15,6 +28,10 @@
         </p>
 
         <div class="d-flex flex-column gap-3 align-items-center mt-4">
+            
+            <!-- Using ASP.NET Core Tag Helpers (asp-controller, asp-action) instead of hardcoded hrefs 
+                 ensures our links are dynamically generated based on the application's routing table. 
+                 This prevents broken links if the application's base path changes during deployment. -->
             <a class="btn btn-primary admin-btn" asp-controller="AdminQuestion" asp-action="Index">
                 📂 Gå till frågor översikten
             </a>

@@ -1,4 +1,12 @@
-﻿<div class="container mt-5 text-center">
+﻿@*
+/// <summary>
+/// Patient introduction and onboarding view for the DLDA assessment.
+/// The layout is deliberately kept simple, centralized, and distraction-free to minimize cognitive load 
+/// for psychiatric patients, ensuring they understand the purpose of the assessment 
+/// and feel secure before proceeding to the actual questionnaire.
+/// </summary>
+*@
+<div class="container mt-5 text-center">
     <h1 class="display-4">DLDA</h1>
     <h4 class="mb-4">Hur jag upplever min funktion i vardagen</h4>
 
@@ -6,6 +14,11 @@
 
     <h5 class="mt-4">Vad handlar bedömningen om?</h5>
 
+    @* 
+    // This visually distinct frame highlights the core reassurance: that skipping questions is allowed. 
+    // Emphasizing this reduces patient performance anxiety and lowers the barrier to participation, 
+    // which is a critical clinical requirement for this specific psychiatric assessment tool. 
+    *@
     <div style="border: 2px solid #198754; padding: 1rem; border-radius: 12px; max-width: 600px; margin: 0 auto; background-color: #f8f9fa;">
         <p class="lead mb-0">
             Frågorna handlar om din vardag. När du svarat kommer personalen att kunna prata med dig om hur stödet kan planeras på bästa sätt.<br />
@@ -13,6 +26,11 @@
         </p>
     </div>
 
+    @* 
+    // We utilize the browser's native history API for navigation rather than a hardcoded server-side route.
+    // This makes the view context-independent, returning the patient exactly to their previous state 
+    // (e.g., a specific dashboard tab or an overview list) without breaking the expected back-navigation flow.
+    *@
     <div class="d-flex justify-content-center mt-5" style="max-width: 600px; margin: 0 auto;">
         <a class="btn btn-outline-secondary" href="javascript:history.back()">
             🔙 Tillbaka

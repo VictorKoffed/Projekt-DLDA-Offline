@@ -1,2 +1,9 @@
-﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+﻿@*
+/// <summary>
+/// Includes standard jQuery libraries required for unobtrusive client-side validation.
+/// By evaluating C# DataAnnotations on the client side, this prevents unnecessary server roundtrips, 
+/// reducing server load and providing immediate validation feedback to the user.
+/// </summary>
+*@
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>

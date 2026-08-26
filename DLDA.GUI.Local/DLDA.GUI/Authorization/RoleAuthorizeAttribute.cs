@@ -3,26 +3,35 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace DLDA.GUI.Authorization
 {
-    // Anpassad attributklass för åtkomstkontroll baserat på användarroll
+    /// <summary>
+    /// Custom authorization filter attribute enforcing role-based access control (RBAC) 
+    /// by inspecting active session state claims against permitted route roles.
+    /// </summary>
     public class RoleAuthorizeAttribute : Attribute, IAuthorizationFilter
     {
-        private readonly string[] _roles; // Array för att lagra tillåtna roller
+        private readonly string[] _roles; // Stores normalized lowercase role identifiers permitted to access the protected resource
 
-        // Konstruktör för att instansiera klassen med tillåtna roller
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RoleAuthorizeAttribute"/> class with specified allowed roles.
+        /// </summary>
+        /// <param name="roles">The list of authorized security roles.</param>
         public RoleAuthorizeAttribute(params string[] roles)
         {
-            _roles = roles.Select(r => r.ToLower()).ToArray(); // Konvertera roller till små bokstäver
+            _roles = roles.Select(r => r.ToLower()).ToArray(); // Normalizes incoming role definitions to lowercase to ensure case-insensitive string comparisons during authorization checks
         }
 
-        // Metod som körs vid autentisering av åtkomst
+        /// <summary>
+        /// Evaluates user session credentials and determines whether access should be granted or redirected.
+        /// </summary>
+        /// <param name="context">The filter context encapsulating the current HTTP request information.</param>
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            var role = context.HttpContext.Session.GetString("Role")?.ToLower(); // Hämta användarroll från sessionen och konvertera till små bokstäver
+            var role = context.HttpContext.Session.GetString("Role")?.ToLower(); // Retrieves the current user role from session storage and normalizes it for matching
 
-            // Kontrollera om användarrollen är null eller inte finns i listan över tillåtna roller
+            // Validates that an active session role exists and matches at least one permitted security tier
             if (role == null || !_roles.Contains(role))
             {
-                // Om användaren inte har rätt roll, vidarebefordra till inloggningsvyn
+                // Redirects unauthenticated or unauthorized users to the login endpoint to safeguard protected views
                 context.Result = new RedirectToActionResult("Login", "Account", null);
             }
         }

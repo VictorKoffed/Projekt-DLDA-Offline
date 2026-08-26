@@ -4,6 +4,10 @@ using DLDA.API.DTOs;
 using DLDA.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Manages individual questionnaire items within an assessment, handling answer submissions,
+/// skips, and item-level data for both patients and healthcare professionals.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AssessmentItemController : ControllerBase
@@ -16,11 +20,11 @@ public class AssessmentItemController : ControllerBase
     }
 
     // ----------------------
-    // [PATIENT] – Hämtning och uppdatering av egna svar
+    // [PATIENT] – Retrieval and update of personal answers
     // ----------------------
 
     // GET: api/AssessmentItem/patient/user/{userId}
-    // Returnerar en lista med bedömningar som tillhör en specifik patient
+    // Returns a summary list of assessments belonging to a specific patient for navigation.
     [HttpGet("patient/user/{userId}")]
     public ActionResult<IEnumerable<object>> GetPatientAssessmentList(int userId)
     {
@@ -40,7 +44,7 @@ public class AssessmentItemController : ControllerBase
     }
 
     // GET: api/AssessmentItem/patient/assessment/{assessmentId}
-    // Returnerar enbart patientens svar för en viss bedömning
+    // Returns strictly patient-facing answers and states for a specific assessment form.
     [HttpGet("patient/assessment/{assessmentId}")]
     public ActionResult<IEnumerable<object>> GetPatientAnswers(int assessmentId)
     {
@@ -64,48 +68,48 @@ public class AssessmentItemController : ControllerBase
     }
 
     // PUT: api/AssessmentItem/patient/{id}
-    // Uppdaterar en patients eget svar
+    // Updates a patient's personal answer for a specific question item.
     [HttpPut("patient/{id}")]
     public IActionResult UpdatePatientAnswer(int id, [FromBody] PatientAnswerDto dto)
     {
-        Console.WriteLine($"[INFO] PUT patient/{id} – inkommande answer: {dto.Answer}, kommentar: {dto.Comment}");
+        Console.WriteLine($"[INFO] PUT patient/{id} – incoming answer: {dto.Answer}, comment: {dto.Comment}");
 
         var item = _context.AssessmentItems.Find(id);
         if (item == null)
         {
-            Console.WriteLine($"[ERROR] Kunde inte hitta AssessmentItem med ID={id}");
+            Console.WriteLine($"[ERROR] Could not find AssessmentItem with ID={id}");
             return NotFound();
         }
 
-        // Spara patientens svar
+        // Persist patient response data and clear skip flags upon receiving an active answer
         item.PatientAnswer = dto.Answer;
         item.PatientComment = dto.Comment;
         item.AnsweredAt = DateTime.UtcNow;
         item.SkippedByPatient = false;
 
-        // Återställ eventuell SkippedByPatient-markering om den finns
+        // Reset potential previous skip state to ensure data consistency when updating an answer
         if (item.SkippedByPatient)
         {
-            Console.WriteLine($"[DEBUG] Fråga var tidigare skippad – återställer SkippedByPatient till false.");
+            Console.WriteLine($"[DEBUG] Question was previously skipped – resetting SkippedByPatient to false.");
             item.SkippedByPatient = false;
         }
 
         try
         {
             _context.SaveChanges();
-            Console.WriteLine($"[SUCCESS] Svar sparat för ItemID={id}: Answer={item.PatientAnswer}");
+            Console.WriteLine($"[SUCCESS] Answer saved for ItemID={id}: Answer={item.PatientAnswer}");
             return NoContent();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ERROR] Misslyckades med att spara svar för ItemID={id}: {ex.Message}");
-            return StatusCode(500, "Kunde inte spara svaret.");
+            Console.WriteLine($"[ERROR] Failed to save answer for ItemID={id}: {ex.Message}");
+            return StatusCode(500, "Could not save the answer.");
         }
     }
 
 
     // PUT: api/AssessmentItem/skip/{itemId}
-    // Markerar en fråga som överhoppad av patienten
+    // Marks a question item as intentionally skipped by the patient.
     [HttpPut("skip/{itemId}")]
     public IActionResult SkipQuestion(int itemId)
     {
@@ -120,7 +124,7 @@ public class AssessmentItemController : ControllerBase
     }
 
     // GET: api/AssessmentItem/patient/assessment/{assessmentId}/overview
-    // Returnerar översikt över en patients bedömning
+    // Returns a comprehensive overview of a patient's assessment progress and questions.
     [HttpGet("patient/assessment/{assessmentId}/overview")]
     public async Task<ActionResult<AssessmentOverviewDto>> GetAssessmentOverview(int assessmentId)
     {
@@ -137,11 +141,11 @@ public class AssessmentItemController : ControllerBase
             .OrderBy(ai => ai.Order)
             .ToListAsync();
 
-        var total = items.Count; // ✅ Lägg till detta
+        var total = items.Count; // ✅ Tracks total scope context for UI step calculations
 
         var questions = items.Select(ai => new QuestionOverviewDto
         {
-            ItemID = ai.ItemID, // ✅ För PUT
+            ItemID = ai.ItemID, // ✅ Required for targeted client PUT requests
             QuestionId = ai.QuestionID,
             QuestionText = ai.Question?.QuestionText ?? "Frågetext saknas",
             PatientAnswer = ai.PatientAnswer is >= 0 and <= 4 ? ai.PatientAnswer : null,
@@ -166,7 +170,7 @@ public class AssessmentItemController : ControllerBase
 
 
     // POST: api/AssessmentItem/assessment/{assessmentId}/complete
-    // Markerar en hel bedömning som färdig
+    // Marks an entire assessment container as fully completed by the patient.
     [HttpPost("assessment/{assessmentId}/complete")]
     public IActionResult CompleteAssessment(int assessmentId)
     {
@@ -180,11 +184,11 @@ public class AssessmentItemController : ControllerBase
     }
 
     // ----------------------
-    // [PERSONAL / ADMIN] – Full åtkomst till alla svar och åtgärder
+    // [STAFF / ADMIN] – Full access to all answers and actions
     // ----------------------
 
     // GET: api/AssessmentItem
-    // Returnerar alla bedömningsposter (inklusive personal- och patientsvar)
+    // Returns all assessment items system-wide, including both staff and patient inputs.
     [HttpGet]
     public ActionResult<IEnumerable<AssessmentItemDto>> GetItems()
     {
@@ -203,11 +207,12 @@ public class AssessmentItemController : ControllerBase
     }
 
     // GET: api/AssessmentItem/staff/assessment/{assessmentId}/overview
+    // Returns a detailed clinical comparison view containing both patient and staff metrics.
     [HttpGet("staff/assessment/{assessmentId}/overview")]
     public async Task<ActionResult<StaffResultOverviewDto>> GetStaffAssessmentOverview(int assessmentId)
     {
         var assessment = await _context.Assessments
-            .Include(a => a.User) // ✅ Inkludera användare för att få ut namnet
+            .Include(a => a.User) // ✅ Eagerly loads user relationship to resolve patient username for clinical logs
             .FirstOrDefaultAsync(a => a.AssessmentID == assessmentId);
 
         if (assessment == null)
@@ -223,7 +228,7 @@ public class AssessmentItemController : ControllerBase
         {
             AssessmentId = assessment.AssessmentID,
             UserId = assessment.UserId,
-            Username = assessment.User?.Username ?? "Okänd", // ✅ Ny egenskap för att visa namn
+            Username = assessment.User?.Username ?? "Okänd", // ✅ Exposes user identifier property for UI display headers
             CreatedAt = assessment.CreatedAt ?? DateTime.MinValue,
             IsStaffComplete = assessment.IsStaffComplete,
             Questions = items.Select(ai => new StaffResultRowDto
@@ -237,7 +242,7 @@ public class AssessmentItemController : ControllerBase
                 StaffComment = ai.StaffComment,
                 Flag = ai.Flag,
                 SkippedByPatient = ai.SkippedByPatient
-                // Difference beräknas automatiskt
+                // Difference is computed automatically by the DTO definition
             }).ToList()
         };
 
@@ -246,7 +251,7 @@ public class AssessmentItemController : ControllerBase
 
 
     // GET: api/AssessmentItem/{id}
-    // Hämtar ett specifikt bedömningsitem
+    // Retrieves a specific assessment item by its primary key identifier.
     [HttpGet("{id}")]
     public ActionResult<AssessmentItemDto> GetItem(int id)
     {
@@ -266,7 +271,7 @@ public class AssessmentItemController : ControllerBase
     }
 
     // GET: api/AssessmentItem/patient/assessment/{assessmentId}/question/{order}
-    // Hämtar ett specifikt bedömningsitem
+    // Retrieves a single questionnaire item matching a specific navigational sequence index.
     [HttpGet("patient/assessment/{assessmentId}/question/{order}")]
     public async Task<ActionResult<QuestionDto>> GetQuestionByOrder(int assessmentId, int order)
     {
@@ -298,7 +303,7 @@ public class AssessmentItemController : ControllerBase
     }
 
     // POST: api/AssessmentItem
-    // Skapar ett nytt bedömningsitem (t.ex. när formulär byggs manuellt)
+    // Creates a new assessment item manually (e.g., administrative structural adjustments).
     [HttpPost]
     public IActionResult CreateItem(AssessmentItemDto dto)
     {
@@ -320,7 +325,7 @@ public class AssessmentItemController : ControllerBase
     }
 
     // PUT: api/AssessmentItem/staff/{id}
-    // Uppdaterar personals svar
+    // Updates a healthcare professional's evaluation response for a specific assessment item.
     [HttpPut("staff/{id}")]
     public IActionResult UpdateStaffAnswer(int id, [FromBody] StaffAnswerDto dto)
     {
@@ -337,7 +342,7 @@ public class AssessmentItemController : ControllerBase
     }
 
     // DELETE: api/AssessmentItem/{id}
-    // Raderar ett bedömningsitem (om det t.ex. blivit fel)
+    // Removes an assessment item entity from the database.
     [HttpDelete("{id}")]
     public IActionResult DeleteItem(int id)
     {
@@ -352,7 +357,7 @@ public class AssessmentItemController : ControllerBase
 
     // POST: api/AssessmentItem/assessment/{assessmentId}/staff-complete
     /// <summary>
-    /// Markerar att personalen är klar med en bedömning, även om vissa frågor inte är besvarade.
+    /// Marks that the healthcare professional has finalized an assessment, even if certain questions remain unanswered.
     /// </summary>
     [HttpPost("assessment/{assessmentId}/staff-complete")]
     public IActionResult CompleteStaffAssessment(int assessmentId)
@@ -364,17 +369,17 @@ public class AssessmentItemController : ControllerBase
         if (assessment == null)
             return NotFound();
 
-        // Räkna obesvarade frågor
+        // Calculate the number of unaddressed questions to monitor clinical completion quality
         var unansweredCount = assessment.AssessmentItems
             .Count(i => !i.StaffAnswer.HasValue);
 
-        // Logga information om eventuella obesvarade frågor
+        // Log administrative warnings for any blank items remaining upon sign-off
         if (unansweredCount > 0)
         {
-            Console.WriteLine($"[INFO] Bedömning {assessmentId} klarmarkerad trots {unansweredCount} obesvarade frågor av personal.");
+            Console.WriteLine($"[INFO] Assessment {assessmentId} marked complete by staff despite {unansweredCount} unanswered items.");
         }
 
-        // Markera som klar oavsett svar
+        // Set finalization flag regardless of empty entries to allow clinical flexibility
         assessment.IsStaffComplete = true;
         _context.SaveChanges();
 

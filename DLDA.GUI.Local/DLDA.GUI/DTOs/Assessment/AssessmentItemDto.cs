@@ -2,27 +2,30 @@
 
 namespace DLDA.GUI.DTOs.Assessment
 {
-    // Koppling mellan frågor och specifika bedömningar, med svar och kommentarer. Full info (för t.ex. personal, admin, statistik).
+    /// <summary>
+    /// Represents a detailed data transfer object mapping an individual assessment question line item, 
+    /// containing comprehensive response metrics, commentary, and flags for professional or administrative reviews.
+    /// </summary>
     public class AssessmentItemDto
     {
-        public int ItemID { get; set; } // Unikt ID för varje bedömningsobjekt
+        public int ItemID { get; set; } // Unique primary key identifier for the specific assessment line item instance
 
-        public int AssessmentID { get; set; } // ID för den övergripande bedömningen som detta objekt tillhör
+        public int AssessmentID { get; set; } // Foreign key identifier referencing the parent assessment session container
 
-        public int QuestionID { get; set; } // ID för den specifika frågan som bedöms
+        public int QuestionID { get; set; } // Foreign key identifier referencing the master template question definition
 
-        public int? PatientAnswer { get; set; } // Patientens svar på frågan (om det finns)
+        public int? PatientAnswer { get; set; } // Numerical rating score submitted by the patient (nullable if unanswered)
 
-        public string? PatientComment { get; set; } // Eventuell kommentar från patienten
+        public string? PatientComment { get; set; } // Optional descriptive commentary provided by the patient for context
 
-        public int? StaffAnswer { get; set; } // Personalens svar på frågan (om det finns)
+        public int? StaffAnswer { get; set; } // Numerical rating score evaluated and submitted by clinical staff (nullable if pending)
 
-        public string? StaffComment { get; set; } // Eventuell kommentar från personalen
+        public string? StaffComment { get; set; } // Optional clinical commentary or feedback provided by the professional reviewer
 
-        public int Order { get; set; } // Ordning för frågan i bedömningen
+        public int Order { get; set; } // Sequence index determining the display presentation order within the wizard questionnaire
 
-        public bool Flag { get; set; } // Flagga för att markera en fråga för ytterligare diskussion av personal
+        public bool Flag { get; set; } // Risk indicator flag set by healthcare staff to highlight items requiring follow-up discussions
 
-        public bool SkippedByPatient { get; set; } // Anger om frågan har hoppats över av patienten
+        public bool SkippedByPatient { get; set; } // Tracks whether the question item was intentionally bypassed by the patient
     }
 }

@@ -1,6 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
-    // Hämta frågor till frontend.
+    /// <summary>
+    /// Represents a data transfer object designed to deliver questionnaire items and context 
+    /// to the frontend quiz wizard interface.
+    /// </summary>
     public class QuestionDto
     {
         public int QuestionID { get; set; }

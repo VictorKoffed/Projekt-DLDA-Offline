@@ -1,11 +1,22 @@
 ﻿@using DLDA.GUI.DTOs.Assessment
 @model AssessmentOverviewDto
 
+@*
+/// <summary>
+/// Displays the patient's assessment overview, allowing them to review, modify, and finalize their answers.
+/// Enforces the business rule that assessments become read-only once marked as complete.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Resultatöversikt";
 }
 
 @functions {
+    /// <summary>
+    /// Maps the numeric DLDA assessment values (0-4) to their corresponding descriptive labels.
+    /// This scale is based on the WHO ICF classification standard used in psychiatric care.
+    /// </summary>
     string FormatAnswer(int? value)
     {
         return value switch
@@ -75,10 +86,13 @@
                         <td>
                             @q.QuestionText
                             <div class="mt-2">
+                                <!-- Auto-submit on change prevents data loss. 
+                                     This is a crucial UX requirement to accommodate patients who might struggle with long forms 
+                                     or forget to manually save their progress. -->
                                 <textarea name="comment"
-                                  class="form-control form-control-sm"
-                                  placeholder="Kommentar (frivilligt)"
-                                  onchange="rememberScroll('row_@q.ItemID'); this.form.submit()">@q.PatientComment</textarea>
+                                          class="form-control form-control-sm"
+                                          placeholder="Kommentar (frivilligt)"
+                                          onchange="rememberScroll('row_@q.ItemID'); this.form.submit()">@q.PatientComment</textarea>
                             </div>
                         </td>
                         <td>
@@ -110,6 +124,7 @@
                     }
                     else
                     {
+                        <!-- Completed assessments are strictly read-only to ensure data immutability during staff review. -->
                         <td>@(q.Order + 1)</td>
                         <td>
                             @q.QuestionText

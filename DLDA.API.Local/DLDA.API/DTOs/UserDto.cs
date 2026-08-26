@@ -1,6 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
-    // Grundläggande info om användare.
+    /// <summary>
+    /// Represents the fundamental data transfer object for user account profiles,
+    /// encapsulating identity properties, role permissions, and optional password payloads for creation or updates.
+    /// </summary>
     public class UserDto
     {
         public int UserID { get; set; }

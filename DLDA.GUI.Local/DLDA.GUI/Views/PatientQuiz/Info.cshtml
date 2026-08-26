@@ -1,4 +1,11 @@
-﻿@{
+﻿@*
+/// <summary>
+/// Patient onboarding and information view for a specific assessment.
+/// This view serves as a psychological buffer, providing clinical context and reassurance 
+/// before the patient begins or resumes the actual questionnaire.
+/// </summary>
+*@
+@{
     ViewData["Title"] = "Information";
     var assessmentId = ViewBag.AssessmentId as int? ?? 0;
     var hasStarted = ViewBag.HasStarted as bool? ?? false;
@@ -12,6 +19,8 @@
 
     <h5 class="mt-4">Vad handlar bedömningen om?</h5>
 
+    <!-- This visually distinct frame highlights the core reassurance: that skipping questions is allowed. 
+         Emphasizing this reduces patient performance anxiety and lowers the barrier to participation. -->
     <div style="border: 2px solid #198754; padding: 1rem; border-radius: 12px; max-width: 600px; margin: 0 auto; background-color: #f8f9fa;">
         <p class="lead mb-0">
             Frågorna handlar om din vardag. När du svarat kommer personalen att kunna prata med dig om hur stödet kan planeras på bästa sätt.<br />
@@ -19,8 +28,14 @@
         </p>
     </div>
 
-    <!-- Knappar nedflyttade och högerställda -->
+    <!-- Primary action buttons are pushed down and right-aligned, adhering to standard directional UX patterns that indicate forward progression. -->
     <div class="d-flex justify-content-end mt-5" style="max-width: 600px; margin: 0 auto;">
+        
+        @* 
+        // The routing logic dynamically adapts based on the assessment's state.
+        // If the assessment is brand new (!hasStarted), the patient is routed to 'ScaleSelect' to choose their preferred visual aid (e.g., Smileys or Numbers).
+        // If it is ongoing (hasStarted), they bypass the setup phase and 'Resume' directly at their last unanswered question, minimizing friction.
+        *@
         <form method="get" asp-controller="PatientQuiz" asp-action="@(hasStarted ? "Resume" : "ScaleSelect")" class="me-2">
             <input type="hidden" name="id" value="@assessmentId" />
             <button type="submit" class="btn btn-success">
@@ -28,6 +43,8 @@
             </button>
         </form>
 
+        <!-- Providing an explicit back route acts as a safe escape hatch, allowing patients to back out 
+             to their dashboard without feeling locked into starting the assessment immediately. -->
         <a class="btn btn-outline-secondary" asp-controller="PatientAssessment" asp-action="Index">
             🔙 Tillbaka till mina bedömningar
         </a>

@@ -1,6 +1,15 @@
 ﻿@using DLDA.GUI.DTOs.Staff
 @model StaffQuestionDto
 
+@*
+/// <summary>
+/// Viewport-aware routing wrapper for the staff assessment interface.
+/// By isolating the desktop and mobile views into separate partials rather than relying solely on CSS media queries, 
+/// we accommodate the vastly different clinical UX requirements of each platform (e.g., side-by-side comparative analysis on desktop 
+/// vs. focused, stacked cognitive-load reduction on mobile) without bloating the DOM or creating fragile responsive layouts.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Fråga (personal)";
 }

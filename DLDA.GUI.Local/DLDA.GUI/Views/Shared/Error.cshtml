@@ -1,4 +1,15 @@
 ﻿@model DLDA.GUI.Models.ErrorViewModel
+
+@*
+/// <summary>
+/// Global error handling view. 
+/// Presents a generic, user-friendly error message to prevent leaking sensitive stack traces 
+/// or internal system architecture details to the end-user.
+/// Exposes a correlation ID (RequestId) to allow IT support and developers to trace the exact 
+/// failure context within the backend telemetry and logs.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Fel";
 }

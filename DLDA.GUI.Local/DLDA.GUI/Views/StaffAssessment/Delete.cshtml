@@ -1,5 +1,15 @@
 ﻿@using DLDA.GUI.DTOs.Assessment
 @model AssessmentDto
+
+@*
+/// <summary>
+/// Staff-facing confirmation view for deleting a patient assessment.
+/// Implements an intentional friction point to prevent accidental data loss of clinical records.
+/// Once confirmed, the deletion is permanent and triggers a hard delete in the underlying database,
+/// cascading to both patient and staff answers associated with this assessment.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Bekräfta borttagning";
 }
@@ -9,14 +19,12 @@
 
     <p class="text-muted">Du håller på att ta bort en bedömning. Denna åtgärd är permanent och kan <strong>inte</strong> ångras.</p>
 
-    <!-- Bedömningsinfo -->
     <ul>
         <li><strong>ID:</strong> @Model.AssessmentID</li>
         <li><strong>Skattningsskala:</strong> @Model.ScaleType</li>
         <li><strong>Skapad:</strong> @Model.CreatedAt.ToString("yyyy-MM-dd")</li>
     </ul>
 
-    <!-- Formulär -->
     <form asp-controller="StaffAssessment" asp-action="DeleteConfirmed" method="post" class="mt-4">
         <input type="hidden" name="id" value="@Model.AssessmentID" />
         <input type="hidden" name="userId" value="@Model.UserId" />

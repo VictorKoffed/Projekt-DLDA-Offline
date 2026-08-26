@@ -1,5 +1,14 @@
 ﻿@using DLDA.GUI.DTOs.Staff
 @model StaffQuestionDto
+
+@*
+/// <summary>
+/// Staff-facing view for conducting the clinical evaluation of a specific assessment question.
+/// Implements the dual-perspective DLDA methodology by rendering the patient's self-assessment 
+/// alongside the staff input, allowing clinicians to immediately identify perception gaps.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Fråga (personal)";
     var prefix = "Number";
@@ -30,9 +39,10 @@
         </span>
     </div>
 
-
     @if (!string.IsNullOrWhiteSpace(Model.PatientName))
     {
+        <!-- Displaying the patient's prior input establishes the clinical baseline 
+             and highlights potential discrepancies between self-perception and clinical observation. -->
         <div class="alert alert-primary">
             <div>
                 👤 <strong>Patient:</strong> @Model.PatientName
@@ -94,6 +104,8 @@
             </div>
         </div>
 
+        <!-- The flag mechanism explicitly bookmarks specific domains for the post-assessment dialogue, 
+             ensuring critical needs are addressed during the patient-clinician review. -->
         <div class="form-check mb-4">
             <input class="form-check-input" type="checkbox" name="flag" id="flag" value="true" @(Model.Flag ? "checked" : "") />
             <label class="form-check-label" for="flag">
@@ -106,7 +118,8 @@
         </div>
     </form>
 
-    <!-- Hoppa över / Navigering -->
+    <!-- Clinical workflows are highly interrupt-driven. Independent state-preservation routes (Skip/Pause) 
+         ensure assessment progress is maintained without data corruption if the session is abruptly halted. -->
     <div class="d-flex gap-3 mt-4 flex-wrap">
         <form asp-action="Previous" method="post">
             <input type="hidden" name="assessmentId" value="@Model.AssessmentID" />

@@ -1,6 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
-    // Koppling mellan frågor och specifika bedömningar, med svar och kommentarer. Full info (för t.ex. personal, admin, statistik).
+    /// <summary>
+    /// Represents a comprehensive data transfer object linking questionnaire templates to specific assessments,
+    /// encapsulating both patient responses and clinical evaluations, comments, and risk flags for administrative oversight.
+    /// </summary>
     public class AssessmentItemDto
     {
         public int ItemID { get; set; }

@@ -6,6 +6,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DLDA.API.Controllers
 {
+    /// <summary>
+    /// Computes analytical metrics, summary overviews, and comparative evaluation timelines
+    /// for psychiatric assessments from both patient and healthcare professional perspectives.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class StatisticsController : ControllerBase
@@ -18,11 +22,11 @@ namespace DLDA.API.Controllers
         }
 
         // --------------------------
-        // [PATIENT] – Återkoppling & översikt
+        // [PATIENT] – Feedback & Overview
         // --------------------------
 
         // GET: api/statistics/skipped/patient/{assessmentId}
-        // Returnerar frågor där patienten inte svarat
+        // Returns unanswered questions to help patients complete missing assessment items.
         [HttpGet("skipped/patient/{assessmentId}")]
         public ActionResult<object> GetSkippedByPatient(int assessmentId)
         {
@@ -42,7 +46,7 @@ namespace DLDA.API.Controllers
         }
 
         // GET: api/statistics/summary/{assessmentId}
-        // Returnerar summering av patientens svar i en bedömning
+        // Returns an aggregated summary of patient scores categorized by severity levels within a single assessment.
         [HttpGet("summary/{assessmentId}")]
         public ActionResult<object> GetSingleAssessmentSummary(int assessmentId)
         {
@@ -80,7 +84,7 @@ namespace DLDA.API.Controllers
         }
 
         // GET: api/statistics/summary/patient/{assessmentId}
-        // Returnerar patientens svar som DTO för statistikvisning
+        // Returns patient answers mapped to a DTO optimized for graphical statistics rendering in the frontend.
         [HttpGet("summary/patient/{assessmentId}")]
         public ActionResult<PatientSingleSummaryDto> GetSingleSummary(int assessmentId)
         {
@@ -171,11 +175,11 @@ namespace DLDA.API.Controllers
 
 
         // --------------------------
-        // [STAFF] – Matchning och jämförelse
+        // [STAFF] – Alignment & Comparison
         // --------------------------
 
         // GET: api/statistics/match/{assessmentId}
-        // Returnerar antal och procentuell matchning mellan patient och personal
+        // Returns the numerical count and percentage alignment between patient and staff evaluations.
         [HttpGet("match/{assessmentId}")]
         public ActionResult<object> GetMatchStatistics(int assessmentId)
         {
@@ -200,7 +204,7 @@ namespace DLDA.API.Controllers
         }
 
         // GET: api/statistics/comparison-table-staff/{assessmentId}
-        // Returnerar rad-för-rad jämförelse mellan patient och personal
+        // Returns a row-by-row comparison matrix classifying score variances between patient and staff perspectives.
         [HttpGet("comparison-table-staff/{assessmentId}")]
         public ActionResult<List<StaffComparisonRowDto>> GetAssessmentComparisonForStaff(int assessmentId)
         {
@@ -253,7 +257,7 @@ namespace DLDA.API.Controllers
         }
 
         /// <summary>
-        /// Jämför två personalbedömningar och returnerar förbättringar, försämringar, flaggade och obesvarade frågor.
+        /// Compares two staff assessments and categorizes shifts into improvements, regressions, flags, and skips.
         /// </summary>
         [HttpGet("staff-compare-assessments/{firstId}/{secondId}")]
         public ActionResult<StaffChangeOverviewDto> CompareStaffAssessments(int firstId, int secondId)
@@ -337,7 +341,7 @@ namespace DLDA.API.Controllers
         }
 
         /// <summary>
-        /// Jämför två patientbedömningar och returnerar förändringar i patientens egna svar över tid (för vårdgivaren).
+        /// Compares two patient assessments over time to track trajectory changes from a clinical monitoring viewpoint.
         /// </summary>
         [HttpGet("compare-patient-answers-for-staff/{firstId}/{secondId}")]
         public ActionResult<PatientChangeOverviewForStaffDto> ComparePatientAnswersForStaff(int firstId, int secondId)

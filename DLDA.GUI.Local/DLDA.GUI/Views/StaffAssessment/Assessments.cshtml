@@ -1,8 +1,18 @@
 ﻿@using DLDA.GUI.DTOs.Assessment
 @model List<AssessmentDto>
 
+@*
+/// <summary>
+/// Staff-facing dashboard for managing a specific patient's assessments.
+/// Facilitates the clinical workflow by allowing staff to track assessment statuses, 
+/// resume ongoing evaluations, and generate longitudinal comparisons to monitor patient progress over time.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Bedömningar för patient";
+    
+    // Longitudinal comparison requires fully finalized data points to ensure clinical accuracy.
     var completed = Model
         .Where(m => m.IsStaffComplete)
         .OrderBy(m => m.CreatedAt)
@@ -19,6 +29,8 @@
     <h3 class="mb-4">Bedömningar för patient</h3>
     <p><strong>👤 Användare:</strong> @ViewBag.Username (ID: @ViewBag.UserId)</p>
 
+    <!-- Longitudinal comparison is a core feature for psychiatric follow-ups. 
+         It requires at least two finalized staff assessments to establish a timeline and calculate variations. -->
     @if (completedStaffCount >= 2)
     {
         <form asp-controller="StaffStatistics" asp-action="Compare" method="post" class="row g-2 mb-4 align-items-end" onsubmit="return validateDates()">
@@ -90,12 +102,17 @@
                         <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
                         <td>@item.ScaleType</td>
                         <td>
+                            <!-- The DLDA framework relies on dual-perspective evaluation. 
+                                 We track the completion status of the patient's self-assessment 
+                                 and the staff's clinical observation independently. -->
                             <div><strong>Patient:</strong> @(item.IsComplete ? "Klar" : "Pågående")</div>
                             <div><strong>Personal:</strong> @(item.IsStaffComplete ? "Klar" : "Pågående")</div>
                         </td>
                         <td class="d-flex flex-wrap gap-2">
                             @if (!item.IsStaffComplete)
                             {
+                                <!-- Staff members often need to pause their evaluation. Tracking the 'AnsweredCount' 
+                                     enables seamless resume functionality, preventing data loss during lengthy assessments. -->
                                 var quizStarted = item.AnsweredCount > 0;
                                 var quizLabel = quizStarted ? "⏩ Fortsätt quiz" : "▶ Starta quiz";
                                 var quizClass = quizStarted ? "btn-continue" : "btn-start";
@@ -124,6 +141,8 @@
                                 </a>
                             }
 
+                            <!-- Cross-comparison statistics (Patient vs. Staff) can only be generated 
+                                 once both parties have firmly committed their finalized answers. -->
                             @if (item.IsComplete && item.IsStaffComplete)
                             {
                                 <a class="btn btn-sm btn-statistik"

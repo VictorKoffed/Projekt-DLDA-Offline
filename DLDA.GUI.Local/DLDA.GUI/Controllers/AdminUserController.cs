@@ -4,7 +4,8 @@ using DLDA.GUI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Controller för att administrera användare (CRUD).
+/// Manages administrative user account lifecycle workflows (CRUD operations), 
+/// securing access exclusively for users holding administrator security clearance.
 /// </summary>
 [RoleAuthorize("admin")]
 public class AdminUserController : Controller
@@ -12,15 +13,16 @@ public class AdminUserController : Controller
     private readonly UserAdminService _service;
 
     /// <summary>
-    /// Skapar en instans av AdminUserController.
+    /// Initializes a new instance of the <see cref="AdminUserController"/> class.
     /// </summary>
+    /// <param name="service">The administrative service handling user repository operations.</param>
     public AdminUserController(UserAdminService service)
     {
         _service = service;
     }
 
     /// <summary>
-    /// Visar en lista med alla användare.
+    /// Renders an index listing of all registered system user accounts.
     /// </summary>
     public async Task<IActionResult> Index()
     {
@@ -29,12 +31,12 @@ public class AdminUserController : Controller
     }
 
     /// <summary>
-    /// Visar formulär för att skapa ny användare.
+    /// Renders the form view for provisioning a new user account profile.
     /// </summary>
     public IActionResult Create() => View(new UserDto());
 
     /// <summary>
-    /// Skapar en ny användare.
+    /// Processes submission data to create and register a new user account within the system repository.
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Create(UserDto user)
@@ -49,7 +51,7 @@ public class AdminUserController : Controller
     }
 
     /// <summary>
-    /// Visar redigeringsformulär för angiven användare.
+    /// Renders the modification form view populated with existing profile data for a specific target user.
     /// </summary>
     public async Task<IActionResult> Edit(int id)
     {
@@ -64,7 +66,7 @@ public class AdminUserController : Controller
     }
 
     /// <summary>
-    /// Uppdaterar en användare.
+    /// Validates route identity parameters against payload identifiers and commits profile updates for the user.
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Edit(int id, UserDto user)
@@ -80,7 +82,7 @@ public class AdminUserController : Controller
     }
 
     /// <summary>
-    /// Visar bekräftelse för att ta bort en användare.
+    /// Renders the confirmation view prior to permanently removing a user account.
     /// </summary>
     [HttpGet]
     public async Task<IActionResult> Delete(int id)
@@ -96,7 +98,7 @@ public class AdminUserController : Controller
     }
 
     /// <summary>
-    /// Tar bort användaren permanent.
+    /// Executes the permanent removal of the specified user account upon administrative confirmation.
     /// </summary>
     [HttpPost]
     [ValidateAntiForgeryToken]

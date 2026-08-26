@@ -4,6 +4,10 @@ using DLDA.API.DTOs;
 using DLDA.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Manages questionnaire templates, administrative CRUD operations for assessment questions,
+/// and sequential quiz flows for both patients and clinical staff.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class QuestionController : ControllerBase
@@ -16,11 +20,11 @@ public class QuestionController : ControllerBase
     }
 
     // --------------------------
-    // [ADMIN] – Hantera frågedefinitioner
+    // [ADMIN] – Question Definition Management
     // --------------------------
 
     // GET: api/Question
-    /// <summary>Hämtar alla frågor från databasen.</summary>
+    /// <summary>Retrieves all questions from the database.</summary>
     [HttpGet]
     public ActionResult<IEnumerable<QuestionDto>> GetQuestions()
     {
@@ -35,7 +39,7 @@ public class QuestionController : ControllerBase
     }
 
     // GET: api/Question/category/{category}
-    /// <summary>Hämtar alla frågor i en viss kategori.</summary>
+    /// <summary>Retrieves all questions belonging to a specific category.</summary>
     [HttpGet("category/{category}")]
     public ActionResult<IEnumerable<QuestionDto>> GetQuestionsByCategory(string category)
     {
@@ -58,7 +62,7 @@ public class QuestionController : ControllerBase
     }
 
     // GET: api/Question/5
-    /// <summary>Hämtar en specifik fråga utifrån ID.</summary>
+    /// <summary>Retrieves a specific question by its unique identifier.</summary>
     [HttpGet("{id}")]
     public ActionResult<QuestionDto> GetQuestion(int id)
     {
@@ -75,7 +79,7 @@ public class QuestionController : ControllerBase
     }
 
     // POST: api/Question
-    /// <summary>Skapar en ny fråga.</summary>
+    /// <summary>Creates a new assessment question template.</summary>
     [HttpPost]
     public IActionResult CreateQuestion(QuestionDto dto)
     {
@@ -92,7 +96,7 @@ public class QuestionController : ControllerBase
     }
 
     // PUT: api/Question/5
-    /// <summary>Uppdaterar en befintlig fråga.</summary>
+    /// <summary>Updates an existing question definition.</summary>
     [HttpPut("{id}")]
     public IActionResult UpdateQuestion(int id, QuestionDto dto)
     {
@@ -109,7 +113,7 @@ public class QuestionController : ControllerBase
     }
 
     // DELETE: api/Question/5
-    /// <summary>Raderar en fråga från databasen.</summary>
+    /// <summary>Deletes a question definition from the database.</summary>
     [HttpDelete("{id}")]
     public IActionResult DeleteQuestion(int id)
     {
@@ -126,12 +130,11 @@ public class QuestionController : ControllerBase
     // --------------------------
 
     // GET: api/Question/quiz/patient/next/{assessmentId}
-    /// <summary>Hämtar nästa obesvarade fråga för patienten.</summary>
-    // GET: api/Question/quiz/patient/next/{assessmentId}
+    /// <summary>Retrieves the next unanswered and unskipped question for the patient wizard.</summary>
     [HttpGet("quiz/patient/next/{assessmentId}")]
     public async Task<ActionResult<QuestionDto>> GetNextUnansweredQuestion(int assessmentId)
     {
-        // 1. Försök hitta obesvarad och inte överhoppad
+        // 1. Attempt to locate the next item that has neither been answered nor intentionally skipped by the patient
         var item = await _context.AssessmentItems
             .Include(ai => ai.Question)
             .Where(ai =>
@@ -141,7 +144,7 @@ public class QuestionController : ControllerBase
             .OrderBy(ai => ai.Order)
             .FirstOrDefaultAsync();
 
-        // 2. Om alla obesvarade är skippade – då är vi klara
+        // 2. If all remaining items are either completed or skipped, the questionnaire sequence is finished for the user
         if (item == null)
         {
             return NotFound(new { message = "Alla frågor är besvarade eller överhoppade." });
@@ -162,7 +165,7 @@ public class QuestionController : ControllerBase
             Total = total,
             ScaleType = assessment?.ScaleType ?? "Numerisk",
 
-            // Lägg till tidigare patientdata om den finns
+            // Include previously persisted patient response context if available for pre-population
             PatientAnswer = item.PatientAnswer,
             PatientComment = item.PatientComment
         });
@@ -172,7 +175,7 @@ public class QuestionController : ControllerBase
 
 
     // POST: api/Question/quiz/patient/submit
-    /// <summary>Sparar patientens svar och kommentar på en fråga.</summary>
+    /// <summary>Saves the patient's score and optional commentary for a specific questionnaire item.</summary>
     [HttpPost("quiz/patient/submit")]
     public IActionResult SubmitPatientAnswer([FromBody] SubmitAnswerDto dto)
     {
@@ -188,7 +191,7 @@ public class QuestionController : ControllerBase
     }
 
     // POST: api/Question/quiz/patient/skip
-    /// <summary>Markerar att patienten hoppat över en fråga.</summary>
+    /// <summary>Marks an assessment item as skipped by the patient.</summary>
     [HttpPost("quiz/patient/skip")]
     public IActionResult SkipPatientQuestion([FromBody] SkipQuestionDto dto)
     {
@@ -205,7 +208,7 @@ public class QuestionController : ControllerBase
 
 
     // GET: api/Question/quiz/patient/progress/{assessmentId}/{questionId}
-    /// <summary>Visar vilken fråga patienten är på i bedömningen.</summary>
+    /// <summary>Returns the current step index and progress metrics for the patient wizard.</summary>
     [HttpGet("quiz/patient/progress/{assessmentId}/{questionId}")]
     public IActionResult GetPatientQuestionProgress(int assessmentId, int questionId)
     {
@@ -271,7 +274,7 @@ public class QuestionController : ControllerBase
     // --------------------------
 
     // GET: api/Question/quiz/staff/next/{assessmentId}
-    /// <summary>Hämtar nästa obesvarade fråga för personalen.</summary>
+    /// <summary>Retrieves the next unanswered question for the healthcare professional's review wizard.</summary>
     [HttpGet("quiz/staff/next/{assessmentId}")]
     public async Task<ActionResult<StaffQuestionDto>> GetNextUnansweredStaffQuestion(int assessmentId)
     {
@@ -324,7 +327,7 @@ public class QuestionController : ControllerBase
 
 
     // GET: api/Question/quiz/staff/previous/{assessmentId}/{currentOrder}
-    /// <summary>Hämtar föregående fråga för personalen.</summary>
+    /// <summary>Retrieves the previous assessment item for clinical review navigation.</summary>
     [HttpGet("quiz/staff/previous/{assessmentId}/{currentOrder}")]
     public async Task<ActionResult<StaffQuestionDto>> GetPreviousStaffQuestion(int assessmentId, int currentOrder)
     {
@@ -365,7 +368,7 @@ public class QuestionController : ControllerBase
 
 
     // POST: api/Question/quiz/staff/submit
-    /// <summary>Sparar personalsvar, kommentar och eventuell flagga.</summary>
+    /// <summary>Saves the staff evaluation response, clinical commentary, and risk flags for an item.</summary>
     [HttpPost("quiz/staff/submit")]
     public IActionResult SubmitStaffAnswer([FromBody] SubmitStaffAnswerDto dto)
     {
@@ -377,12 +380,12 @@ public class QuestionController : ControllerBase
         item.Flag = dto.Flag ?? false;
         item.AnsweredAt = DateTime.UtcNow;
 
-        // 🔽 Hämta bedömnings-ID för vidare kontroll
+        // 🔽 Extract assessment ID for subsequent aggregate completion checks
         var assessmentId = item.AssessmentID;
 
         _context.SaveChanges();
 
-        // 🔍 Kontrollera om alla frågor är besvarade – men markera inte som klar automatiskt
+        // 🔍 Verify if all questions have been addressed by staff – keeping finalization strictly manual via explicit sign-off
         var allAnswered = _context.AssessmentItems
             .Where(i => i.AssessmentID == assessmentId)
             .All(i => i.StaffAnswer.HasValue);
@@ -396,7 +399,7 @@ public class QuestionController : ControllerBase
     }
 
     // GET: api/Question/quiz/staff/progress/{assessmentId}/{questionId}
-    /// <summary>Visar vilken fråga personalen är på samt patientens svar och flagga.</summary>
+    /// <summary>Returns the current step index and clinical comparison metrics for the staff wizard.</summary>
     [HttpGet("quiz/staff/progress/{assessmentId}/{questionId}")]
     public IActionResult GetStaffQuestionProgress(int assessmentId, int questionId)
     {

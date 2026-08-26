@@ -1,6 +1,16 @@
 ﻿@using System.Text.Json
 @using DLDA.GUI.DTOs.Patient
 @model PatientSingleSummaryDto
+
+@*
+/// <summary>
+/// Patient-facing summary view for a single self-assessment.
+/// This view applies a strengths-based approach by explicitly highlighting areas 
+/// with low scores (0-1, indicating few or no problems). This is a deliberate clinical design choice 
+/// to encourage patient engagement and provide a balanced, positive perspective on their current state.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Egenbedömning – sammanställning";
     ViewData["BodyId"] = "patient-summary-single";
@@ -22,7 +32,6 @@
 
 <div id="pdf-content" class="container mt-4">
 
-    <!-- Navigering och PDF-knapp -->
     <div class="d-flex justify-content-between align-items-start mb-3 no-print">
         <a class="btn btn-secondary mt-2" asp-controller="PatientAssessment" asp-action="Index">
             ⬅ Tillbaka till mina bedömningar
@@ -48,6 +57,9 @@
                 <li><strong>@hoppadeÖver</strong> frågor <span class="text-muted">hoppades över</span>.</li>
             </ul>
 
+            <!-- Automated feedback uses predefined percentage thresholds (70% and 40%) 
+                 of problem-free areas to ensure the patient receives proportionate, 
+                 context-sensitive clinical encouragement. -->
             <div class="mt-3">
                 @if (utanProblem == 0 && måttligtProblem == 0 && hoppadeÖver > 0)
                 {
@@ -82,7 +94,6 @@
         </div>
     </div>
 
-    <!-- Sekundär navigering -->
     <div class="mt-5 no-print">
         <a class="btn btn-secondary" asp-controller="PatientAssessment" asp-action="Index">
             ⬅ Tillbaka till mina bedömningar
@@ -97,7 +108,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const labels = ['Utan problem (0–1)', 'Måttligt problem (2)', 'Hoppad över'];
             const data = [@utanProblem, @måttligtProblem, @hoppadeÖver];
-            renderPatientSinglePieChart(labels, data); // Funktionen finns i site.js
+            renderPatientSinglePieChart(labels, data);
         });
     </script>
 }

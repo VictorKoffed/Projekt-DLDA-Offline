@@ -1,8 +1,9 @@
-﻿
-// Returneras av API:t efter lyckad inloggning.
-
-namespace DLDA.API.DTOs
+﻿namespace DLDA.API.DTOs
 {
+    /// <summary>
+    /// Represents the response payload returned by the authentication API upon successful user verification,
+    /// supplying essential identity context and role authorizations required for client session management.
+    /// </summary>
     public class AuthResponseDto
     {
         public int UserID { get; set; }

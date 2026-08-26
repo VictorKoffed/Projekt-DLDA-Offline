@@ -1,13 +1,32 @@
 ﻿@model DLDA.GUI.DTOs.Question.Question
 
+@*
+/// <summary>
+/// Mobile-optimized view for patients answering a single assessment question.
+/// The layout is specifically constrained to handle touch targets, vertical scrolling, and limited screen real estate, 
+/// prioritizing accessibility and reducing cognitive load for psychiatric patients using mobile devices.
+/// </summary>
+*@
+
 @{
+    // The assessment ID is retrieved from the ViewBag because this view operates on an item *within* an assessment,
+    // and the Question DTO only possesses the ItemID.
     var assessmentId = ViewBag.AssessmentId as int? ?? 0;
+    
+    // Fallback to "numerisk" ensures the view won't crash if the scale type is missing from the DTO.
     var scaleType = (Model.ScaleType ?? "Numerisk").ToLower();
+    
+    // Defines which image assets to load based on the user's selected scale.
     var prefix = scaleType == "smiley" ? "Smiley" : "Number";
+    
     var current = Model.Order + 1;
     var total = ViewBag.TotalQuestions as int? ?? 0;
+    
+    // Calculates completion percentage for the visual progress bar. Guards against division by zero.
     var progressPercent = total > 0 ? (int)((double)current / total * 100) : 0;
 
+    // Maps the numeric value (0-4) to its clinical description based on the WHO ICF classification.
+    // Encapsulating this locally keeps the view logic self-contained.
     string GetLabel(int value) => value switch
     {
         0 => "Inget problem",
@@ -19,11 +38,14 @@
     };
 }
 
+<!-- The asp-append-version="true" attribute ensures automatic cache-busting, guaranteeing 
+     mobile clients always receive the latest stylesheet immediately after deployments. -->
 <link rel="stylesheet" href="~/css/PatientQuestion.Mobile.css" asp-append-version="true" />
 
 <div class="container px-3 mt-3 text-center">
 
-    <!-- Progressbar -->
+    <!-- Progressbar: A critical UX element that provides immediate visual feedback 
+         regarding the patient's position in the assessment, helping to mitigate survey fatigue. -->
     <div class="mb-3">
         <small class="text-muted">Fråga @current av @total</small>
         <div class="progress" style="height: 8px;">
@@ -31,15 +53,16 @@
         </div>
     </div>
 
-    <!-- Frågetext + introduktion -->
+    <!-- Question Context Box -->
     <div class="rounded bg-light p-3 border border-2 border-primary mb-3 text-start">
         <small class="text-muted">Fråga @current</small>
         <p class="fw-semibold mt-2 mb-1">Hur bedömer du din:</p>
         <h5 class="question-title">@Model.QuestionText</h5>
     </div>
 
-    <!-- Svarsalternativ -->
+    <!-- The primary form for submitting the answer. Uses POST to safely mutate state on the server. -->
     <form asp-action="SubmitAnswer" method="post">
+        <!-- Hidden inputs bind the item and assessment IDs back to the controller, maintaining session context. -->
         <input type="hidden" name="itemId" value="@Model.AssessmentItemID" />
         <input type="hidden" name="assessmentId" value="@assessmentId" />
 
@@ -49,6 +72,9 @@
                 var inputId = $"mobile-a{i}";
                 var imagePath = Url.Content($"~/Images/{prefix} {i}.png");
 
+                <!-- Mobile optimization: The radio button is hidden (btn-check), and the label is expanded 
+                     to 100% width (w-100) with a minimum height (min-height: 60px) to create a massive, 
+                     fat-finger-friendly touch target. -->
                 <div>
                     <input class="btn-check" type="radio" name="answer" id="@inputId" value="@i"
                            @(Model.PatientAnswer == i ? "checked" : "") required />
@@ -61,17 +87,19 @@
             }
         </div>
 
-        <!-- Nästa-knapp -->
+        <!-- Next Button: Isolated at the bottom of the form as the primary call to action. -->
         <div class="d-grid mb-4">
             <button type="submit" class="btn btn-next-main">💾 Nästa fråga</button>
         </div>
 
-        <!-- Kommentar -->
+        <!-- Comment block included INSIDE the form for mobile, 
+             ensuring the comment is submitted simultaneously with the primary answer payload. -->
         <div class="mb-3">
             <textarea class="form-control" name="comment" rows="2" placeholder="Kommentar (frivilligt)">@Model.PatientComment</textarea>
         </div>
 
-        <!-- Informationsknapp med kollapsbar text -->
+        <!-- Collapsible Info Box: Hidden by default on mobile to conserve extreme vertical space, 
+             but available via a toggle for patients who need reassurance. -->
         <div class="mb-3 text-start">
             <button class="btn btn-outline-info w-100" type="button" data-bs-toggle="collapse" data-bs-target="#patientInfo">
                 ℹ️ Visa information om frågorna
@@ -87,14 +115,14 @@
         </div>
     </form>
 
-    <!-- Knapprad -->
+    <!-- Secondary Action Grid -->
     <div class="container">
-
-        <!-- Höger sida: Föregående + Hoppa över -->
+        <!-- Right side (visually): Previous & Skip. Wrapped in distinct forms to bypass the 'required' validation on the main answer form. -->
         <div class="row mb-3 justify-content-end text-end">
             <div class="col-12 col-sm-6">
                 <form asp-action="Previous" method="post">
                     <input type="hidden" name="assessmentId" value="@assessmentId" />
+                    <!-- Passing the current order ensures the backend can traverse backwards correctly even if the patient skipped previous questions. -->
                     <input type="hidden" name="currentOrder" value="@Model.Order" />
                     <button type="submit" class="btn btn-outline-secondary w-100 mb-2">⬅ Föregående</button>
                 </form>
@@ -107,7 +135,7 @@
             </div>
         </div>
 
-        <!-- Vänster sida: Pausa + Skattningsskala -->
+        <!-- Left side (visually): Pause & Scale change -->
         <div class="row text-start">
             <div class="col-12 col-sm-6">
                 <form asp-action="Pause" method="post">
@@ -115,6 +143,7 @@
                     <button type="submit" class="btn btn-pause w-100 mb-2">⏸ Pausa</button>
                 </form>
 
+                <!-- Changing the scale is state-neutral regarding the current answer, so a GET request is semantically appropriate. -->
                 <form asp-action="ScaleSelect" asp-route-id="@assessmentId" method="get">
                     <button type="submit" class="btn btn-outline-info w-100">🔁 Byt skattningsskala</button>
                 </form>

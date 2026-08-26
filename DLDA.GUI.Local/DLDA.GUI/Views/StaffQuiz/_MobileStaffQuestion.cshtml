@@ -1,5 +1,14 @@
 ﻿@model DLDA.GUI.DTOs.Staff.StaffQuestionDto
 
+@*
+/// <summary>
+/// Mobile-optimized view for staff conducting the DLDA clinical assessment.
+/// Prioritizes a vertically stacked layout with high-contrast, thumb-friendly touch targets.
+/// Patient input is hidden behind a collapsible toggle by default to reduce cognitive load and screen clutter, 
+/// allowing staff to evaluate independently before comparing perspectives.
+/// </summary>
+*@
+
 @{
     var current = Model.Order + 1;
     var total = ViewBag.TotalQuestions as int? ?? 0;
@@ -20,7 +29,6 @@
 
 <div class="container px-3 mt-3 text-center">
 
-    <!-- Progressbar -->
     <div class="mb-3">
         <small class="text-muted">Fråga @current av @total</small>
         <div class="progress" style="height: 8px;">
@@ -28,26 +36,25 @@
         </div>
     </div>
 
-    <!-- Frågetext + introduktion -->
     <div class="rounded bg-light p-3 border border-2 border-primary mb-3 text-start">
         <small class="text-muted">Fråga @current</small>
         <p class="fw-semibold mt-2 mb-1">Hur bedömer du patientens:</p>
         <h5 class="fw-bold text-primary">@Model.QuestionText</h5>
     </div>
 
-    <!-- Formulär: SubmitAnswer -->
     <form asp-action="SubmitAnswer" method="post">
         <input type="hidden" name="itemId" value="@Model.ItemID" />
         <input type="hidden" name="assessmentId" value="@Model.AssessmentID" />
         <input type="hidden" name="userId" value="@Model.UserID" />
 
-        <!-- Svarsalternativ -->
         <div class="d-grid gap-2 mb-3">
             @for (int i = 0; i <= 4; i++)
             {
                 var inputId = $"staff-a{i}";
                 var imagePath = Url.Content($"~/Images/Number {i}.png");
 
+                <!-- Visually hidden radio inputs styled as large buttons maximize the touch target area, 
+                     a critical accessibility requirement for mobile clinical usage. -->
                 <div>
                     <input class="btn-check" type="radio" name="answer" id="@inputId" value="@i"
                            @(Model.StaffAnswer == i ? "checked" : "") required />
@@ -60,12 +67,12 @@
             }
         </div>
 
-        <!-- Nästa-knapp -->
         <div class="d-grid mb-4">
             <button type="submit" class="btn btn-primary btn-lg">💾 Nästa</button>
         </div>
 
-        <!-- Flagga -->
+        <!-- The flag mechanism explicitly bookmarks specific domains for the post-assessment dialogue, 
+             ensuring critical needs are addressed during the patient-clinician review. -->
         <div class="form-check mb-3 text-start">
             <input class="form-check-input" type="checkbox" name="flag" id="flag" value="true"
                    @(Model.Flag ? "checked" : "") />
@@ -74,13 +81,11 @@
             </label>
         </div>
 
-        <!-- Kommentar -->
         <div class="mb-3 text-start">
             <label class="form-label">Kommentar (frivilligt)</label>
             <textarea class="form-control" name="comment" rows="2">@Model.StaffComment</textarea>
         </div>
 
-        <!-- Visa patientens svar-knapp -->
         @if (!string.IsNullOrWhiteSpace(Model.PatientName))
         {
             <div class="mb-3">
@@ -120,10 +125,10 @@
         }
     </form>
 
-    <!-- Övriga knappar -->
     <div class="container">
 
-        <!-- Höger sida: Föregående + Hoppa över -->
+        <!-- Independent state-preservation routes (Skip/Pause/Previous) ensure assessment progress 
+             is maintained without data corruption if the clinical session is abruptly halted. -->
         <div class="row mb-3 justify-content-end text-end">
             <div class="col-12 col-sm-6">
                 <form asp-action="Previous" method="post">
@@ -144,7 +149,6 @@
             </div>
         </div>
 
-        <!-- Vänster sida: Pausa -->
         <div class="row text-start">
             <div class="col-12 col-sm-6">
                 <form asp-action="Pause" method="post">

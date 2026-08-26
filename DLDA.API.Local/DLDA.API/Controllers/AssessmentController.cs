@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
 
+/// <summary>
+/// Manages the lifecycle, creation, retrieval, and updates of psychiatric assessments (DLDA).
+/// Coordinates data handling between patients and healthcare professionals while enforcing structural consistency.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AssessmentController : ControllerBase
@@ -17,17 +21,17 @@ public class AssessmentController : ControllerBase
     }
 
     // --------------------------
-    // [PATIENT] – Endast åtkomst till egna bedömningar
+    // [PATIENT] – Restricted access to personal assessments only
     // --------------------------
 
     // GET: api/Assessment/user/{userId}
-    // Returnerar alla bedömningar som tillhör en specifik användare + om den påbörjats
+    // Returns all assessments belonging to a specific user, including progress metrics for UI rendering.
     [HttpGet("user/{userId}")]
     public async Task<ActionResult<IEnumerable<AssessmentDto>>> GetAssessmentsForUser(int userId)
     {
         return await _context.Assessments
             .Where(a => a.UserId == userId)
-            .Include(a => a.AssessmentItems) // 👈 Behövs för att kunna kontrollera svar
+            .Include(a => a.AssessmentItems) // 👈 Required to evaluate ongoing answers and completion status per item
             .OrderByDescending(a => a.CreatedAt)
             .Select(a => new AssessmentDto
             {
@@ -45,7 +49,7 @@ public class AssessmentController : ControllerBase
     }
 
     // GET: api/Assessment/{id}
-    // Returnerar en specifik bedömning – kontroll av ägarskap måste ske i frontend/backend
+    // Retrieves a specific assessment – ownership validation must be handled upstream in the client/gateway layer.
     [HttpGet("{id}")]
     public async Task<ActionResult<AssessmentDto>> GetAssessment(int id)
     {
@@ -63,7 +67,7 @@ public class AssessmentController : ControllerBase
     }
 
     /// <summary>
-    /// Returnerar totalt antal frågor i en bedömning baserat på max(Order).
+    /// Calculates the total number of questions in an assessment based on the maximum order index.
     /// </summary>
     [HttpGet("{id}/question-count")]
     public async Task<ActionResult<int>> GetQuestionCount(int id)
@@ -79,11 +83,11 @@ public class AssessmentController : ControllerBase
     }
 
     // --------------------------
-    // [PERSONAL] – Full åtkomst till alla bedömningar
+    // [STAFF] – Full administrative access to all assessments
     // --------------------------
 
     // POST: api/Assessment
-    // Skapar en ny bedömning och kopplar alla aktiva frågor som AssessmentItems
+    // Instantiates a new assessment container and maps all currently active template questions as assessment items.
     [HttpPost]
     public async Task<ActionResult<AssessmentDto>> CreateAssessment(AssessmentDto dto)
     {
@@ -101,7 +105,7 @@ public class AssessmentController : ControllerBase
             };
 
             _context.Assessments.Add(assessment);
-            await _context.SaveChangesAsync(); // ✅ Här skapas ID:t
+            await _context.SaveChangesAsync(); // ✅ Persists immediately to generate the primary key ID required for child relations
 
             Console.WriteLine($"[INFO] Assessment sparad med ID={assessment.AssessmentID}");
 
@@ -128,7 +132,7 @@ public class AssessmentController : ControllerBase
                     PatientAnswer = null,
                     StaffAnswer = null,
                     Flag = false,
-                    SkippedByPatient = false, // ✅ Nytt fält
+                    SkippedByPatient = false, // ✅ Tracks explicit user skips separately from unanswered states
                     AnsweredAt = null,
                     Order = index++
                 };
@@ -163,7 +167,7 @@ public class AssessmentController : ControllerBase
     }
 
     // GET: api/Assessment
-    // Returnerar samtliga bedömningar i systemet (för personal/admin)
+    // Returns all system assessments for clinical oversight and auditing.
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AssessmentDto>>> GetAssessments()
     {
@@ -180,7 +184,7 @@ public class AssessmentController : ControllerBase
     }
 
     // GET: api/Assessment/search
-    // Söker patienter via namn och returnerar deras bedömningar
+    // Filters and returns patient assessments matching a given partial username query string.
     [HttpGet("search")]
     public async Task<ActionResult<IEnumerable<object>>> SearchAssessmentsByPatientName([FromQuery] string name)
     {
@@ -205,10 +209,8 @@ public class AssessmentController : ControllerBase
         return Ok(results);
     }
 
-
-
     // PUT: api/Assessment/{id}
-    // Uppdaterar en befintlig bedömning (endast för personal)
+    // Updates metadata for an existing assessment container.
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateAssessment(int id, AssessmentDto dto)
     {
@@ -226,7 +228,7 @@ public class AssessmentController : ControllerBase
     }
 
     // DELETE: api/Assessment/{id}
-    // Tar bort en bedömning (endast för personal/admin)
+    // Deletes an assessment entity and its cascaded relational items.
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteAssessment(int id)
     {
@@ -241,15 +243,15 @@ public class AssessmentController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            // Om raden redan är borta, behandla det som "OK"
-            return NoContent(); // eller: return NotFound();
+            // If the record was already deleted concurrently, treat it as a successful omission to maintain idempotency
+            return NoContent();
         }
 
         return NoContent();
     }
 
     // POST: /StaffAssessment/Unlock
-    // låser upp en redan avklarad bedömning
+    // Reverts the completion lock on an assessment to allow modifications by clinical staff.
     [HttpPost("unlock/{assessmentId}")]
     public IActionResult UnlockAssessment(int assessmentId)
     {
@@ -262,6 +264,4 @@ public class AssessmentController : ControllerBase
 
         return Ok();
     }
-
-
 }

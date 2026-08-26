@@ -3,7 +3,8 @@ using DLDA.GUI.DTOs.Question;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Admincontroller för att hantera skapande, redigering och borttagning av frågor.
+/// Manages administrative question catalog workflows, including creation, modification, 
+/// and archival operations, secured exclusively for administrator security roles.
 /// </summary>
 [RoleAuthorize("admin")]
 public class AdminQuestionController : Controller
@@ -11,15 +12,16 @@ public class AdminQuestionController : Controller
     private readonly QuestionAdminService _service;
 
     /// <summary>
-    /// Konstruktor som injicerar QuestionAdminService.
+    /// Initializes a new instance of the <see cref="AdminQuestionController"/> class.
     /// </summary>
+    /// <param name="service">The administrative service handling question repository operations.</param>
     public AdminQuestionController(QuestionAdminService service)
     {
         _service = service;
     }
 
     /// <summary>
-    /// Visar en lista av alla frågor.
+    /// Renders an index listing of all master questionnaire catalog items.
     /// </summary>
     public async Task<IActionResult> Index()
     {
@@ -28,12 +30,12 @@ public class AdminQuestionController : Controller
     }
 
     /// <summary>
-    /// Visar vyn för att skapa en ny fråga.
+    /// Renders the creation form view for defining a new question template.
     /// </summary>
     public IActionResult Create() => View("Create", new Question());
 
     /// <summary>
-    /// Skapar en ny fråga.
+    /// Processes submission data to create and persist a new question definition in the catalog.
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Create(Question dto)
@@ -48,7 +50,7 @@ public class AdminQuestionController : Controller
     }
 
     /// <summary>
-    /// Visar redigeringsvyn för en viss fråga.
+    /// Renders the modification form view populated with existing properties for a specific target question.
     /// </summary>
     public async Task<IActionResult> Edit(int id)
     {
@@ -63,7 +65,7 @@ public class AdminQuestionController : Controller
     }
 
     /// <summary>
-    /// Uppdaterar en fråga.
+    /// Validates route integrity against payload identifiers and commits updates to an existing question definition.
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> Edit(int id, Question dto)
@@ -79,7 +81,7 @@ public class AdminQuestionController : Controller
     }
 
     /// <summary>
-    /// Visar bekräftelsesidan för borttagning av en fråga.
+    /// Renders the confirmation view prior to permanently removing or deactivating a question item.
     /// </summary>
     public async Task<IActionResult> Delete(int id)
     {
@@ -94,7 +96,7 @@ public class AdminQuestionController : Controller
     }
 
     /// <summary>
-    /// Bekräftar och tar bort frågan.
+    /// Executes the removal or deactivation of the specified question definition upon administrative confirmation.
     /// </summary>
     [HttpPost]
     public async Task<IActionResult> DeleteConfirmed(int id)

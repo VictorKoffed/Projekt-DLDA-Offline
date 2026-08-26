@@ -4,21 +4,30 @@
     ViewData["Title"] = "Logga in";
 }
 
+@*
+/// <summary>
+/// Primary authentication gateway for the DLDA application.
+/// The UI is designed to be highly accessible, responsive, and distraction-free, 
+/// as it serves both healthcare professionals and psychiatric patients. 
+/// It relies on ASP.NET Core Tag Helpers for seamless model binding and immediate validation feedback.
+/// </summary>
+*@
+
 <link rel="stylesheet" href="~/css/Account.css" />
 
 <div class="login-container">
     <div class="login-box">
-        <!-- Avatar-ikon -->
+        <!-- Avatar Icon: Provides a universal visual cue to establish trust and clarify the authentication context, aiding patients with potential cognitive load. -->
         <div class="login-avatar">
             <i class="fas fa-user-circle"></i>
         </div>
 
-        <!-- Rubrik och text -->
+        <!-- Header & Subtitle: Kept intentionally minimalistic to avoid distracting the user from the primary action. -->
         <h2 class="text-center mb-2">DLDA</h2>
         <p class="text-center text-muted mb-4">Logga in med dina uppgifter</p>
 
         <form asp-action="Login" method="post">
-            <!-- användarnamn -->
+            <!-- Username Input: The 'asp-for' tag helper automatically wires up the input name, ID, and validation rules directly from the LoginDto, ensuring UI consistency with backend constraints. -->
             <div class="form-group mb-3">
                 <div class="input-with-icon">
                     <i class="fas fa-user icon-left"></i>
@@ -27,7 +36,7 @@
                 <span asp-validation-for="Username" class="text-danger small"></span>
             </div>
 
-            <!-- Lösenord -->
+            <!-- Password Input: Input type is managed by the tag helper, but explicitly defining type="password" acts as a fallback to ensure cross-browser security masking. -->
             <div class="form-group mb-3">
                 <div class="input-with-icon">
                     <i class="fas fa-lock icon-left"></i>
@@ -36,16 +45,16 @@
                 <span asp-validation-for="Password" class="text-danger small"></span>
             </div>
 
-            <!-- Kom ihåg mig -->
+            <!-- Remember Me: Visual placeholder. Note: In real clinical healthcare applications, persistent sessions must be carefully weighed against strict security and data privacy policies. -->
             <div class="form-check mb-3">
                 <input type="checkbox" class="form-check-input" id="rememberMe" />
                 <label class="form-check-label" for="rememberMe">Kom ihåg mig</label>
             </div>
 
-            <!-- Logga in knapp -->
+            <!-- Login Submission: Utilizes w-100 to ensure the touch-target is large enough for mobile users, enhancing accessibility. -->
             <button type="submit" class="btn btn-primary w-100 mb-3">Logga in </button>
 
-            <!-- Glömt lösenord -->
+            <!-- Forgot Password: Dummy link for prototype completeness. In a production healthcare scenario, this would typically route to a secure centralized identity provider or IT-support flow. -->
             <p class="text-center small">
                 <a href="#">Glömt lösenord?</a>
             </p>

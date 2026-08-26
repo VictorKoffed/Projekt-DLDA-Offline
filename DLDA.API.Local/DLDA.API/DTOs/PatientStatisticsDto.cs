@@ -1,5 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
+    /// <summary>
+    /// Represents statistical data container for a patient assessment, holding sequence timestamps
+    /// and collection items of individual question statistics.
+    /// </summary>
     public class PatientStatisticsDto
     {
         public int AssessmentId { get; set; }
@@ -7,6 +11,9 @@
         public List<PatientAnswerStatsDto> Answers { get; set; } = new();
     }
 
+    /// <summary>
+    /// Represents statistical metrics for a single question response item within a patient statistics report.
+    /// </summary>
     public class PatientAnswerStatsDto
     {
         public int QuestionId { get; set; }
@@ -14,6 +21,10 @@
         public int? Answer { get; set; }
     }
 
+    /// <summary>
+    /// Represents a comparative overview tracking changes in patient responses between two assessment timelines,
+    /// providing computed aggregate shifts and category breakdowns.
+    /// </summary>
     public class PatientChangeOverviewDto
     {
         public List<ImprovementApiDto> Förbättringar { get; set; } = new();
@@ -21,11 +32,11 @@
         public DateTime PreviousDate { get; set; }
         public DateTime CurrentDate { get; set; }
 
-        // 🔄 Automatisk beräkning: hur många färre frågor hoppades över?
+        // 🔄 Automatic computation: calculates the net decrease in skipped questions between sessions
         public int FärreHoppadeFrågor =>
             Förbättringar.Count(f => f.SkippedPrevious) - Förbättringar.Count(f => f.SkippedCurrent);
 
-        // 🔤 Unika kategorier med förbättringar
+        // 🔤 Extracts distinct categories associated with recorded improvements for analytical groupings
         public List<string> FörbättradeKategorier =>
             Förbättringar
                 .Where(f => !string.IsNullOrWhiteSpace(f.Category))
@@ -35,6 +46,9 @@
                 .ToList();
     }
 
+    /// <summary>
+    /// Represents delta metrics for an individual question comparing previous and current evaluation states.
+    /// </summary>
     public class ImprovementDto
     {
         public string? Question { get; set; } = string.Empty;
@@ -44,11 +58,14 @@
         public string? Category { get; set; } = string.Empty;
         public int QuestionId { get; set; }
 
-        // 🔍 Hoppade över-data
+        // 🔍 Tracks skip state flags across temporal evaluation comparisons
         public bool SkippedPrevious { get; set; }
         public bool SkippedCurrent { get; set; }
     }
 
+    /// <summary>
+    /// Represents an API-optimized data transfer object for tracking score differences and progress shifts between assessments.
+    /// </summary>
     public class ImprovementApiDto
     {
         public string Question { get; set; } = string.Empty;

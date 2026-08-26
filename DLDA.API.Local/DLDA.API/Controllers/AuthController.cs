@@ -6,6 +6,10 @@ using BCrypt.Net;
 
 namespace DLDA.API.Controllers;
 
+/// <summary>
+/// Manages user authentication flows and provides utility endpoints for initializing
+/// development environments with seed data, administrative accounts, and realistic test metrics.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
@@ -18,7 +22,7 @@ public class AuthController : ControllerBase
     }
 
     // ==========================================
-    // 1. Vanlig Inloggning
+    // 1. Standard Login
     // ==========================================
     [HttpPost("login")]
     public ActionResult<AuthResponseDto> Login(LoginDto dto)
@@ -46,7 +50,7 @@ public class AuthController : ControllerBase
     }
 
     // ==========================================
-    // 2. DEV-VERKTYG: Skapa/Uppdatera Admin
+    // 2. DEV UTILITIES: Create/Update Admin Account
     // ==========================================
     [HttpPost("dev-update-admin")]
     public IActionResult DevUpdateAdmin()
@@ -75,7 +79,7 @@ public class AuthController : ControllerBase
 
         _context.SaveChanges();
 
-        // Valfritt: rensa dubbletter
+        // Optional: purge potential duplicate administrative entries to maintain unique identity integrity
         var duplicates = _context.Users
             .Where(u => u.Username == "admin")
             .OrderBy(u => u.UserID)
@@ -92,7 +96,7 @@ public class AuthController : ControllerBase
     }
 
     // ==========================================
-    // 3. DEV-VERKTYG: Seeda DLDA-frågor
+    // 3. DEV UTILITIES: Seed DLDA Question Templates
     // ==========================================
     [HttpPost("dev-seed-questions")]
     public IActionResult SeedQuestions()
@@ -104,7 +108,7 @@ public class AuthController : ControllerBase
 
         var questions = new List<Question>
         {
-            // 1. Lärande och att tillämpa kunskap
+            // 1. Learning and applying knowledge
             new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att se", IsActive = true },
             new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att höra", IsActive = true },
             new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att läsa", IsActive = true },
@@ -114,23 +118,23 @@ public class AuthController : ControllerBase
             new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Koncentrationsförmåga", IsActive = true },
             new Question { Category = "1. Lärande och att tillämpa kunskap", QuestionText = "Förmåga att lösa problem i vardagen", IsActive = true },
 
-            // 2. Allmänna krav i vardagen
+            // 2. General tasks and demands
             new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Förmåga att göra vardagliga sysslor", IsActive = true },
             new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Förmåga att arbeta i grupp", IsActive = true },
             new Question { Category = "2. Allmänna krav i vardagen", QuestionText = "Förmåga att hantera stress", IsActive = true },
 
-            // 3. Kommunikation
+            // 3. Communication
             new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att prata med andra", IsActive = true },
             new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att kommunicera med andra genom att skriva", IsActive = true },
             new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att använda telefon genom att ringa", IsActive = true },
             new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att använda appar", IsActive = true },
             new Question { Category = "3. Kommunikation", QuestionText = "Förmåga att använda dator", IsActive = true },
 
-            // 4. Förflyttning
+            // 4. Mobility
             new Question { Category = "4. Förflyttning", QuestionText = "Förmåga att gå och förflytta sig mellan olika platser", IsActive = true },
             new Question { Category = "4. Förflyttning", QuestionText = "Förmåga att använda transportmedel som passagerare (t.ex. bil, buss, taxi, färdtjänst)", IsActive = true },
 
-            // 5a. Personlig vård
+            // 5a. Self-care
             new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sin hygien", IsActive = true },
             new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sin tandvård", IsActive = true },
             new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att sköta sina läkemedel", IsActive = true },
@@ -138,27 +142,27 @@ public class AuthController : ControllerBase
             new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att tillgodose sitt behov av motion", IsActive = true },
             new Question { Category = "5a. Personlig vård", QuestionText = "Förmåga att tillgodose sitt behov av sömn", IsActive = true },
 
-            // 5b. Substansbruk
+            // 5b. Substance use
             new Question { Category = "5b. Substansbruk", QuestionText = "Användande av tobak", IsActive = true },
             new Question { Category = "5b. Substansbruk", QuestionText = "Användande av alkohol", IsActive = true },
             new Question { Category = "5b. Substansbruk", QuestionText = "Användande av droger", IsActive = true },
 
-            // 6. Hemliv
+            // 6. Domestic life
             new Question { Category = "6. Hemliv", QuestionText = "Förmåga att planera och laga måltider", IsActive = true },
             new Question { Category = "6. Hemliv", QuestionText = "Förmåga att sköta sin bostad", IsActive = true },
 
-            // 7. Mellanmänskliga relationer
+            // 7. Interpersonal interactions and relationships
             new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till kontakter med vänner, grannar, bekanta", IsActive = true },
             new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till kontakter med arbetsgivare, vård och sociala myndigheter", IsActive = true },
             new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till familjerelationer (t.ex. föräldrar, barn, syskon, släkt)", IsActive = true },
             new Question { Category = "7. Mellanmänskliga relationer", QuestionText = "Förmåga till känslomässiga relationer (t.ex. personliga, romantiska, äktenskapliga, sexuella)", IsActive = true },
 
-            // 8. Viktiga livsområden
+            // 8. Major life areas
             new Question { Category = "8. Viktiga livsområden", QuestionText = "Förmåga att genomföra studier", IsActive = true },
             new Question { Category = "8. Viktiga livsområden", QuestionText = "Förmåga att arbeta", IsActive = true },
             new Question { Category = "8. Viktiga livsområden", QuestionText = "Förmåga att sköta sin ekonomi", IsActive = true },
 
-            // 9. Samhällsgemenskap
+            // 9. Community, social and civic life
             new Question { Category = "9. Samhällsgemenskap", QuestionText = "Förmåga att delta i aktiviteter på fritiden", IsActive = true },
             new Question { Category = "9. Samhällsgemenskap", QuestionText = "Förmåga att tillfredsställa andliga behov (t.ex. känna välbefinnande genom tro, religion, fridfulla naturupplevelser etc.)", IsActive = true }
         };
@@ -170,7 +174,7 @@ public class AuthController : ControllerBase
     }
 
     // ==========================================
-    // 4. DEV-VERKTYG: Seeda testanvändare
+    // 4. DEV UTILITIES: Seed Test Users
     // ==========================================
     [HttpPost("dev-seed-users")]
     public IActionResult SeedUsers()
@@ -178,7 +182,7 @@ public class AuthController : ControllerBase
         var passwordHash = BCrypt.Net.BCrypt.HashPassword("password");
         int usersAdded = 0;
 
-        // 1. Skapa en test-patient
+        // 1. Create a test patient account
         if (!_context.Users.Any(u => u.Username == "patient"))
         {
             _context.Users.Add(new User
@@ -192,7 +196,7 @@ public class AuthController : ControllerBase
             usersAdded++;
         }
 
-        // 2. Skapa en test-personal (staff)
+        // 2. Create a test healthcare professional account
         if (!_context.Users.Any(u => u.Username == "staff"))
         {
             _context.Users.Add(new User
@@ -216,7 +220,7 @@ public class AuthController : ControllerBase
     }
 
     // ==========================================
-    // 5. DEV-VERKTYG: Skapa två realistiska mock-bedömningar (Tidslinje)
+    // 5. DEV UTILITIES: Seed Realistic Mock Timeline Assessments
     // ==========================================
     [HttpPost("dev-seed-mock-assessment")]
     public IActionResult SeedMockAssessment()
@@ -227,10 +231,10 @@ public class AuthController : ControllerBase
         if (patient == null || !questions.Any())
             return BadRequest("❌ Se till att köra dev-seed-users och dev-seed-questions först!");
 
-        var random = new Random(42); // Samma "slump" varje gång för stabila grafer
+        var random = new Random(42); // Seeded random instance ensures deterministic graph trends across seeding runs
 
         // ---------------------------------------------------------
-        // BEDÖMNING 1: För 30 dagar sedan 
+        // ASSESSMENT 1: Baseline metrics from 30 days ago
         // ---------------------------------------------------------
         var oldAssessment = new Assessment
         {
@@ -268,18 +272,18 @@ public class AuthController : ControllerBase
             } else if (q.Category != null && q.Category.Contains("Substansbruk")) {
                 item.SkippedByPatient = true; item.PatientAnswer = null; item.StaffAnswer = 2; item.Flag = true;
             } else if (q.Category != null && q.Category.Contains("Hemliv")) {
-                // Hemlivet fungerade jättebra för en månad sen!
+                // Domestic life functioned exceptionally well one month prior!
                 item.PatientAnswer = 0; item.StaffAnswer = 0; 
             } else {
                 item.PatientAnswer = random.Next(2, 5); 
-                item.StaffAnswer = item.PatientAnswer == 4 ? 3 : item.PatientAnswer; // Små åsiktsskillnader
+                item.StaffAnswer = item.PatientAnswer == 4 ? 3 : item.PatientAnswer; // Minor observational discrepancies
             }
             oldItems.Add(item);
         }
         _context.AssessmentItems.AddRange(oldItems);
 
         // ---------------------------------------------------------
-        // BEDÖMNING 2: För 2 dagar sedan 
+        // ASSESSMENT 2: Recent metrics from 2 days ago
         // ---------------------------------------------------------
         var newAssessment = new Assessment
         {
@@ -309,16 +313,16 @@ public class AuthController : ControllerBase
             };
 
             if (q.Category != null && q.Category.Contains("Mellanmänskliga")) {
-                item.PatientAnswer = 2; item.StaffAnswer = 2; // Tydlig FÖRBÄTTRING
+                item.PatientAnswer = 2; item.StaffAnswer = 2; // Marked IMPROVEMENT
                 item.StaffComment = "Börjat sitta med i dagrummet korta stunder. Tydlig förbättring.";
             } else if (q.QuestionText != null && q.QuestionText.Contains("sömn")) {
-                item.PatientAnswer = 1; item.StaffAnswer = 1; // Tydlig FÖRBÄTTRING
+                item.PatientAnswer = 1; item.StaffAnswer = 1; // Marked IMPROVEMENT
                 item.PatientComment = "Melatoninet fungerar jättebra nu.";
             } else if (q.Category != null && q.Category.Contains("Substansbruk")) {
                 item.PatientAnswer = 0; item.StaffAnswer = 0; item.Flag = false; 
             } else if (q.Category != null && q.Category.Contains("Hemliv")) {
-                // Tydlig FÖRSÄMRING + ÅSIKTSSKILLNAD
-                // Patienten tycker det funkar okej (2), personalen ser att det är kaos (4)
+                // Marked REGRESSION + PERSPECTIVE DISCREPANCY
+                // Patient rates functionality as okay (2), while staff observes complete chaos (4)
                 item.PatientAnswer = 2; item.StaffAnswer = 4; 
                 item.StaffComment = "Har slutat städa helt. Diskberget växer och patienten slänger sopor på golvet.";
                 item.Flag = true;

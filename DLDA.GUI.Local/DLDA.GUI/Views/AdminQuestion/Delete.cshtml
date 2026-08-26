@@ -1,13 +1,21 @@
 ﻿@using DLDA.GUI.DTOs.Question
 @model Question
 
+@*
+/// <summary>
+/// Administrator view for confirming the deletion of a question.
+/// This view acts as a deliberate friction point (an interstitial confirmation step) before executing a destructive operation.
+/// Implementing a dedicated confirmation screen mitigates the risk of accidental data loss caused by misclicks or fatigue.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Bekräfta borttagning";
 }
 
-
+<!-- Utilizing asp-append-version="true" ensures automatic cache-busting by appending a cryptographic hash to the URL.
+     This guarantees administrators always receive the latest stylesheet immediately after deployments without requiring manual browser cache clearing. -->
 <link rel="stylesheet" href="~/css/adminquestion.css" asp-append-version="true" />
-
 
 <div class="container mt-5">
     <h2 class="mb-4 text-danger text-center">🗑️ Bekräfta borttagning</h2>
@@ -15,6 +23,8 @@
     <div class="question-panel">
         <p class="text-center">Är du säker på att du vill ta bort följande fråga?</p>
 
+        <!-- Displaying the exact entity data prior to deletion is a crucial UX safeguard.
+             It provides the administrator with immediate contextual verification, ensuring they are destroying the correct record. -->
         <ul class="text-start">
             <li><strong>Frågetext:</strong> @Model.QuestionText</li>
             <li><strong>Kategori:</strong> @Model.Category</li>
@@ -22,9 +32,15 @@
         </ul>
 
         <div class="d-flex justify-content-center gap-2">
+            <!-- Deletion MUST always be executed via an HTTP POST request rather than a simple GET link.
+                 Wrapping the delete action in a form prevents web crawlers, browser pre-fetching mechanisms, 
+                 or Cross-Site Request Forgery (CSRF) exploits from inadvertently triggering destructive database actions. -->
             <form asp-action="DeleteConfirmed" asp-route-id="@Model.QuestionID" method="post">
                 <button type="submit" class="btn btn-danger">🗑 Ta bort</button>
             </form>
+            
+            <!-- Providing an explicit cancel route acts as a safe escape hatch, 
+                 instilling confidence in the user by making it easy to abort the destructive workflow. -->
             <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
         </div>
     </div>

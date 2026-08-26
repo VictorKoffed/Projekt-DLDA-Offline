@@ -7,7 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DLDA.GUI.Controllers
 {
     /// <summary>
-    /// Controller för personalens hantering av bedömningar.
+    /// Manages healthcare professional workflows for overseeing patient assessments, 
+    /// managing session lifecycles, and filtering clinical dashboards securely.
     /// </summary>
     [RoleAuthorize("staff")]
     public class StaffAssessmentController : Controller
@@ -20,7 +21,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Visar filtrerbar lista över patienter med deras senaste bedömning.
+        /// Renders a filtered list view of patients alongside their latest assessment statuses.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> Index(string? search, bool? ongoing, bool? notOngoing, string? recent)
@@ -31,7 +32,7 @@ namespace DLDA.GUI.Controllers
 
 
         /// <summary>
-        /// söka på patienter med söksträng.
+        /// Executes patient catalog searches based on specified text queries.
         /// </summary>
         public async Task<IActionResult> Patients(string? search)
         {
@@ -40,7 +41,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Visar alla bedömningar för en specifik patient.
+        /// Renders all historical and active assessment sessions belonging to a specific patient.
         /// </summary>
         public async Task<IActionResult> Assessments(int userId)
         {
@@ -52,7 +53,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Skapar en ny bedömning åt angiven patient.
+        /// Provisions a new assessment container session for the specified patient profile.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateForPatient(int userId)
@@ -67,7 +68,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Visar bekräftelsesida innan radering av bedömning.
+        /// Renders the confirmation view prior to permanently deleting an assessment record.
         /// </summary>
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
@@ -79,7 +80,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Raderar angiven bedömning efter bekräftelse.
+        /// Executes the permanent removal of the specified assessment session upon confirmation.
         /// </summary>
         [HttpPost]
         [ValidateAntiForgeryToken]

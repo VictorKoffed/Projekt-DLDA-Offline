@@ -7,13 +7,20 @@ using System.Text.Json;
 namespace DLDA.GUI.Services
 {
     /// <summary>
-    /// Service för att hantera statistik för personalvy.
+    /// Service class responsible for retrieving and aggregating statistics for the staff view.
+    /// Acts as an orchestration layer to decouple the MVC controllers from the complexities of fetching, 
+    /// parsing, and combining multiple data sources required for the analytical dashboards.
     /// </summary>
     public class StaffStatisticsService
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<StaffStatisticsService> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the StaffStatisticsService.
+        /// </summary>
+        /// <param name="factory">Provides a pre-configured HttpClient. Using IHttpClientFactory prevents socket exhaustion and manages the DNS lifecycle automatically.</param>
+        /// <param name="logger">Records network anomalies or parsing failures to support operational observability.</param>
         public StaffStatisticsService(IHttpClientFactory factory, ILogger<StaffStatisticsService> logger)
         {
             _httpClient = factory.CreateClient("DLDA");
@@ -21,13 +28,16 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar jämförelsedata mellan patient och personal samt bedömningsinfo.
+        /// Retrieves comparison data between the patient's self-assessment and the staff's assessment, along with the assessment metadata.
+        /// Returning a Tuple reduces the number of service calls required by the Controller, ensuring cohesive data is fetched together.
         /// </summary>
         public async Task<(List<StaffStatistics>? Comparison, AssessmentDto? Assessment)> GetComparisonAsync(int assessmentId)
         {
             try
             {
-                // Hämta jämförelsedata
+                // Fetch comparison data
+                // We use ReadAsStringAsync followed by manual deserialization to explicitly apply PropertyNameCaseInsensitive.
+                // This ensures robust mapping even if the API's JSON casing conventions change.
                 var comparisonResponse = await _httpClient.GetAsync($"statistics/comparison-table-staff/{assessmentId}");
                 List<StaffStatistics>? comparison = null;
                 if (comparisonResponse.IsSuccessStatusCode)
@@ -36,7 +46,7 @@ namespace DLDA.GUI.Services
                     comparison = JsonSerializer.Deserialize<List<StaffStatistics>>(comparisonJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                 }
 
-                // Hämta bedömning
+                // Fetch assessment metadata
                 var assessmentResponse = await _httpClient.GetAsync($"assessment/{assessmentId}");
                 AssessmentDto? assessment = null;
                 if (assessmentResponse.IsSuccessStatusCode)
@@ -55,7 +65,7 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar översiktsdata över tid för specifik patient.
+        /// Retrieves longitudinal overview data tracking changes over time for a specific patient.
         /// </summary>
         public async Task<StaffChangeOverviewDto?> GetChangeOverviewAsync(int userId)
         {
@@ -69,6 +79,10 @@ namespace DLDA.GUI.Services
                 }
 
                 var json = await response.Content.ReadAsStringAsync();
+                
+                // The API returns a plain text string instead of a 4xx status or a structured JSON response 
+                // when there are fewer than two assessments available. We intercept this specific string 
+                // to prevent a fatal JsonException during deserialization.
                 if (json.Contains("inte tillräckligt")) return null;
 
                 var overview = JsonSerializer.Deserialize<StaffChangeOverviewDto>(json, new JsonSerializerOptions
@@ -86,7 +100,7 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar patientens egna svar för en bedömning (används för sammanställning).
+        /// Retrieves the patient's self-assessment answers for a specific assessment, used primarily for data aggregation and summary views.
         /// </summary>
         public async Task<List<StaffStatistics>> GetPatientAnswerSummaryAsync(int assessmentId)
         {
@@ -105,6 +119,8 @@ namespace DLDA.GUI.Services
                     PropertyNameCaseInsensitive = true
                 });
 
+                // Returning an empty collection (?? new()) instead of null is a Clean Code practice.
+                // It eliminates redundant null-checks in the Controller and prevents Razor views from throwing NullReferenceExceptions when iterating.
                 return stats ?? new();
             }
             catch (Exception ex)
@@ -115,7 +131,7 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Jämför två valda avslutade personalbedömningar för en patient i vårdgivarens svar.
+        /// Compares two selected, completed staff assessments for a patient to identify trends and deviations in the caregiver's evaluations.
         /// </summary>
         public async Task<StaffChangeOverviewDto?> CompareAssessmentsAsync(int firstId, int secondId)
         {
@@ -125,6 +141,8 @@ namespace DLDA.GUI.Services
                 if (!response.IsSuccessStatusCode) return null;
 
                 var json = await response.Content.ReadAsStringAsync();
+                
+                // Safety check to handle API business rule validation where it returns text instead of JSON if data is insufficient.
                 if (json.Contains("inte tillräckligt")) return null;
 
                 return JsonSerializer.Deserialize<StaffChangeOverviewDto>(json, new JsonSerializerOptions
@@ -140,7 +158,7 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Jämför två patientbedömningar och returnerar förändringar i patientens egna svar över tid.
+        /// Compares two patient self-assessments and returns the delta/changes in the patient's own answers over time, aiding staff in tracking subjective progress.
         /// </summary>
         public async Task<PatientChangeOverviewForStaffDto?> ComparePatientAnswersForStaffAsync(int firstId, int secondId)
         {

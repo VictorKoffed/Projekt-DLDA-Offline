@@ -2,7 +2,8 @@
 using DLDA.GUI.DTOs.Authentication;
 
 /// <summary>
-/// Hanterar inloggning och utloggning av användare.
+/// Manages user authentication workflows, session state lifecycles, 
+/// and role-based navigation routing for the MVC frontend interface.
 /// </summary>
 public class AccountController : Controller
 {
@@ -16,16 +17,17 @@ public class AccountController : Controller
     }
 
     /// <summary>
-    /// Visar inloggningssidan.
+    /// Renders the user login form view for credential inputs.
     /// </summary>
     [HttpGet]
     public IActionResult Login() => View();
 
     /// <summary>
-    /// Bearbetar inloggningsuppgifter och skapar session.
+    /// Processes submitted authentication credentials, establishes active session states,
+    /// and routes users to their respective role-specific landing pages.
     /// </summary>
-    /// <param name="login">Inloggningsdata (användarnamn och lösenord).</param>
-    /// <returns>Redirect till relevant startsida baserat på användarroll, eller tillbaks till login vid fel.</returns>
+    /// <param name="login">The credential payload containing username and password inputs.</param>
+    /// <returns>A redirect action to the appropriate role dashboard, or back to login view with error feedback if authentication fails.</returns>
     [HttpPost]
     public async Task<IActionResult> Login(LoginDto login)
     {
@@ -36,10 +38,12 @@ public class AccountController : Controller
             return View();
         }
 
+        // Persists user identity context and security role tier within encrypted session storage for subsequent requests
         HttpContext.Session.SetInt32("UserID", user.UserID);
         HttpContext.Session.SetString("Username", user.Username);
         HttpContext.Session.SetString("Role", user.Role);
 
+        // Determines target dashboard routing dynamically based on privilege authorization levels
         return user.Role.ToLower() switch
         {
             "admin" => RedirectToAction("Index", "Admin"),
@@ -50,9 +54,9 @@ public class AccountController : Controller
     }
 
     /// <summary>
-    /// Loggar ut användaren genom att rensa sessionen.
+    /// Terminates the current active session by purging stored state data and revoking access tokens.
     /// </summary>
-    /// <returns>Redirect till inloggningssidan.</returns>
+    /// <returns>A redirect action returning the user to the login portal view.</returns>
     [HttpPost]
     public IActionResult Logout()
     {

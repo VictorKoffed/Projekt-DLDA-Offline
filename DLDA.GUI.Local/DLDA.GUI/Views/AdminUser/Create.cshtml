@@ -1,10 +1,24 @@
 ﻿@using DLDA.GUI.DTOs.User
 @model UserDto
 
+@*
+/// <summary>
+/// Administrator view for provisioning new users within the system.
+/// This view utilizes strongly-typed model binding to the UserDto, ensuring that data 
+/// validation rules (such as password complexity or email formats) are enforced symmetrically 
+/// on both the client and server sides before the HTTP request is dispatched.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Skapa användare";
 }
 
+@* 
+// Utilizing the @section directive ensures that view-specific CSS is injected directly into the layout's <head>.
+// This prevents unstyled flashes of content (FOUC) and keeps the global layout clean from page-specific bloat.
+// The asp-append-version="true" attribute enforces cache-busting by appending a cryptographic hash to the file request.
+*@
 @section Styles {
     <link rel="stylesheet" href="~/css/adminuser.css" asp-append-version="true" />
 }
@@ -12,7 +26,11 @@
 <div class="container mt-5">
     <h2 class="mb-4">➕ Skapa ny användare</h2>
 
+    <!-- The POST method is strictly enforced here to comply with HTTP semantics for state-mutating operations. 
+         This guarantees that sensitive data (like the new user's password) is securely encapsulated 
+         within the request body and never exposed in the URL parameters. -->
     <form asp-action="Create" method="post">
+        
         <div class="mb-3">
             <label asp-for="Username" class="form-label">Användarnamn</label>
             <input asp-for="Username" class="form-control" />
@@ -20,11 +38,16 @@
 
         <div class="mb-3">
             <label asp-for="Email" class="form-label">E-post</label>
+            <!-- Explicitly declaring type="email" alongside the tag helper triggers native browser validation 
+                 and optimized mobile keyboards (e.g., showing the '@' symbol prominently) on mobile devices. -->
             <input asp-for="Email" class="form-control" type="email" />
         </div>
 
         <div class="mb-3">
             <label asp-for="Role" class="form-label">Roll</label>
+            <!-- The system operates on a strict, static Role-Based Access Control (RBAC) matrix. 
+                 Hardcoding these options directly in the view prevents unnecessary database round-trips 
+                 for a domain that rarely, if ever, changes its core security roles. -->
             <select asp-for="Role" class="form-select">
                 <option value="admin">Admin</option>
                 <option value="staff">Personal</option>
@@ -34,11 +57,17 @@
 
         <div class="mb-3">
             <label asp-for="Password" class="form-label">Lösenord</label>
+            <!-- While asp-validation-for handles complex server-side constraints (like length and character requirements), 
+                 adding the HTML5 'required' attribute provides an immediate client-side barrier, 
+                 preventing unnecessary network requests if the field is entirely blank. -->
             <input asp-for="Password" class="form-control" type="password" required />
             <span asp-validation-for="Password" class="text-danger"></span>
         </div>
 
         <button type="submit" class="btn btn-primary">💾 Skapa</button>
+        
+        <!-- Providing an explicit cancel route acts as a safe escape hatch, 
+             preventing user frustration or accidental submissions if they change their mind during data entry. -->
         <a asp-action="Index" class="btn btn-secondary ms-2">Avbryt</a>
     </form>
 </div>

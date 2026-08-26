@@ -1,4 +1,10 @@
-﻿@* Visar meddelanden från både TempData och ViewBag *@
+﻿@*
+/// <summary>
+/// Global notification component for displaying system alerts and feedback.
+/// Consolidates both TempData (for cross-request POST-redirect-GET flows) and ViewBag 
+/// (for single-request validation or errors) to ensure uniform user feedback across the application.
+/// </summary>
+*@
 
 @if (TempData["Success"] != null || ViewBag.Success != null)
 {

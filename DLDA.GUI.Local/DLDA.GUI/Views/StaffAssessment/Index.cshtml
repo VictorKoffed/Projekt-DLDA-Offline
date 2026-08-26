@@ -2,6 +2,13 @@
 @using DLDA.GUI.DTOs.User
 @model List<PatientWithAssessmentStatusDto>
 
+@*
+/// <summary>
+/// Staff-facing dashboard for patient management and triage.
+/// Provides filtering capabilities based on assessment status and timeline to help clinical staff 
+/// prioritize patients requiring immediate attention or follow-up evaluations.
+/// </summary>
+*@
 
 @{
     ViewData["Title"] = "Patientlista";
@@ -11,19 +18,20 @@
     <h2 class="mb-4">👥 Patientlista</h2>
 
     <div class="row">
-        <!-- 🔍 Vänsterspalt med filter -->
+        
         <div class="col-md-4">
             <div class="border rounded p-3 bg-light shadow-sm">
                 <h5 class="mb-3">🧪 Filtrera patienter</h5>
 
+                <!-- The filtering criteria (ongoing status, temporal recency) directly map to clinical workflow needs, 
+                     enabling staff to quickly identify patients who are mid-evaluation or due for a new assessment. -->
                 <form method="get" asp-action="Index">
-                    <!-- Sökfält -->
+                    
                     <div class="mb-3">
                         <label for="search" class="form-label">🔍 Sökfält</label>
                         <input type="text" name="search" id="search" class="form-control" placeholder="Skriv användarnamn..." value="@Context.Request.Query["search"]" />
                     </div>
 
-                    <!-- Pågående bedömning -->
                     <div class="mb-3">
                         <label class="form-label">📌 Pågående bedömning?</label>
                         <div class="form-check">
@@ -36,7 +44,6 @@
                         </div>
                     </div>
 
-                    <!-- Senast bedömning -->
                     <div class="mb-3">
                         <label class="form-label">🕒 Senast bedömning</label>
                         <div class="form-check">
@@ -53,7 +60,6 @@
                         </div>
                     </div>
 
-                    <!-- Sök och rensa -->
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-outline-primary w-100">Sök</button>
                         <button type="button" onclick="clearSearch()" class="btn btn-outline-secondary w-100">Rensa</button>
@@ -62,7 +68,6 @@
             </div>
         </div>
 
-        <!-- 📋 Högerkolumn med patientlistan -->
         <div class="col-md-8">
             @if (Model.Any())
             {
@@ -103,7 +108,9 @@
                 </div>
             }
 
-            <!-- Skapa ny patient-knapp -->
+            <!-- Enforces strict RBAC boundaries. Staff members cannot create users directly; 
+                 they must switch to an Admin context, which by design terminates the current Staff session 
+                 to prevent privilege escalation. -->
             <div class="mt-4">
                 <a asp-controller="AdminUser" asp-action="Create" class="btn btn-success w-100">
                     ➕ Skapa ny patient

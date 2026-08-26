@@ -1,17 +1,30 @@
 ﻿@using DLDA.GUI.DTOs.Question
 @model List<Question>
 
+@*
+/// <summary>
+/// Administrator dashboard for managing the assessment question catalog.
+/// By binding strongly to a List of Question DTOs, this view guarantees compile-time safety 
+/// and eliminates runtime errors associated with dynamic ViewBag/ViewData rendering.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Frågesida index";
 }
 
-
+<!-- The asp-append-version="true" attribute acts as an automatic cache-buster. 
+     It appends a unique cryptographic hash to the file request, ensuring administrators 
+     always see the most recent styling updates immediately following a new deployment 
+     without requiring manual browser cache clearing. -->
 <link rel="stylesheet" href="~/css/adminquestion.css" asp-append-version="true" />
 
 <div class="container mt-5">
     <h2 class="mb-4">📋 Frågesida index</h2>
 
     <div class="question-panel">
+        <!-- Using Tag Helpers (asp-action) instead of standard hrefs couples the UI directly to the application's routing table.
+             This ensures that if the underlying controller's route template ever changes, these links will adapt automatically and not break. -->
         <a asp-action="Create" class="btn btn-success mb-3">➕ Lägg till ny fråga</a>
 
         <table class="table table-bordered mb-0">
@@ -31,9 +44,14 @@
                         <td>@question.QuestionID</td>
                         <td>@question.QuestionText</td>
                         <td>@question.Category</td>
+                        
+                        <!-- Translating the raw boolean property into explicit visual indicators (emojis) reduces cognitive load.
+                             This UX decision allows administrators to rapidly scan large data grids for inactive items. -->
                         <td>@(question.IsActive ? "✅" : "❌")</td>
                         <td>
                             <div class="d-inline-flex gap-2">
+                                <!-- The asp-route-[param] helper dynamically securely appends the entity's primary key to the route data.
+                                     This guarantees the target controller action knows exactly which database record to act upon. -->
                                 <a asp-action="Edit" asp-route-id="@question.QuestionID" class="btn btn-sm btn-primary">✏ Redigera</a>
                                 <a asp-action="Delete" asp-route-id="@question.QuestionID" class="btn btn-sm btn-danger">🗑 Ta bort</a>
                             </div>

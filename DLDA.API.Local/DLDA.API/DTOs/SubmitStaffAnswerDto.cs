@@ -1,11 +1,14 @@
 ﻿namespace DLDA.API.DTOs
 {
-    // DTO för att skicka ett svar från personal (inkl. flagga och kommentar).
+    /// <summary>
+    /// Represents the data transfer payload submitted when a healthcare professional evaluates
+    /// and submits an answer for a specific questionnaire item, including score rating, risk flags, and clinical commentary.
+    /// </summary>
     public class SubmitStaffAnswerDto
     {
-        public int ItemID { get; set; }           // Frågeradens ID
-        public int? Answer { get; set; }           // Svar 0–4
-        public bool? Flag { get; set; }           // Markering för vidare diskussion
-        public string? Comment { get; set; }      // Kommentar från personalen
+        public int ItemID { get; set; }            // Identifies the specific assessment line item being targeted for the professional evaluation submission
+        public int? Answer { get; set; }           // Numerical score rating on the assessment scale (0–4)
+        public bool? Flag { get; set; }            // Indicator flag highlighting items requiring special attention or follow-up discussions
+        public string? Comment { get; set; }       // Professional clinical commentary elaborating on the evaluation
     }
 }

@@ -1,20 +1,26 @@
 ﻿namespace DLDA.GUI.DTOs.Patient
 {
-    // DTO för patientens svar och eventuell kommentar
+    /// <summary>
+    /// Represents a data transfer object encapsulating a patient's numerical rating score 
+    /// and optional descriptive commentary for a questionnaire item response.
+    /// </summary>
     public class PatientAnswerDto
     {
-        public int? Answer { get; set; } // Patientens svar på frågan (kan vara null om obesvarad)
+        public int? Answer { get; set; } // Numerical score rating provided by the patient (nullable if left unanswered or bypassed)
 
-        public string? Comment { get; set; } // Eventuell kommentar från patienten
+        public string? Comment { get; set; } // Optional contextual explanation commentary provided by the patient
     }
 
-    // DTO för att skicka ett patientsvar (inkl. kommentar).
+    /// <summary>
+    /// Represents the submission payload data transfer object used when transmitting 
+    /// a patient's answered questionnaire item data to the server backend.
+    /// </summary>
     public class SubmitAnswerDto
     {
-        public int ItemID { get; set; }           // Frågeradens ID som ska besvaras
+        public int ItemID { get; set;            // Unique primary key identifier referencing the specific assessment line item being answered
 
-        public int Answer { get; set; }           // Svar från patienten, skalad från 0 till 4
+            public int Answer { get; set;            // Numerical rating score submitted by the patient, typically scaled within defined questionnaire boundaries (e.g., 0 to 4)
 
-        public string? Comment { get; set; }      // Eventuell kommentar från patienten
+            public string? Comment { get; set;      // Optional descriptive feedback commentary submitted alongside the rating score
+        }
     }
-}

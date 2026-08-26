@@ -1,9 +1,18 @@
 ﻿@using DLDA.GUI.DTOs.Assessment
 @model List<AssessmentDto>
 
+@*
+/// <summary>
+/// Patient-facing dashboard displaying their historical and ongoing assessments.
+/// This view aggregates complex clinical progression data and exposes a secure UI for longitudinal comparison.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Mina bedömningar";
 
+    // We pre-filter and sort the model data locally to prepare the dropdowns for longitudinal comparison.
+    // Operating on the strongly-typed DTO collection ensures data integrity before it hits the DOM.
     var completed = Model
         .Where(m => m.IsComplete)
         .OrderBy(m => m.CreatedAt)
@@ -14,16 +23,22 @@
     var secondDefault = completed.LastOrDefault()?.AssessmentID ?? 0;
 }
 
+<!-- asp-append-version="true" is essential here for automatic cache-busting, ensuring patients 
+     always receive the latest UI tweaks without needing technical know-how to clear their browser cache. -->
 <link rel="stylesheet" href="~/css/PatientAssessment.css" asp-append-version="true" />
 
 <div class="container mt-5">
     <h2 class="mb-4">Mina bedömningar</h2>
 
+    <!-- A minimum of two completed assessments is required to perform a meaningful longitudinal comparison.
+         By wrapping the form in this logic gate, we prevent invalid API requests and reduce UI clutter for new patients. -->
     @if (completedCount >= 2)
     {
         <form asp-controller="PatientStatistics" asp-action="Compare" method="post" class="row g-2 mb-4 align-items-end" onsubmit="return validateDates()">
             <div class="col-md-4">
                 <label class="form-label">Första bedömning</label>
+                <!-- The data-date attribute is injected here to empower the client-side JavaScript validateDates() function, 
+                     allowing it to enforce chronological order without triggering a costly server round-trip. -->
                 <select name="firstId" id="firstSelect" class="form-select" required>
                     @foreach (var item in completed)
                     {
@@ -66,6 +81,7 @@
         </div>
     }
 
+    <!-- Fallback UI for brand new patients to prevent them from staring at a confusing empty data grid. -->
     @if (!Model.Any())
     {
         <p>Du har ännu inte påbörjat någon bedömning.</p>
@@ -96,6 +112,8 @@
                             }
                             else
                             {
+                                <!-- Rendering the explicit progression (X of Y questions) provides crucial context 
+                                     for patients returning to an interrupted session. -->
                                 <span class="status-ongoing">
                                     Pågående – @item.AnsweredCount av @item.TotalQuestions frågor
                                 </span>
@@ -104,6 +122,8 @@
                         <td>
                             @if (!item.IsComplete)
                             {
+                                // Dynamically adjusting the button text and styling based on HasStarted 
+                                // creates a clear psychological distinction between initiating a new task and resuming an old one.
                                 var action = item.HasStarted ? "Fortsätt" : "Starta";
                                 var btnClass = item.HasStarted ? "btn-warning btn-continue" : "btn-primary btn-start";
                                 <a class="btn btn-sm @btnClass"
@@ -114,6 +134,8 @@
                             else
                             {
                                 <div class="d-flex gap-2 flex-wrap">
+                                    <!-- Using asp-route-[param] securely embeds the assessment ID into the URL, 
+                                         ensuring the target controller can fetch the exact clinical record required. -->
                                     <a class="btn btn-sm btn-visa"
                                        asp-controller="PatientResult"
                                        asp-action="Index"

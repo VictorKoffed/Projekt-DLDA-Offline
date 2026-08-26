@@ -5,7 +5,8 @@ using DLDA.GUI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Controller för personalens statistikvyer, såsom jämförelse och förändringar över tid.
+/// Manages healthcare professional statistical analytics views, comparative matrices, 
+/// longitudinal progress tracking, and response distribution breakdowns, secured exclusively for staff security roles.
 /// </summary>
 [Route("StaffStatistics")]
 [RoleAuthorize("staff")]
@@ -33,7 +34,7 @@ public class StaffStatisticsController : Controller
                 return RedirectToAction("Index", "StaffAssessment");
             }
 
-            int userId = assessment.UserId; // 👈 nu har vi userId säkert
+            int userId = assessment.UserId; // Extracts and securely preserves the patient identifier context for fallback redirects
 
             if (comparison == null || !comparison.Any())
             {
@@ -58,7 +59,7 @@ public class StaffStatisticsController : Controller
 
 
     /// <summary>
-    /// Visar förbättringar och försämringar över tid för patientens bedömningar.
+    /// Renders longitudinal improvement or regression trajectories across multiple patient assessments from a staff perspective.
     /// </summary>
     [HttpGet("ChangeOverview/{userId}")]
     public async Task<IActionResult> ChangeOverview(int userId)
@@ -84,7 +85,7 @@ public class StaffStatisticsController : Controller
     }
 
     /// <summary>
-    /// Visar patientens egen svarsfördelning i en piechart.
+    /// Renders the patient's score distribution metrics formatted for graphical chart visualization.
     /// </summary>
     [HttpGet("PatientAnswerSummary/{assessmentId}")]
     public async Task<IActionResult> PatientAnswerSummary(int assessmentId)
@@ -118,7 +119,7 @@ public class StaffStatisticsController : Controller
     }
 
     /// <summary>
-    /// Jämför två avslutade personalbedömningar för en patient och visar förändringar över tid i personalsvar.
+    /// Compares two completed professional assessment sessions to evaluate clinical evaluation shifts over time.
     /// </summary>
     [HttpPost("Compare")]
     public async Task<IActionResult> Compare(int userId, int firstId, int secondId)
@@ -137,7 +138,7 @@ public class StaffStatisticsController : Controller
         }
 
         ViewBag.UserId = userId;
-        ViewBag.FirstId = firstId;   // 👈 För att kunna skickas vidare i vyn
+        ViewBag.FirstId = firstId;   // Preserves session identifiers in ViewBag state to maintain comparison context across view redirects
         ViewBag.SecondId = secondId;
 
         return View("ChangeOverview", result);
@@ -145,10 +146,7 @@ public class StaffStatisticsController : Controller
 
 
     /// <summary>
-    /// Jämför två avslutade patientbedömningar och visar förändringar i patientens egna svar över tid, från personalens vy.
-    /// </summary>
-    /// <summary>
-    /// Jämför två patientbedömningar och visar förändringar i patientens egna svar över tid (för vårdgivare).
+    /// Compares two historical patient self-assessments to visualize patient behavioral or symptomatic shifts over time for clinicians.
     /// </summary>
     public async Task<IActionResult> ComparePatientAnswersForStaff(int userId, int firstId, int secondId)
     {

@@ -1,4 +1,12 @@
-﻿@{
+﻿@*
+/// <summary>
+/// Main application layout serving as the structural shell for the DLDA GUI.
+/// Handles global session state retrieval and implements dynamic Role-Based Access Control (RBAC) 
+/// for the navigation menu. Assigns a role-specific CSS class to the body tag to enable 
+/// context-aware styling and UI adaptations based on whether the user is a Patient, Staff, or Admin.
+/// </summary>
+*@
+@{
     var isLoggedIn = Context.Session.GetInt32("UserID").HasValue;
     var username = Context.Session.GetString("Username");
     var role = Context.Session.GetString("Role");
@@ -30,7 +38,6 @@
             <div class="navbar-brand d-flex align-items-center">
                 <img src="~/Images/dlda_logo.png" alt="DLDA logotyp" style="height: 36px;" />
             </div>
-
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
                     aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,13 +96,13 @@
                     }
                     else
                     {
-                        
+                        <!-- Unauthenticated state intentionally renders no navigation elements 
+                             to enforce a strict authentication boundary. -->
                     }
                 </ul>
             </div>
         </div>
     </nav>
-
 
     <div class="container">
         <main role="main" class="pb-3">
@@ -113,13 +120,10 @@
         </div>
     </footer>
 
-    <!-- Ikoner -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-    <!-- Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
 
-
+    <!-- Global dependencies required for client-side generation of physical medical records (PDF exports) -->
     <script src="~/lib/html2canvas/html2canvas.min.js"></script>
     <script src="~/lib/jspdf/jspdf.umd.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

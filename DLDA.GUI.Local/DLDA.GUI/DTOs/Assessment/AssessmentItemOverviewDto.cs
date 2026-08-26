@@ -1,20 +1,23 @@
 ﻿namespace DLDA.GUI.DTOs.Assessment
 {
-    // DTO för översikt av bedömningsobjekt med grundläggande information om frågor och svar från patienten
+    /// <summary>
+    /// Represents a lightweight data transfer object summarizing individual questionnaire item responses 
+    /// and core prompt text for patient overview dashboards and summary views.
+    /// </summary>
     public class AssessmentItemOverviewDto
     {
-        public int ItemID { get; set; } // Unikt ID för varje bedömningsobjekt
+        public int ItemID { get; set; } // Unique primary key identifier for the specific assessment line item instance
 
-        public int QuestionID { get; set; } // ID för den specifika frågan som bedöms
+        public int QuestionID { get; set; } // Foreign key identifier referencing the master template question definition
 
-        public string QuestionText { get; set; } = string.Empty; // Texten för den specifika frågan, som är tom som standard
+        public string QuestionText { get; set; } = string.Empty; // Localized prompt text presented to the user, initialized to empty string as a default fallback
 
-        public int? PatientAnswer { get; set; } // Patientens svar på frågan (null om obesvarad)
+        public int? PatientAnswer { get; set; } // Numerical rating score submitted by the patient (null if left unanswered)
 
-        public bool Flag { get; set; } // Flagga för att markera en fråga för ytterligare diskussion
+        public bool Flag { get; set; } // Indicator flag highlighting items marked for special clinical review or discussion
 
-        public string? PatientComment { get; set; } // Eventuell kommentar från patienten
+        public string? PatientComment { get; set; } // Optional descriptive feedback commentary provided by the patient
 
-        public bool SkippedByPatient { get; set; } // Anger om frågan har hoppats över av patienten
+        public bool SkippedByPatient { get; set; } // Tracks whether the patient intentionally chose to bypass this question item
     }
 }

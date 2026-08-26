@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DLDA.GUI.Controllers
 {
     /// <summary>
-    /// Controller som hanterar sammanställning och uppföljning av patientens bedömning.
+    /// Manages patient-facing assessment summary reviews, final completion sign-offs, 
+    /// and post-submission answer updates, secured exclusively for patient security roles.
     /// </summary>
     [RoleAuthorize("patient")]
     public class PatientResultController : Controller
@@ -19,7 +20,7 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Visar sammanställning över svar för en given bedömning.
+        /// Renders the comprehensive results overview and response summary matrix for a specified completed assessment session.
         /// </summary>
         public async Task<IActionResult> Index(int assessmentId)
         {
@@ -41,7 +42,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Markerar att bedömningen är komplett och återgår till översikten.
+        /// Finalizes the assessment session by marking it complete, locking further edits, 
+        /// and returning the patient to their primary assessment dashboard.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Complete(int assessmentId)
@@ -57,7 +59,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Uppdaterar ett tidigare svar i efterhand.
+        /// Processes modifications to previously submitted answers during the review phase 
+        /// before final sign-off is committed.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> UpdateAnswer(int itemId, int assessmentId, int answer, string? comment)

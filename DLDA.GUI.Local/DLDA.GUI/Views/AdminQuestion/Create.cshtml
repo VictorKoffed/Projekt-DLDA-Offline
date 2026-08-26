@@ -1,22 +1,35 @@
 ﻿@using DLDA.GUI.DTOs.Question
 @model Question
 
+@*
+/// <summary>
+/// Administrator view for creating a new assessment question.
+/// This view leverages ASP.NET Core Tag Helpers to strongly bind the HTML form elements directly to the Question model.
+/// This approach ensures type safety, prevents hardcoded input names, and seamlessly hooks into the centralized validation pipeline.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Skapa ny fråga";
 }
 
-
+<!-- asp-append-version="true" is utilized here for automatic cache-busting. 
+     It appends a cryptographic hash of the file to the URL, guaranteeing that administrators 
+     always receive the latest styling updates without needing to manually clear browser caches after a deployment. -->
 <link rel="stylesheet" href="~/css/adminquestion.css" asp-append-version="true" />
-
 
 <div class="container mt-5">
     <h2 class="mb-4">➕ Skapa ny fråga</h2>
 
     <div class="question-panel">
+        <!-- The form explicitly targets the "Create" action using a POST method to comply with secure data-mutation practices.
+             This ensures the payload is transmitted in the HTTP request body rather than the URL, which is a fundamental requirement for state-changing operations. -->
         <form asp-action="Create" method="post">
             <div class="mb-3 text-start">
                 <label asp-for="QuestionText" class="form-label">Frågetext</label>
                 <input asp-for="QuestionText" class="form-control" />
+                <!-- The asp-validation-for tag dynamically renders error messages.
+                     It provides immediate, contextual feedback if the user's input violates the data annotations defined on the underlying Question DTO. -->
                 <span asp-validation-for="QuestionText" class="text-danger"></span>
             </div>
 
@@ -27,12 +40,17 @@
             </div>
 
             <div class="form-check mb-3 text-start">
+                <!-- Standard HTML checkboxes natively only submit a value if they are checked, which can cause model binding issues. 
+                     The asp-for tag helper mitigates this by automatically generating a hidden shadow-input alongside the checkbox, 
+                     ensuring that a definitive 'false' boolean value is safely transmitted to the controller when left unchecked. -->
                 <input asp-for="IsActive" class="form-check-input" />
                 <label asp-for="IsActive" class="form-check-label">Aktiv</label>
             </div>
 
             <div class="d-flex justify-content-center gap-2">
                 <button type="submit" class="btn btn-primary">💾 Skapa fråga</button>
+                <!-- Providing an explicit cancel route acts as a safe escape hatch, 
+                     preventing user frustration or accidental submissions if they change their mind during data entry. -->
                 <a asp-action="Index" class="btn btn-secondary">Avbryt</a>
             </div>
         </form>

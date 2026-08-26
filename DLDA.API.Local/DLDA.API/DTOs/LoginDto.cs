@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-// Inloggningsuppgifter som skickas från frontend till API.
-
 namespace DLDA.API.DTOs
 {
+    /// <summary>
+    /// Represents the authentication credentials payload submitted from the client frontend to the API
+    /// during the login verification workflow.
+    /// </summary>
     public class LoginDto
     {
         public string Username { get; set; } = "";

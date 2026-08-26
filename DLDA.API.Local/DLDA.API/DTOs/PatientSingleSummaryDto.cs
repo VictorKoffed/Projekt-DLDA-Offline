@@ -1,5 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
+    /// <summary>
+    /// Represents an aggregated statistical summary of a single patient assessment,
+    /// providing distribution metrics, severity categories, and top areas of concern for graphical visualization.
+    /// </summary>
     public class PatientSingleSummaryDto
     {
         public int AssessmentId { get; set; }

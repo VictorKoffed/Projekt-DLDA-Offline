@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace DLDA.GUI.Controllers
 {
     /// <summary>
-    /// Controller som hanterar personalens resultatöversikt för bedömningar.
+    /// Manages healthcare professional result review dashboards, comparative scoring matrices, 
+    /// clinical sign-off completions, and session unlocks, secured exclusively for staff security roles.
     /// </summary>
     [RoleAuthorize("staff")]
     public class StaffResultController : Controller
@@ -19,7 +20,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Visar personalens sammanställning av en bedömning.
+        /// Renders the comprehensive staff results matrix comparing patient self-assessments 
+        /// against clinical professional evaluations.
         /// </summary>
         public async Task<IActionResult> Index(int id)
         {
@@ -35,7 +37,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Uppdaterar ett personal-svar, kommentar och flagga i sammanställningen.
+        /// Processes inline modifications to professional scores, clinical commentary, 
+        /// or risk flags directly from the results matrix view.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> UpdateStaffAnswer(int itemId, int assessmentId, int answer, string? comment, bool flag)
@@ -57,7 +60,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Markerar personalens bedömning som komplett.
+        /// Finalizes the healthcare professional review by committing a completion sign-off, 
+        /// locking the evaluation against further accidental modifications.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Complete(int assessmentId, int userId)
@@ -73,7 +77,8 @@ namespace DLDA.GUI.Controllers
         }
 
         /// <summary>
-        /// Låser upp en bedömning som tidigare markerats som klar.
+        /// Revokes a prior clinical completion sign-off to reopen a locked assessment session 
+        /// for necessary adjustments or follow-up reviews.
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Unlock(int assessmentId, int userId)

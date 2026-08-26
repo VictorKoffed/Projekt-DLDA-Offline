@@ -6,13 +6,19 @@ using System.Text.Json;
 namespace DLDA.GUI.Services
 {
     /// <summary>
-    /// Serviceklass som hanterar hämtning av statistik för patienter.
+    /// Service class responsible for retrieving and aggregating patient statistics.
+    /// Acts as an abstraction layer to decouple the MVC controllers and Razor views from raw HTTP communication and data parsing.
     /// </summary>
     public class PatientStatisticsService
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<PatientStatisticsService> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the PatientStatisticsService.
+        /// </summary>
+        /// <param name="factory">Provides a pre-configured HttpClient. Using IHttpClientFactory prevents socket exhaustion and manages DNS lifecycle automatically.</param>
+        /// <param name="logger">Logger instance for capturing API integration failures and unexpected runtime exceptions.</param>
         public PatientStatisticsService(IHttpClientFactory factory, ILogger<PatientStatisticsService> logger)
         {
             _httpClient = factory.CreateClient("DLDA");
@@ -20,8 +26,10 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar alla patientens svar för en bedömning.
+        /// Retrieves all answers submitted by a patient for a specific assessment.
         /// </summary>
+        /// <param name="assessmentId">The unique identifier of the assessment.</param>
+        /// <returns>A list of patient answers. Returns an empty list on failure to prevent NullReferenceExceptions in the UI layer.</returns>
         public async Task<List<PatientAnswerStatsDto>> GetAnswersForAssessmentAsync(int assessmentId)
         {
             try
@@ -29,6 +37,8 @@ namespace DLDA.GUI.Services
                 var response = await _httpClient.GetAsync($"AssessmentItem/patient/assessment/{assessmentId}");
                 if (!response.IsSuccessStatusCode) return new();
 
+                // Returning an empty collection (?? new()) instead of null is a Clean Code practice. 
+                // It eliminates the need for redundant null-checks in the Controller and prevents Razor views from crashing when iterating.
                 return await response.Content.ReadFromJsonAsync<List<PatientAnswerStatsDto>>() ?? new();
             }
             catch (Exception ex)
@@ -39,8 +49,10 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar grundläggande metadata om en bedömning.
+        /// Retrieves fundamental metadata for a specific assessment.
         /// </summary>
+        /// <param name="assessmentId">The unique identifier of the assessment.</param>
+        /// <returns>The assessment metadata, or null if the request fails, allowing the caller to handle missing data explicitly.</returns>
         public async Task<AssessmentDto?> GetAssessmentAsync(int assessmentId)
         {
             try
@@ -58,8 +70,10 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar summerad statistik för en bedömning.
+        /// Retrieves an aggregated statistical summary for a single assessment.
         /// </summary>
+        /// <param name="assessmentId">The unique identifier of the assessment.</param>
+        /// <returns>A DTO containing the statistical summary, or null if the API call fails.</returns>
         public async Task<PatientSingleSummaryDto?> GetSummaryAsync(int assessmentId)
         {
             try
@@ -77,8 +91,11 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar förbättringar över tid för en patient (minst 2 bedömningar krävs).
+        /// Retrieves longitudinal improvement data for a patient to track progress over time.
+        /// A minimum of two completed assessments is required by the API to calculate this data.
         /// </summary>
+        /// <param name="userId">The unique identifier of the patient.</param>
+        /// <returns>A DTO containing the change overview, or null if data is insufficient or the request fails.</returns>
         public async Task<PatientChangeOverviewDto?> GetImprovementDataAsync(int userId)
         {
             try
@@ -86,6 +103,10 @@ namespace DLDA.GUI.Services
                 var response = await _httpClient.GetAsync($"statistics/patient-change-overview/{userId}");
                 if (!response.IsSuccessStatusCode) return null;
 
+                // We read the content as a raw string first. 
+                // The API currently returns a success status with a plain text message if there aren't enough assessments, 
+                // rather than returning a structured JSON or a 4xx status. 
+                // We intercept this specific string to prevent JSON deserialization exceptions.
                 var json = await response.Content.ReadAsStringAsync();
                 if (json.Contains("inte tillräckligt")) return null;
 
@@ -102,8 +123,11 @@ namespace DLDA.GUI.Services
         }
 
         /// <summary>
-        /// Hämtar förbättringar över tid genom att jämföra två valda bedömningar.
+        /// Calculates the statistical differences between two specific assessments to visualize changes.
         /// </summary>
+        /// <param name="id1">The unique identifier of the first assessment.</param>
+        /// <param name="id2">The unique identifier of the second assessment.</param>
+        /// <returns>A DTO containing the comparison metrics, or null if the API call fails.</returns>
         public async Task<PatientChangeOverviewDto?> CompareAssessmentsAsync(int id1, int id2)
         {
             try

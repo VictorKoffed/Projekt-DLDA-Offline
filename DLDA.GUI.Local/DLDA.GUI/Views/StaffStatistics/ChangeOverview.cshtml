@@ -1,4 +1,13 @@
 ﻿@model StaffChangeOverviewDto
+
+@*
+/// <summary>
+/// Staff-facing view for visualizing longitudinal changes between two clinical assessments.
+/// Consolidates improvements, deteriorations, and flagged items to help clinicians quickly identify 
+/// trends and prepare targeted interventions for the patient review session.
+/// </summary>
+*@
+
 @{
     ViewData["BodyId"] = "staff-change-page";
 }
@@ -69,7 +78,9 @@
                 <li><a class="dropdown-item" href="#" onclick="filterData('deterioration')">Försämringar</a></li>
             </ul>
         </div>
-        <!-- 📈 Ny knapp: Växla till patientens förändringar -->
+        
+        <!-- Toggle view state to analyze the patient's self-assessment trajectory for the same time period. 
+             This is crucial for identifying if the patient's self-awareness aligns with clinical observations. -->
         <form asp-controller="StaffStatistics"
               asp-action="ComparePatientAnswersForStaff"
               method="post" class="d-inline">

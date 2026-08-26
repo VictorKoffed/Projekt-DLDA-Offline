@@ -1,4 +1,14 @@
 ﻿@model PatientChangeOverviewDto
+
+@*
+/// <summary>
+/// Patient-facing view that visualizes improvements between their two most recent assessments.
+/// By isolating and highlighting positive changes (rather than deteriorations), this view 
+/// serves as a motivational tool to reinforce progress during psychiatric treatment.
+/// Includes functionality for PDF export to facilitate physical record-keeping and clinical discussions.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Förbättring över tid";
     ViewData["BodyId"] = "patient-change-page";
@@ -30,6 +40,7 @@
         _ => score.ToString()
     };
 
+    // Categorizes the magnitude of improvement based on predefined clinical threshold rules.
     string FormatImprovement(int change) => change switch
     {
         >= 3 => "Stora förbättringar",
@@ -41,8 +52,9 @@
 
 <link rel="stylesheet" href="~/css/pdf.css" asp-append-version="true" />
 
-
 <div id="pdf-content" class="container mt-2">
+    <!-- The 'no-print' class ensures navigation and action buttons are excluded from the PDF export, 
+         keeping the generated document clean for physical medical records. -->
     <div class="d-flex justify-content-between align-items-start mb-3 no-print">
         <a class="btn btn-secondary mt-2" asp-controller="PatientAssessment" asp-action="Index">
             ⬅ Tillbaka till mina bedömningar
@@ -80,6 +92,9 @@
                         <ul class="list-unstyled mb-3">
                             <li><strong>@förbättringar.Count</strong> frågor visade förbättring.</li>
                             <li><strong>@kategorier.Count</strong> kategorier innehöll förbättringar.</li>
+                            
+                            <!-- Highlights increased patient engagement by tracking questions 
+                                 that were previously omitted but are now being answered. -->
                             <li><strong>@förbättringar.Count(f => f.SkippedPrevious)</strong> frågor besvarades nu som tidigare varit <span class="text-muted">hoppade över</span>.</li>
                         </ul>
 

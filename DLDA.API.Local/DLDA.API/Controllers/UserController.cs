@@ -6,6 +6,10 @@ using DLDA.API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
+/// <summary>
+/// Manages user accounts, administrative user administration, role assignments,
+/// and clinical patient listings enriched with latest assessment metrics.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class UserController : ControllerBase
@@ -18,7 +22,7 @@ public class UserController : ControllerBase
     }
 
     // --------------------------
-    // [ADMIN] – Hantera userdefinitioner
+    // [ADMIN] – User Definition Management
     // --------------------------
 
     // GET: api/User
@@ -36,7 +40,7 @@ public class UserController : ControllerBase
     }
 
     // GET: api/User/patients?search=anna
-    // Hämtar alla patienter, och filtrerar på namn om söksträng anges
+    // Retrieves all patients, applying optional partial name filtering if a search query is specified.
     [HttpGet("patients")]
     public ActionResult<IEnumerable<UserDto>> GetPatients([FromQuery] string? search)
     {
@@ -59,7 +63,7 @@ public class UserController : ControllerBase
     }
 
     // GET: api/User/5
-    // Hämtar en specifik användare
+    // Retrieves a specific user profile by its primary key identifier.
     [HttpGet("{id}")]
     public ActionResult<UserDto> GetUser(int id)
     {
@@ -76,7 +80,7 @@ public class UserController : ControllerBase
     }
 
     // POST: api/User
-    // Skapar en ny användare med standardlösenord
+    // Instantiates a new user account with secure password hashing and fallback defaults.
     [HttpPost]
     public IActionResult CreateUser(UserDto dto)
     {
@@ -84,7 +88,7 @@ public class UserController : ControllerBase
         {
             Username = dto.Username,
             Email = dto.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password ?? "password"), // Om inget lösenord skickas: "password" används som default.
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password ?? "password"), // Fallback to "password" default if no explicit password payload is provided.
             Role = dto.Role,
             CreatedAt = DateTime.UtcNow
         };
@@ -102,7 +106,7 @@ public class UserController : ControllerBase
     }
 
     // PUT: api/User/5
-    // Uppdaterar användarinformation
+    // Updates user profile details and conditionally re-hashes passwords if modified.
     [HttpPut("{id}")]
     public IActionResult UpdateUser(int id, UserDto dto)
     {
@@ -115,7 +119,7 @@ public class UserController : ControllerBase
         user.Email = dto.Email;
         user.Role = dto.Role;
 
-        // Om nytt lösenord anges, uppdatera det
+        // Conditionally update password hash if a new non-empty password is supplied
         if (!string.IsNullOrWhiteSpace(dto.Password))
         {
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
@@ -126,7 +130,7 @@ public class UserController : ControllerBase
     }
 
     // DELETE: api/User/5
-    // Tar bort en användare
+    // Deletes a user profile from the database.
     [HttpDelete("{id}")]
     public IActionResult DeleteUser(int id)
     {
@@ -139,11 +143,11 @@ public class UserController : ControllerBase
     }
 
     // --------------------------
-    // [PERSONAL] –  hämta listor på patienter
+    // [STAFF] – Clinical Patient Directory Listing
     // --------------------------
 
     // GET api/user/5
-    // visa användarnamn och senaste bedömningens datum
+    // Exposes patient usernames paired with their most recent assessment status for clinical dashboards.
     [HttpGet("with-latest-assessment")]
     public async Task<ActionResult<IEnumerable<PatientWithAssessmentStatusDto>>> GetUsersWithLatestAssessment(
     [FromQuery] string? search,
@@ -180,30 +184,30 @@ public class UserController : ControllerBase
         {
             var a = p.LastAssessment;
 
-            // 🟡 Fall: ingen bedömning alls
+            // 🟡 Edge case: Patient has no assessment history
             if (a == null)
             {
-                // Visa endast om NOT ongoing är markerad (ej pågående) och INTE ongoing
+                // Display only if 'not ongoing' filter is explicitly checked and ' ongoing' is not
                 if (notOngoing == true && ongoing != true)
                     return true;
 
-                // Annars döljs de utan bedömning om något filter är aktivt
+                // Otherwise, exclude unassessed patients if any other status filters are active
                 return ongoing != true && notOngoing != true && string.IsNullOrWhiteSpace(recent);
             }
 
-            //  Om både ongoing + notOngoing är valda → visa alla med bedömning
+            // If both ongoing and not-ongoing filters are toggled, bypass status filters to show all assessed patients
             if (ongoing == true && notOngoing == true)
                 return true;
 
-            // Endast pågående
+            // Restrict to active ongoing assessments only
             if (ongoing == true && notOngoing != true && a.IsComplete)
                 return false;
 
-            // Endast ej pågående (❗ Visa endast om bedömning är klar)
+            // Restrict to completed assessments (❗ Ensures uncompleted forms are filtered out when looking for finished states)
             if (notOngoing == true && ongoing != true && !a.IsComplete)
                 return false;
 
-            // Tidsfilter
+            // Time window filters based on assessment creation date
             if (recent == "week" && a.CreatedAt < DateTime.Today.AddDays(-7))
                 return false;
 

@@ -1,5 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
+    /// <summary>
+    /// Represents an aggregate result container detailing clinical assessment findings,
+    /// patient identification data, and structured professional evaluation rows.
+    /// </summary>
     public class StaffResultDto
     {
         public int AssessmentId { get; set; }
@@ -11,10 +15,14 @@
         public List<StaffResultRowDto> Questions { get; set; } = new();
     }
 
+    /// <summary>
+    /// Represents an individual row within a staff result matrix, comparing patient self-assessment
+    /// scores against professional evaluations and calculating discrepancy deltas.
+    /// </summary>
     public class StaffResultRowDto
     {
         public int ItemID { get; set; }
-        public int Order { get; set; } // För nummer i listan
+        public int Order { get; set; } // Represents the sequence index position within the rendered table list
         public string QuestionText { get; set; } = string.Empty;
 
         public int? PatientAnswer { get; set; }
@@ -30,6 +38,10 @@
                 : -1;
     }
 
+    /// <summary>
+    /// Represents a comprehensive overview DTO for professional result review dashboards,
+    /// tracking clinical sign-off status alongside detailed comparative question rows.
+    /// </summary>
     public class StaffResultOverviewDto
     {
         public int AssessmentId { get; set; }
@@ -40,5 +52,4 @@
         public List<StaffResultRowDto> Questions { get; set; } = new();
 
     }
-
 }

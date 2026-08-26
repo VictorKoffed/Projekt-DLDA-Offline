@@ -4,6 +4,10 @@ using DLDA.GUI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
+/// <summary>
+/// Manages patient-facing statistical analytics, historical trend tracking, 
+/// and assessment comparison dashboards, secured exclusively for patient security roles.
+/// </summary>
 [Route("PatientStatistics")]
 [RoleAuthorize("patient")]
 public class PatientStatisticsController : Controller
@@ -18,7 +22,7 @@ public class PatientStatisticsController : Controller
     }
 
     /// <summary>
-    /// Visar statistik för en enskild bedömning (rådata per fråga).
+    /// Renders detailed granular statistics and raw question-by-question responses for a specific assessment session.
     /// </summary>
     [HttpGet("Single/{assessmentId}")]
     public async Task<IActionResult> Single(int assessmentId)
@@ -48,7 +52,7 @@ public class PatientStatisticsController : Controller
     }
 
     /// <summary>
-    /// Visar sammanfattande statistik för en bedömning (sammanställd vy).
+    /// Renders an aggregated summary view of statistical metrics for an assessment.
     /// </summary>
     [HttpGet("Overview")]
     [HttpGet("Overview/{assessmentId}")]
@@ -65,15 +69,15 @@ public class PatientStatisticsController : Controller
     }
 
     /// <summary>
-    /// Visar förbättringar över tid (kräver minst två avslutade bedömningar).
+    /// Renders longitudinal improvement trends over time, requiring a minimum of two completed assessment sessions.
     /// </summary>
     [HttpGet("Improvement/{userId}")]
     public async Task<IActionResult> Improvement(int userId)
     {
-        // Hämta förbättringsdatan från servicen
+        // Retrieves aggregated longitudinal trend metrics from the service layer
         var data = await _service.GetImprovementDataAsync(userId);
 
-        // Kontrollera om data saknas
+        // Validates that sufficient historical data exists to plot progress over time
         if (data == null)
         {
             _logger.LogWarning("Förbättringsdatan är null för användaren {UserId}. Kontrollera att två avslutade bedömningar finns.", userId);
@@ -81,13 +85,17 @@ public class PatientStatisticsController : Controller
             return RedirectToAction("Index", "PatientAssessment");
         }
 
-        // Om data finns, visa förbättringen
+        // Renders the trend visualization view once baseline prerequisites are confirmed
         return View("Improvement", data);
     }
 
+    /// <summary>
+    /// Compares metrics between two distinct assessment sessions to highlight delta changes.
+    /// </summary>
     [HttpPost("Compare")]
     public async Task<IActionResult> Compare(int firstId, int secondId)
     {
+        // Prevents redundant comparison operations against identical assessment identifiers
         if (firstId == secondId)
         {
             TempData["Error"] = "Du måste välja två olika bedömningar att jämföra.";
@@ -101,7 +109,7 @@ public class PatientStatisticsController : Controller
             return RedirectToAction("Index", "PatientAssessment");
         }
 
-        return View("Improvement", data); // återanvänder din befintliga vy
+        return View("Improvement", data); // Reuses the existing trend visualization layout view for comparative analysis
     }
 
 }

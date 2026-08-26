@@ -1,5 +1,9 @@
 ﻿namespace DLDA.API.DTOs
 {
+    /// <summary>
+    /// Represents a detailed row-by-row comparison matrix mapping discrepancies between
+    /// a patient's self-assessment and a healthcare professional's evaluation for clinical review.
+    /// </summary>
     public class StaffComparisonRowDto
     {
         public int QuestionNumber { get; set; }
@@ -10,26 +14,29 @@
         public int? PatientAnswer { get; set; }
         public string? PatientComment { get; set; }
 
-        // 👩‍⚕️ Personal
+        // 👩‍⚕️ Staff
         public int? StaffAnswer { get; set; }
         public string? StaffComment { get; set; }
 
-        // 🟡 Klassificering (match, mild-diff, strong-diff, skipped)
+        // 🟡 Classification state categorizing perspective alignment (e.g., match, mild-diff, strong-diff, skipped)
         public string Classification { get; set; } = string.Empty;
 
-        // ⛔ Fråga hoppad över av patient
+        // ⛔ Tracks whether the specific question item was intentionally skipped by the patient
         public bool SkippedByPatient { get; set; }
 
-        // 🚩 Markerad av personal för vidare diskussion
+        // 🚩 Indicates items flagged by clinical staff for follow-up discussions or critical attention
         public bool IsFlagged { get; set; }
 
-        // Info om datum och patientnamn
+        // Contextual metadata recording creation timestamp and patient account identifier
         public DateTime CreatedAt { get; set; }
         public string Username { get; set; } = string.Empty;
 
     }
 
-
+    /// <summary>
+    /// Represents an aggregate longitudinal change overview for staff analysis, categorizing
+    /// clinical assessment trajectories across improvements, regressions, risk flags, and skipped items.
+    /// </summary>
     public class StaffChangeOverviewDto
     {
         public string Username { get; set; } = string.Empty;

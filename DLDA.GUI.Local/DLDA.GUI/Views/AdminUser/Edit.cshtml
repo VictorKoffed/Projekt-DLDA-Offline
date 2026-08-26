@@ -1,10 +1,23 @@
 ﻿@using DLDA.GUI.DTOs.User
 @model UserDto
 
+@*
+/// <summary>
+/// Administrator view for editing an existing user profile.
+/// Utilizes strongly-typed model binding and ASP.NET Core Tag Helpers to securely map UI inputs directly to the underlying UserDto.
+/// This approach ensures type safety and delegates data binding seamlessly to the MVC framework.
+/// </summary>
+*@
+
 @{
     ViewData["Title"] = "Redigera användare";
 }
 
+@* 
+// Utilizing the @section directive ensures that view-specific CSS is injected directly into the layout's <head>.
+// This prevents unstyled flashes of content (FOUC) and keeps the global layout clean from page-specific bloat.
+// The asp-append-version="true" attribute enforces cache-busting by appending a cryptographic hash to the file request.
+*@
 @section Styles {
     <link rel="stylesheet" href="~/css/adminuser.css" asp-append-version="true" />
 }
@@ -12,7 +25,12 @@
 <div class="container mt-5">
     <h2 class="mb-4">✏️ Redigera användare</h2>
 
+    <!-- The POST method is strictly enforced here to comply with HTTP semantics for state-mutating operations, 
+         ensuring that data modification payloads are securely encapsulated within the request body rather than exposed in the URL. -->
     <form asp-action="Edit" method="post">
+        
+        <!-- A hidden input field is strictly required to bind the entity's primary key (UserID) back to the DTO during the POST request. 
+             Without this, the backend controller would receive a model with a default/empty ID, completely losing the context of WHICH database record it is supposed to update. -->
         <input type="hidden" asp-for="UserID" />
 
         <div class="mb-3">
@@ -22,11 +40,16 @@
 
         <div class="mb-3">
             <label asp-for="Email" class="form-label">E-post</label>
+            <!-- Explicitly declaring type="email" alongside the tag helper triggers native browser validation 
+                 and optimized mobile keyboards (e.g., showing the '@' symbol prominently) on mobile devices. -->
             <input asp-for="Email" class="form-control" type="email" />
         </div>
 
         <div class="mb-3">
             <label asp-for="Role" class="form-label">Roll</label>
+            <!-- The system operates on a strict, static Role-Based Access Control (RBAC) matrix. 
+                 Hardcoding these options directly in the view prevents unnecessary database round-trips 
+                 for a domain that rarely, if ever, changes its core security roles. -->
             <select asp-for="Role" class="form-select">
                 <option value="admin">Admin</option>
                 <option value="staff">Personal</option>
@@ -36,10 +59,15 @@
 
         <div class="mb-3">
             <label asp-for="Password" class="form-label">Nytt lösenord (valfritt)</label>
+            <!-- Making the password field optional during the edit workflow prevents the accidental overwriting of a user's existing credentials 
+                 when an administrator only intends to update non-sensitive properties like the email address or role. -->
             <input asp-for="Password" class="form-control" />
         </div>
 
         <button type="submit" class="btn btn-success">💾 Spara ändringar</button>
+        
+        <!-- Providing an explicit cancel route acts as a safe escape hatch, 
+             allowing the administrator to gracefully abort the editing process without executing a partial or accidental change. -->
         <a asp-action="Index" class="btn btn-secondary ms-2">Avbryt</a>
     </form>
 </div>
