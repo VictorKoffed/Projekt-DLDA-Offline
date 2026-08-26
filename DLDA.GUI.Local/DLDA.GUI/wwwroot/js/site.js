@@ -1,9 +1,8 @@
-﻿// ==============================
-// 📊 posetiva förändringar ifrån de två senaste bedömningarna för patient visas i stapeldiagram (PatientStatistics/Improvment)
-// ==============================
-
-// PatientStatistics/improvement
-// === improvementChart.js ===
+/**
+ * Renders a comparative bar chart for longitudinal patient progress tracking.
+ * Visualizes the delta between a patient's historical and current assessments 
+ * to instantly identify clinical trajectories (improvement vs. deterioration).
+ */
 function renderImprovementChart(labels, previousData, currentData) {
     const ctx = document.getElementById('improvementChart');
     if (!ctx) return;
@@ -50,8 +49,11 @@ function renderImprovementChart(labels, previousData, currentData) {
     });
 }
 
-// PatientStatistics/improvement
-// === Dölj sektion ===
+/**
+ * Toggles the visibility of detailed tabular data.
+ * Used to manage cognitive load, allowing patients/staff to digest high-level chart metrics 
+ * before drilling down into itemized assessment specifics.
+ */
 function toggleDetailsPatient() {
     const section = document.getElementById('detailsSection');
     const button = document.getElementById('toggleButton');
@@ -63,12 +65,10 @@ function toggleDetailsPatient() {
     button.innerText = isVisible ? '🔍 Visa detaljer per fråga' : '🔜 Dölj detaljer';
 }
 
-// ==============================
-// 📊 posetiva frågesvar ifrån en bedömning för patient visas i en piechart (PatientStatistics/Singel)
-// ==============================
-
-// PatientStatistics/Single
-// === piechart patient ===
+/**
+ * Visualizes the distribution of patient self-assessment scores for a single evaluation.
+ * Acts as a rapid clinical triage tool to quickly assess the severity proportion of a patient's condition.
+ */
 function renderPatientSinglePieChart(labels, data) {
     const ctx = document.getElementById('resultPie');
     if (!ctx) return;
@@ -91,7 +91,7 @@ function renderPatientSinglePieChart(labels, data) {
                         label: function (ctx) {
                             const label = ctx.label || '';
                             const value = ctx.parsed || 0;
-                            return `${label}: ${value} frågor`;
+                            return `${label}:${value} frågor`;
                         }
                     }
                 },
@@ -114,12 +114,10 @@ function renderPatientSinglePieChart(labels, data) {
     });
 }
 
-// ==============================
-// 📊 Autoscroll funktion till vårdgivare översiktvy (StaffResult)
-// ==============================
-
-// StaffResult/Index
-// === Autoskroll vid svar/flagg-kommentar ===
+/**
+ * Preserves viewport scroll position across synchronous form postbacks.
+ * Critical for maintaining staff context when updating individual items in a lengthy clinical assessment list.
+ */
 function rememberScroll(id) {
     sessionStorage.setItem('scrollTo', id);
 }
@@ -133,18 +131,14 @@ window.addEventListener('load', function () {
     }
 });
 
-// ==============================
-// 📊 Förändringar över tid negativ och posetiva ändringar visas i stapeldiagram (StaffChangeOverview)
-// ==============================
+/** Global reference to prevent canvas memory leaks and overlapping charts during client-side re-renders. */
+let chartInstance = null;
 
-let chartInstance = null; // Global referens till diagraminstansen
-
-// StaffChangeOverview
 /**
- * 🔄 Uppdaterar stapeldiagrammet baserat på valt filter (alla / förbättring / försämring)
+ * Dynamically re-renders the longitudinal chart to isolate specific clinical trends.
+ * Allows staff to filter out noise and focus purely on deteriorating or improving domains.
  */
 function updateChart(filterType) {
-    // Steg 1: Klassificera varje datapunkt
     const rawTypes = rawPrevious.map((prev, i) => {
         const curr = rawCurrent[i];
         if (curr < prev) return "Förbättring";
@@ -152,7 +146,6 @@ function updateChart(filterType) {
         return "Oförändrad";
     });
 
-    // Steg 2: Filtrera index enligt valt filter
     const filteredIndexes = rawTypes
         .map((type, i) => {
             if (filterType === 'improvement' && type === "Förbättring") return i;
@@ -162,7 +155,6 @@ function updateChart(filterType) {
         })
         .filter(i => i !== -1);
 
-    // Steg 3: Extrahera data för diagrammet
     const labels = filteredIndexes.map(i => rawLabels[i]);
     const previous = filteredIndexes.map(i => rawPrevious[i]);
     const current = filteredIndexes.map(i => rawCurrent[i]);
@@ -170,7 +162,6 @@ function updateChart(filterType) {
         rawCurrent[i] < rawPrevious[i] ? "#28a745" : "#dc3545"
     );
 
-    // Steg 4: Uppdatera rubrik
     const chartTitle = document.getElementById("chartFilterLabel");
     if (chartTitle) {
         chartTitle.innerText =
@@ -181,10 +172,8 @@ function updateChart(filterType) {
                     : "Visar endast försämringar";
     }
 
-    // Steg 5: Rensa befintligt diagram
     if (chartInstance) chartInstance.destroy();
 
-    // Steg 6: Rita nytt diagram
     const ctx = document.getElementById('improvementChart');
     if (!ctx) return;
 
@@ -230,16 +219,14 @@ function updateChart(filterType) {
     });
 }
 
-
-// StaffChangeOverview
 /**
- * 📂 Filtrerar både diagram och tabell samt återkopplingspaneler
+ * Orchestrates client-side filtering across both charts, data tables, and feedback summary panels 
+ * to provide a synchronized, context-aware dashboard view without server roundtrips.
  */
 function filterData(type) {
     updateChart(type);
     filterTable(type);
 
-    // Visa/dölj återkopplingspaneler
     const showImprovement = (type === 'all' || type === 'improvement');
     const showDeterioration = (type === 'all' || type === 'deterioration');
 
@@ -254,9 +241,8 @@ function filterData(type) {
     toggleDisplay("feedbackDeteriorationNote", showDeterioration);
 }
 
-// StaffChangeOverview
 /**
- * 📋 Filtrerar tabellrader visuellt efter typ
+ * Applies visual filtering to table rows matching the selected clinical trend.
  */
 function filterTable(type) {
     const improvementRows = document.querySelectorAll('.table-success');
@@ -270,9 +256,8 @@ function filterTable(type) {
     );
 }
 
-// StaffChangeOverview
 /**
- * 👁 Växlar visning av den detaljerade frågetabellen
+ * Toggles detailed itemized view for staff during longitudinal comparisons.
  */
 function toggleDetailsStaff() {
     const section = document.getElementById('detailsSection');
@@ -283,10 +268,6 @@ function toggleDetailsStaff() {
     if (button) button.textContent = visible ? '🔍 Visa detaljer' : '🔍 Dölj detaljer';
 }
 
-// StaffChangeOverview
-/** 
- * 🚀 Initierar vyn vid sidladdning
- */
 document.addEventListener('DOMContentLoaded', function () {
     const chartEl = document.getElementById('improvementChart');
     if (chartEl) {
@@ -303,21 +284,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// ==============================
-// 📊 Jämnförelse mellan vårdgivare och patient i en bedömning visas i en piechart (Comparison)
-// ==============================
-
-
-// StaffStatistics/Comparison
-// === Chart: Fördelning av skillnader mellan svar (utan 'Obesvarad') ===
+/**
+ * Visualizes the cognitive dissonance or discrepancy between patient self-perception 
+ * and clinical observation, central to the DLDA methodology.
+ */
 function renderStaffComparisonPie(labels, values) {
     const ctx = document.getElementById('comparisonPie');
     if (!ctx) return;
 
-    // Registrera plugin för att visa procent
     Chart.register(ChartDataLabels);
 
-    // Filtrera bort "Obesvarad" (eller vad som motsvarar det)
     const filtered = labels
         .map((label, index) => ({ label, value: values[index] }))
         .filter(entry => !entry.label.includes("Obesvarad") && entry.value > 0);
@@ -325,7 +301,7 @@ function renderStaffComparisonPie(labels, values) {
     const filteredLabels = filtered.map(entry => entry.label);
     const filteredValues = filtered.map(entry => entry.value);
 
-    const filteredColors = ['#dc3545', '#ffc107', '#198754']; // Anpassa färger om fler kategorier
+    const filteredColors = ['#dc3545', '#ffc107', '#198754']; 
 
     new Chart(ctx, {
         type: 'pie',
@@ -344,7 +320,7 @@ function renderStaffComparisonPie(labels, values) {
                         label: function (ctx) {
                             const label = ctx.label || '';
                             const value = ctx.parsed || 0;
-                            return `${label}: ${value} frågor`;
+                            return `${label}:${value} frågor`;
                         }
                     }
                 },
@@ -367,18 +343,19 @@ function renderStaffComparisonPie(labels, values) {
     });
 }
 
-
-
-// StaffStatistics/Comparison
-// === Toggle: Visa/dölj frågetabell ===
+/**
+ * Toggles the full itemized comparison table.
+ */
 function toggleComparisonTable() {
     const section = document.getElementById("questionTableSection");
     if (!section) return;
     section.style.display = section.style.display === "none" ? "block" : "none";
 }
 
-// StaffStatistics/Comparison
-// === Filter: Tillämpa filter baserat på val i dropdown ===
+/**
+ * Dynamically filters the comparison table to isolate critical discrepancy types 
+ * (e.g., strong differences or manually flagged items) during active patient consultations.
+ */
 function applyComparisonFilters() {
     const filter = document.getElementById("filterSelector")?.value;
     const rows = document.querySelectorAll("#comparisonTable tbody tr");
@@ -398,8 +375,10 @@ function applyComparisonFilters() {
     });
 }
 
-// StaffStatistics/PatientAnswerSummary
-// === Piechart: Sammanställning av patientens egna svar ===
+/**
+ * Renders an isolated overview of patient self-assessment inputs, establishing 
+ * the baseline for clinical review before the clinician introduces their own evaluation.
+ */
 function renderPatientAnswerSummaryPie(labels, data) {
     const ctx = document.getElementById('patientAnswerPie');
     if (!ctx) return;
@@ -413,12 +392,12 @@ function renderPatientAnswerSummaryPie(labels, data) {
             datasets: [{
                 data: data,
                 backgroundColor: [
-                    '#198754', // 0 - grön
-                    '#74c37e', // 1 - ljusgrön
-                    '#ffc107', // 2 - gul
-                    '#fd7e14', // 3 - orange
-                    '#dc3545', // 4 - röd
-                    '#dee2e6'  // null - grå
+                    '#198754', 
+                    '#74c37e', 
+                    '#ffc107', 
+                    '#fd7e14', 
+                    '#dc3545', 
+                    '#dee2e6'  
                 ]
             }]
         },
@@ -430,7 +409,7 @@ function renderPatientAnswerSummaryPie(labels, data) {
                         label: function (ctx) {
                             const label = ctx.label || '';
                             const value = ctx.parsed || 0;
-                            return `${label}: ${value} frågor`;
+                            return `${label}:${value} frågor`;
                         }
                     }
                 },
@@ -450,16 +429,18 @@ function renderPatientAnswerSummaryPie(labels, data) {
     });
 }
 
-// ==============================
-// 📋 PatientAnswerSummary – Visa/dölj och filtrera frågetabell
-// ==============================
-
+/**
+ * Toggles visibility of the detailed self-assessment tabular data.
+ */
 function togglePatientAnswerTable() {
     const section = document.getElementById("patientAnswerTableSection");
     if (!section) return;
     section.style.display = section.style.display === "none" ? "block" : "none";
 }
 
+/**
+ * Filters the patient self-assessment table by specific severity thresholds.
+ */
 function applyPatientAnswerFilter() {
     const filter = document.getElementById("patientAnswerFilter")?.value;
     const rows = document.querySelectorAll("#patientAnswerTable tbody tr");
@@ -476,10 +457,11 @@ function applyPatientAnswerFilter() {
     });
 }
 
-// ==============================
-// 📊 Patient – Jämför förbättring över tid
-// ==============================
-
+/**
+ * Client-side chronological validation for comparison queries.
+ * Ensures the baseline assessment temporally precedes the current assessment 
+ * to prevent inverted longitudinal analysis.
+ */
 function validateDates() {
     const first = document.getElementById("firstSelect");
     const second = document.getElementById("secondSelect");
@@ -498,10 +480,9 @@ function validateDates() {
     return true;
 }
 
-// ==============================
-// 📊 StaffStatistics – Validera datum för jämförelse (bedömning 1 måste vara äldre)
-// ==============================
-
+/**
+ * Client-side chronological validation for comparison queries (Staff contextual wrapper).
+ */
 function validateDates() {
     const first = document.getElementById("firstSelect");
     const second = document.getElementById("secondSelect");
@@ -520,9 +501,9 @@ function validateDates() {
     return true;
 }
 
-// ==============================
-// 📊 StaffAssessment söka i patient lista)
-// ==============================
+/**
+ * Resets the active patient filter state and reloads the base staff assessment list.
+ */
 function clearSearch() {
     const searchInput = document.querySelector('input[name="search"]');
     if (searchInput) {
@@ -531,9 +512,11 @@ function clearSearch() {
     window.location.href = searchInput?.closest("form")?.getAttribute("action") || window.location.href;
 }
 
-// ==============================
-// 📄 PDF-export för olika sidor
-// ==============================
+/**
+ * Orchestrates the generation of immutable PDF reports for physical medical records.
+ * Uses html2canvas and jsPDF to capture the current DOM state, injects standardized hospital branding (logo/dates),
+ * and structures pagination to ensure compliance with clinical documentation standards.
+ */
 document.addEventListener("DOMContentLoaded", function () {
     const pageId = document.body.id;
     const exportBtn = document.getElementById("downloadPdfBtn");
@@ -578,15 +561,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const wasHidden = tableSection?.style.display === "none";
         if (wasHidden) tableSection.style.display = "block";
 
-        // Temporär stil för att dölja knappar i PDF
         const style = document.createElement("style");
         style.innerHTML = "@media screen {.no-print { display: none !important; }}";
         document.head.appendChild(style);
 
         try {
-            // ✅ Justerad sökväg för servermiljö (lägg till projektmapp om nödvändigt)
             const logo = new Image();
-            logo.src = "/images/dlda_logo.png"; // <-- Lägg till projektmapp!
+            logo.src = "/images/dlda_logo.png"; 
             await new Promise(resolve => logo.onload = resolve);
 
             const canvas = await html2canvas(container, { scale: 2 });
