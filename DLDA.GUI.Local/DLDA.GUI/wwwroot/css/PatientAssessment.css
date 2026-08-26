@@ -1,4 +1,9 @@
-﻿/* Gemensam stil för outline-knappar */
+/**
+ * Stylesheet for assessment workflow action buttons.
+ * Implements a semantic color-coding system to instantly communicate the state of an evaluation.
+ * This reduces cognitive load for clinical staff and helps prevent incomplete medical records 
+ * by visually highlighting interrupted or unstarted workflows.
+ */
 .btn-outline-style {
     background-color: transparent;
     font-weight: 600;
@@ -6,7 +11,7 @@
     transition: all 0.2s ease-in-out;
 }
 
-/* Starta – grön kant, fylls vid hover */
+/* Green signifies a new, unstarted clinical assessment. */
 .btn-start {
     background-color: transparent;
     color: #198754;
@@ -19,7 +24,7 @@
         color: white;
     }
 
-/* Fortsätt – orange kant, fylls vid hover */
+/* Orange visually warns of an interrupted workflow that requires resumption. */
 .btn-continue {
     background-color: transparent;
     color: #d17b00;
@@ -32,7 +37,7 @@
         color: white;
     }
 
-/* Visa – grå kant, fylls vid hover */
+/* Neutral gray denotes a finalized, immutable assessment available strictly for review. */
 .btn-visa {
     background-color: transparent;
     color: #6c757d;
@@ -45,7 +50,6 @@
         color: white;
     }
 
-/* Pågående-status */
 .status-ongoing {
     color: #d17b00;
     font-weight: 600;
