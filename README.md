@@ -1,10 +1,10 @@
+# 🌐 Projekt DLDA Offline
+
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=flat&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Docker](https://img.shields.io/badge/Docker-DevContainers-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-MVC-brightgreen?style=flat&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/apps/aspnet)
 [![Entity Framework](https://img.shields.io/badge/EF%20Core-SQL%20Server-blue?style=flat&logo=microsoftsqlserver&logoColor=white)](https://learn.microsoft.com/en-us/ef/core/)
 [![Säkerhet](https://img.shields.io/badge/Security-RBAC%20%26%20BCrypt-red?style=flat)](https://github.com/BcryptNet/bcrypt.net)
-
-# 🌐 Projekt DLDA Offline
 
 ## 📝 Introduktion
 
