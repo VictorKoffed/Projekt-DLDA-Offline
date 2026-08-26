@@ -1,4 +1,12 @@
-﻿@media (max-width: 768px) {
+/**
+ * Viewport-aware display utility classes.
+ * Enforces strict structural separation between desktop and mobile interfaces. 
+ * This approach guarantees that clinical staff and patients receive a highly optimized, 
+ * context-specific UX (e.g., side-by-side data analysis on desktop vs. focused, single-column 
+ * cognitive load reduction on mobile) without introducing complex, fragile responsive overrides.
+ */
+
+@media (max-width: 768px) {
     .only-desktop {
         display: none !important;
     }
