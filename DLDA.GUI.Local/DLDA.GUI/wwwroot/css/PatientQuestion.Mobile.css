@@ -1,4 +1,9 @@
-﻿/* Nästa-knapp – grön stil */
+/**
+ * Stylesheet for the mobile assessment quiz interface.
+ * Enforces high-contrast visual feedback and tactile touch states for answer selection,
+ * ensuring accessibility and reducing input errors during mobile evaluations.
+ */
+
 .btn-next-main {
     background-color: #198754;
     color: white;
@@ -15,7 +20,7 @@
         color: white;
     }
 
-/* Grön markerad fråga i mobilvy */
+/* Provides unambiguous visual confirmation for selected touch targets on mobile viewports. */
 .btn-check:checked + label.btn-outline-secondary {
     background-color: #eaf6ee !important;
     border-color: #198754 !important;
@@ -23,7 +28,6 @@
     font-weight: 600;
 }
 
-/* ✅ Markerat svarsalternativ */
 .btn-check:checked + label.btn-outline-secondary {
     background-color: #eaf6ee !important;
     border-color: #198754 !important;
@@ -31,24 +35,23 @@
     font-weight: 600;
 }
 
-/* ✅ Hover-effekt för alla svar */
 .btn-outline-secondary:hover {
     background-color: #f0f8f4 !important;
     border-color: #198754;
     color: #198754;
 }
 
-/* ✅ Progressbar grön */
+/* Overrides default theme palette to maintain consistent branding across evaluation progress indicators. */
 .progress-bar.bg-primary {
     background-color: #198754 !important;
 }
 
-/* ✅ Frågetext grön */
 .question-title {
     color: #198754;
     font-weight: 700;
 }
 
+/* Amber styling visually distinguishes state-suspending actions from final submission buttons. */
 .btn-pause {
     background-color: transparent;
     color: #d17b00;

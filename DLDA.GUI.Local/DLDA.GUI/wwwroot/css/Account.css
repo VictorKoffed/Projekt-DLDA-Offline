@@ -1,11 +1,18 @@
-﻿body {
+/**
+ * Stylesheet for the authentication module (Login).
+ * Prioritizes a centralized, responsive flexbox layout to ensure the login form 
+ * remains visually prominent and vertically centered across all device viewports.
+ */
+
+body {
     background-color: #ffffff;
     font-family: 'Inter', sans-serif;
     margin: 0;
 }
 
 .login-container {
-    min-height: calc(100vh - 120px); /* Lämna plats för navbar + footer */
+    /* Accounts for the fixed height of the global navbar and footer to prevent unnecessary vertical scrolling. */
+    min-height: calc(100vh - 120px);
     display: flex;
     justify-content: center;
     align-items: center;

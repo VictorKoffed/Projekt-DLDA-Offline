@@ -1,4 +1,10 @@
-﻿/* Container för hela frågan */
+/**
+ * Stylesheet for the assessment question interface.
+ * Establishes a clear visual hierarchy and utilizes distinct color-coding 
+ * to guide users through the evaluation workflow, minimizing cognitive fatigue 
+ * during lengthy clinical sessions.
+ */
+
 .question-box {
     background-color: #fff;
     border-left: 5px solid #198754;
@@ -8,7 +14,6 @@
     margin-bottom: 2rem;
 }
 
-    /* Frågetext */
     .question-box h4 {
         color: #198754;
         font-weight: 700;
@@ -20,7 +25,7 @@
         color: #6c757d;
     }
 
-/* Bildknappar */
+/* Visually transforms standard radio inputs into clickable image cards to improve target sizes and accessibility. */
 .form-check label.btn {
     border: 2px solid transparent;
     border-radius: 8px;
@@ -34,7 +39,6 @@
     background-color: #eaf6ee;
 }
 
-/* Info-ruta */
 .info-alert {
     font-size: 0.9rem;
     background-color: #e9f7fc;
@@ -44,7 +48,6 @@
     margin-bottom: 1.5rem;
 }
 
-/* Knappsektioner */
 .question-buttons button {
     min-width: 150px;
 }
@@ -54,12 +57,12 @@ button[type="submit"].btn-lg {
     font-weight: 600;
 }
 
-/* Kommentar-ruta */
 textarea.form-control {
     border-radius: 8px;
     padding: 1rem;
 }
 
+/* Differentiates state-suspending actions from primary workflow progression to prevent accidental submissions. */
 .btn-pause {
     background-color: transparent;
     color: #d17b00;
@@ -73,7 +76,6 @@ textarea.form-control {
         color: white;
     }
 
-/* Stor grön knapp för "Nästa fråga" */
 .btn-next-main {
     background-color: #198754;
     color: white;
@@ -90,7 +92,6 @@ textarea.form-control {
         background-color: #146c43;
     }
 
-/* Justera mellanrummet under nästa-fråga-knappen */
 .question-buttons {
     margin-top: 0.5rem;
 }

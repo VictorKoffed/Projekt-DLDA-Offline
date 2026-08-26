@@ -1,19 +1,20 @@
-﻿/* === adminuser.css === */
+/**
+ * Stylesheet for the administrative user management interface.
+ * Establishes a distinct visual boundary to separate RBAC configuration and user management 
+ * from standard clinical workflows, mitigating the risk of accidental systemic alterations.
+ */
 
-/* Allmänt */
 body {
     background-color: #ffffff;
     color: #212529;
     font-family: "Segoe UI", sans-serif;
 }
 
-/* Rubriker */
 h2 {
     color: #007bff;
     font-weight: 600;
 }
 
-/* Formulär */
 .form-label {
     font-weight: 600;
 }
@@ -25,7 +26,6 @@ h2 {
     padding: 10px;
 }
 
-/* Knappar */
 .btn {
     border-radius: 8px;
     font-weight: 500;
@@ -33,7 +33,7 @@ h2 {
     transition: 0.2s ease-in-out;
 }
 
-/* Primär knapp (Skapa, Redigera) */
+/* Enforces standardized primary action affordances for safe administrative mutations (e.g., saving user profiles). */
 .btn-primary {
     background-color: #007bff;
     border-color: #007bff;
@@ -45,7 +45,7 @@ h2 {
         border-color: #004999;
     }
 
-/* Mintgrön knapp */
+/* Mint green signifies successful or additive administrative actions (e.g., creating a new user entity). */
 .btn-success {
     background-color: #3eb489;
     border-color: #3eb489;
@@ -57,7 +57,7 @@ h2 {
         border-color: #2e8f6f;
     }
 
-/* Sekundär knapp (Avbryt) */
+/* Neutral gray de-emphasizes non-destructive fallback actions to guide users toward primary actions. */
 .btn-secondary {
     background-color: #6c757d;
     border-color: #6c757d;
@@ -69,12 +69,11 @@ h2 {
         border-color: #545b62;
     }
 
-/* Farlig knapp (Ta bort) */
+/* Red enforces cognitive friction for destructive, irreversible administrative actions (e.g., deleting a user or revoking access). */
 .btn-danger {
     border-radius: 8px;
 }
 
-/* Tabell */
 .table {
     border: 1px solid #dee2e6;
 }
@@ -95,7 +94,7 @@ h2 {
         border-radius: 6px;
     }
 
-/* Panel runt användartabellen */
+/* Encapsulates critical administrative user data within a high-contrast boundary, reinforcing the context switch from clinical to administrative state. */
 .user-table-panel {
     background-color: #e6f2fd;
     border: 2px solid #000;
@@ -106,12 +105,11 @@ h2 {
     margin: 0 auto;
 }
 
-/* För responsiv tabell */
 .table-responsive {
     overflow-x: auto;
 }
 
-/* Anpassad spacing vid små skärmar */
+/* Maximizes touch target area for administrative actions on small viewports, ensuring compliance with mobile accessibility standards. */
 @media (max-width: 576px) {
     .btn {
         width: 100%;

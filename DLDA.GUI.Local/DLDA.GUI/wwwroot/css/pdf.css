@@ -1,19 +1,22 @@
-﻿/* Göm alla element markerade med .no-print */
+/**
+ * Stylesheet for PDF generation and physical print layouts of clinical assessment reports.
+ * Enforces high-contrast typography, print-specific suppression of interactive elements, 
+ * and structural page-break constraints to ensure medical records remain compliant, legible, 
+ * and structurally intact when exported or printed for patient files.
+ */
+
 @media print {
     .no-print {
         display: none !important;
     }
 }
 
-/* Grundstil för bättre utskriftslayout */
 body {
     font-family: "Arial", sans-serif;
     font-size: 12pt;
     color: #000;
     background-color: white;
 }
-
-
 
 h2 {
     font-size: 18pt;
@@ -60,6 +63,8 @@ h2 {
     background-color: #e2e3e5;
 }
 
+/* Prevents table rows from breaking across page boundaries, ensuring individual 
+   assessment entries remain complete and coherent on printed medical documentation. */
 tr {
     page-break-inside: avoid;
 }

@@ -1,10 +1,15 @@
-﻿h2 {
+/**
+ * Stylesheet for the Admin Panel dashboard.
+ * Implements distinct visual cues to clearly differentiate administrative interfaces 
+ * from clinical and patient workflows, reducing the risk of unintended systemic modifications.
+ */
+h2 {
     color: #007bff;
     font-weight: 600;
 }
 
 .admin-panel-box {
-    background-color: #e6f2fd; /* Ny blå färg */
+    background-color: #e6f2fd;
     border: 2px solid #333333;
     border-radius: 16px;
     padding: 30px;

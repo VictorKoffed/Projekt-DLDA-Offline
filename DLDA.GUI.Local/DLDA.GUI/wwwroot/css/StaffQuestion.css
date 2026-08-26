@@ -1,4 +1,10 @@
-﻿@media (max-width: 768px) {
+/**
+ * Viewport visibility utilities and staff-specific interaction states.
+ * Enforces strict structural separation between desktop and mobile interfaces to optimize 
+ * clinical workflows per device, and applies context-aware styling for staff inputs.
+ */
+
+@media (max-width: 768px) {
     .only-desktop {
         display: none !important;
     }
@@ -18,12 +24,13 @@
     }
 }
 
-/* Markerad svarsknapp (blå) */
+/* Enforces a distinct primary blue visual language to differentiate staff inputs from patient inputs, providing clear tactile feedback for selected states. */
 input[type="radio"].btn-check:checked + label {
     border: 2px solid #0d6efd;
     background-color: #eaf0ff;
 }
 
+/* Amber styling visually distinguishes state-suspending actions from final submission buttons to prevent accidental workflow termination. */
 .btn-pause {
     background-color: transparent;
     color: #d17b00;
