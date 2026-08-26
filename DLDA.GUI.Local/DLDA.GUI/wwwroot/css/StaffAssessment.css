@@ -1,11 +1,17 @@
-﻿/* Tabellhuvud – samma stil som patient */
+/**
+ * Stylesheet for the staff assessment dashboard and action controls.
+ * Implements a semantic color-coding system to instantly communicate the state 
+ * and consequence of clinical workflows. Maintains visual parity with patient-facing 
+ * interfaces to ensure a cohesive user experience across different RBAC roles.
+ */
+
+/* Mirrors the patient table header styling to ensure visual consistency across dual-perspective views. */
 .table-staff thead tr {
     background-color: #BDD9C4;
     color: #000;
     font-weight: 600;
 }
 
-/* Gemensam bas för outline-knappar */
 .btn-outline-style {
     background-color: transparent;
     font-weight: 600;
@@ -13,7 +19,6 @@
     transition: all 0.2s ease-in-out;
 }
 
-/* ▶ Till quiz – blå */
 .btn-quiz {
     background-color: transparent;
     color: #0d6efd;
@@ -27,7 +32,7 @@
         color: white;
     }
 
-/* 📄/📊 Visa resultat/översikt – grå */
+/* Neutral gray denotes read-only or finalized states, distinguishing them from actionable workflows. */
 .btn-visa {
     background-color: transparent;
     color: #6c757d;
@@ -41,7 +46,6 @@
         color: white;
     }
 
-/* 📊 Statistik – grön */
 .btn-statistik {
     background-color: transparent;
     color: #198754;
@@ -55,7 +59,7 @@
         color: white;
     }
 
-/* 🗑 Ta bort – röd */
+/* Red enforces friction for destructive, irreversible actions (e.g., deleting a clinical record). */
 .btn-delete {
     background-color: transparent;
     color: #dc3545;
@@ -69,7 +73,6 @@
         color: white;
     }
 
-/* Ny bedömning – grön outline */
 .btn-outline-success {
     font-weight: 600;
     transition: all 0.2s ease-in-out;
@@ -80,7 +83,6 @@
         color: white;
     }
 
-/* Tillbaka – grå outline */
 .btn-outline-secondary {
     font-weight: 600;
     transition: all 0.2s ease-in-out;
@@ -91,6 +93,7 @@
         color: white;
     }
 
+/* Green signifies the initiation of a new clinical evaluation. */
 .btn-start {
     background-color: transparent;
     color: #198754;
@@ -104,6 +107,7 @@
         color: white;
     }
 
+/* Amber visually highlights interrupted workflows that require resumption to prevent data loss. */
 .btn-continue {
     background-color: transparent;
     color: #d17b00;
