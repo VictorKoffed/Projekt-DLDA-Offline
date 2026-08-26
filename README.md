@@ -1,18 +1,18 @@
-# 🌐 Projekt DLDA
+# 🌐 Project DLDA
 
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=flat&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Docker](https://img.shields.io/badge/Docker-DevContainers-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
 [![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-MVC-brightgreen?style=flat&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/apps/aspnet)
 [![Entity Framework](https://img.shields.io/badge/EF%20Core-SQL%20Server-blue?style=flat&logo=microsoftsqlserver&logoColor=white)](https://learn.microsoft.com/en-us/ef/core/)
-[![Säkerhet](https://img.shields.io/badge/Security-RBAC%20%26%20BCrypt-red?style=flat)](https://github.com/BcryptNet/bcrypt.net)
+[![Security](https://img.shields.io/badge/Security-RBAC%20%26%20BCrypt-red?style=flat)](https://github.com/BcryptNet/bcrypt.net)
 
-## 📝 Introduktion
+## 📝 Introduction
 
-**DLDA** är en webbaserad prototyp som digitaliserar det psykiatriska skattningsverktyget **DLDA (Daily Life Dialogue Assessment in Psychiatric Care)**.
+**DLDA** is a web-based prototype that digitizes the psychiatric assessment tool **DLDA (Daily Life Dialogue Assessment in Psychiatric Care)**.
 
-Projektet består av en ASP.NET Core MVC-applikation och ett separat Web API som tillsammans hanterar användargränssnitt, autentisering, skattningar och datahantering. Systemet använder Entity Framework Core och SQL Server för lagring och körs i en Docker-baserad miljö.
+The project consists of an ASP.NET Core MVC application and a separate Web API that together handle the user interface, authentication, assessments, and data management. The system uses Entity Framework Core and SQL Server for data storage and runs in a Docker-based environment.
 
-Målet är att göra skattningen enklare att genomföra digitalt och samtidigt ge vårdpersonal möjlighet att följa resultat, jämföra skattningar och se förändringar över tid.
+The goal is to make the assessment easier to complete digitally while giving healthcare professionals the ability to track results, compare assessments, and monitor changes over time.
 
 ---
 
@@ -22,180 +22,180 @@ Målet är att göra skattningen enklare att genomföra digitalt och samtidigt g
 
 ---
 
-## 🖼️ Skärmbilder
+## 🖼️ Screenshots
 
-### 💻 Webbgränssnitt (Desktop)
+### 💻 Web Interface (Desktop)
 
-**DLDA – Bedömning för patient**  
-![Patient Bedömning](Pictures/BedomingForPatientOversikt.png)
+**DLDA – Patient Assessment**  
+![Patient Assessment](Pictures/BedomingForPatientOversikt.png)
 
-**DLDA – Förändring över tid**  
-![Förändring över tid](Pictures/ForandringOverTid.png)
+**DLDA – Change Over Time**  
+![Change Over Time](Pictures/ForandringOverTid.png)
 
-**DLDA – Patientöversikt**  
-![Patientöversikt](Pictures/PatientOversikt.png)
+**DLDA – Patient Overview**  
+![Patient Overview](Pictures/PatientOversikt.png)
 
-**DLDA – Quiz-gränssnitt**  
+**DLDA – Quiz Interface**  
 ![Quiz](Pictures/Quiz.png)
 
-### 📱 Responsiv design (Mobilvy)
+### 📱 Responsive Design (Mobile View)
 
-Gränssnittet är anpassat för att vårdpersonal och patienter ska kunna använda systemet på både mobil och desktop.
+The interface is designed so that healthcare professionals and patients can use the system on both mobile and desktop.
 
-| Översikt | Bedömning | Förändring | Quiz | Jämförelse |
+| Overview | Assessment | Change | Quiz | Comparison |
 | :---: | :---: | :---: | :---: | :---: |
-| <img src="Pictures/PatientOversikt_Mobil.png" alt="Patientöversikt Mobil" width="160"/> | <img src="Pictures/BedomingForPatientOversikt_Mobil.png" alt="Bedömning Mobil" width="160"/> | <img src="Pictures/ForandringOverTid_Mobil.png" alt="Förändring Mobil" width="160"/> | <img src="Pictures/Quiz_Mobil.png" alt="Quiz Mobil" width="160"/> | <img src="Pictures/SkillnadMellanPatientOchPersonalSvar_Mobil.png" alt="Skillnad Mobil" width="160"/> |
+| <img src="Pictures/PatientOversikt_Mobil.png" alt="Patient Overview Mobile" width="160"/> | <img src="Pictures/BedomingForPatientOversikt_Mobil.png" alt="Assessment Mobile" width="160"/> | <img src="Pictures/ForandringOverTid_Mobil.png" alt="Change Mobile" width="160"/> | <img src="Pictures/Quiz_Mobil.png" alt="Quiz Mobile" width="160"/> | <img src="Pictures/SkillnadMellanPatientOchPersonalSvar_Mobil.png" alt="Difference Mobile" width="160"/> |
 
 ---
 
-## 📋 Innehåll
+## 📋 Contents
 
-- [Vad är DLDA?](#vad-är-dlda)
-- [Syfte](#-syfte)
-- [Begränsningar](#️-begränsningar)
-- [Projektstruktur](#-projektstruktur)
-- [Mappstruktur](#-mappstruktur)
-- [Kom igång (Build & Run)](#-kom-igång-build--run)
-- [Användarroller & Säkerhet](#-användarroller--säkerhet)
-- [Funktioner](#️-funktioner)
-- [Arkitektur](#-arkitektur)
-- [Tekniska koncept som används](#-tekniska-koncept-som-används)
-- [Projektgrupp & Kontext](#-projektgrupp--kontext)
-- [AI-assistans](#-ai-assistans)
-
----
-
-## Vad är DLDA?
-
-**DLDA (Daily Life Dialogue Assessment in Psychiatric Care)** är ett bedömningsverktyg som bygger på Världshälsoorganisationens (WHO) ICF-klassifikation. Verktyget används inom psykiatrin för att tillsammans med patienten och vårdpersonalen få en bild av hur olika delar av patientens vardag fungerar.
-
-Bedömningen består av frågor inom nio områden, bland annat personlig vård, kommunikation, hemliv och relationer. Både patienten och vårdpersonalen gör en egen skattning på en skala från **0 till 4**, där 0 innebär inget problem och 4 innebär ett mycket stort problem.
-
-Resultaten kan sedan användas som underlag för samtal mellan patient och vårdpersonal, exempelvis kring behov, stöd och fortsatt vård.
+- [What is DLDA?](#what-is-dlda)
+- [Purpose](#-purpose)
+- [Limitations](#️-limitations)
+- [Project Structure](#-project-structure)
+- [Folder Structure](#-folder-structure)
+- [Getting Started (Build & Run)](#-getting-started-build--run)
+- [User Roles & Security](#-user-roles--security)
+- [Features](#️-features)
+- [Architecture](#-architecture)
+- [Technical Concepts Used](#-technical-concepts-used)
+- [Project Team & Context](#-project-team--context)
+- [AI Assistance](#-ai-assistance)
 
 ---
 
-## 🎯 Syfte
+## What is DLDA?
 
-Syftet med projektet är att undersöka hur DLDA skulle kunna fungera i en digital miljö istället för på papper.
+**DLDA (Daily Life Dialogue Assessment in Psychiatric Care)** is an assessment tool based on the World Health Organization's (WHO) ICF classification. The tool is used in psychiatric care to provide an overview, together with the patient and healthcare professional, of how different aspects of the patient's everyday life are functioning.
 
-Tanken är att göra det enklare för patienten att genomföra sin skattning och samtidigt ge vårdpersonalen en tydligare överblick över resultaten. Systemet gör det bland annat möjligt att jämföra patientens och personalens skattningar, visualisera resultat och följa förändringar över tid.
+The assessment consists of questions covering nine areas, including personal care, communication, domestic life, and relationships. Both the patient and healthcare professional provide their own assessment on a scale from **0 to 4**, where 0 indicates no problem and 4 indicates a very significant problem.
 
----
-
-## ⚠️ Begränsningar
-
-Projektet är en prototyp som har utvecklats i utbildningssyfte och är inte avsett att användas som ett färdigt kliniskt vårdsystem.
-
-Funktioner, säkerhet och datalagring är anpassade efter projektets tekniska förutsättningar. Projektet ska därför inte användas för att hantera riktiga patientuppgifter eller användas i klinisk verksamhet.
+The results can then be used as a basis for discussions between the patient and healthcare professional, for example regarding needs, support, and continued care.
 
 ---
 
-## 📁 Projektstruktur
+## 🎯 Purpose
 
-Lösningen är uppdelad i två samverkande huvudprojekt:
+The purpose of the project is to explore how DLDA could work in a digital environment instead of on paper.
 
-| Projekt | Typ | Syfte |
+The aim is to make it easier for patients to complete their assessments while giving healthcare professionals a clearer overview of the results. The system makes it possible to compare patient and staff assessments, visualize results, and track changes over time.
+
+---
+
+## ⚠️ Limitations
+
+This project is a prototype developed for educational purposes and is not intended to be used as a finished clinical healthcare system.
+
+Its features, security, and data storage are adapted to the technical requirements of the project. The project must therefore not be used to handle real patient data or in clinical practice.
+
+---
+
+## 📁 Project Structure
+
+The solution is divided into two cooperating main projects:
+
+| Project | Type | Purpose |
 |:---|:---|:---|
-| **DLDA.API** | Web API | Hanterar affärslogik, databasåtkomst via EF Core, autentisering och API-endpoints. |
-| **DLDA.GUI** | MVC Web App | Webbgränssnitt som kommunicerar med API:et och hanterar användarflöden och sessioner. |
+| **DLDA.API** | Web API | Handles business logic, database access through EF Core, authentication, and API endpoints. |
+| **DLDA.GUI** | MVC Web App | Web interface that communicates with the API and handles user flows and sessions. |
 
-Projektet kan köras på två olika sätt beroende på användningsområde:
+The project can be run in two different ways depending on the use case:
 
-- **Docker Compose** används för att köra projektets olika delar som en samlad miljö.
-- **DevContainers** används som utvecklingsmiljö för respektive projekt. Både `DLDA.API` och `DLDA.GUI` har egna DevContainer-konfigurationer, vilket gör det möjligt att utveckla i isolerade och reproducerbara miljöer.
+- **Docker Compose** is used to run the different parts of the project as a single environment.
+- **DevContainers** are used as development environments for each project. Both `DLDA.API` and `DLDA.GUI` have their own DevContainer configurations, making it possible to develop in isolated and reproducible environments.
 
 ---
 
-## 🧱 Mappstruktur
+## 🧱 Folder Structure
 
 ```text
 Projekt-DLDA-Offline/
 ├─ DLDA.API/
-│  ├─ .devcontainer/           # Konfiguration för Docker-utvecklingsmiljö
-│  ├─ Controllers/             # API-endpoints (Assessment, Auth, User, m.fl.)
-│  ├─ Data/                    # AppDbContext för SQL Server-koppling
-│  ├─ DTOs/                    # Data Transfer Objects för dataöverföring
-│  └─ Models/                  # Datamodeller (User, Question, Assessment)
+│  ├─ .devcontainer/           # Docker development environment configuration
+│  ├─ Controllers/             # API endpoints (Assessment, Auth, User, etc.)
+│  ├─ Data/                    # AppDbContext for SQL Server connection
+│  ├─ DTOs/                    # Data Transfer Objects for data transfer
+│  └─ Models/                  # Data models (User, Question, Assessment)
 ├─ DLDA.GUI/
-│  ├─ .devcontainer/           # Konfiguration för Docker-utvecklingsmiljö
-│  ├─ Authorization/           # RoleAuthorizeAttribute för RBAC-logik
-│  ├─ Controllers/             # MVC-logik för Patient, Staff och Admin
-│  ├─ Services/                # API-klienter (AccountService, QuizService, etc.)
-│  ├─ Views/                   # Razor-vyer (HTML/C#)
-│  └─ wwwroot/                 # CSS, JS och bilder
-└─ docker-compose.yml          # Docker Compose-konfiguration
+│  ├─ .devcontainer/           # Docker development environment configuration
+│  ├─ Authorization/           # RoleAuthorizeAttribute for RBAC logic
+│  ├─ Controllers/             # MVC logic for Patient, Staff, and Admin
+│  ├─ Services/                # API clients (AccountService, QuizService, etc.)
+│  ├─ Views/                   # Razor views (HTML/C#)
+│  └─ wwwroot/                 # CSS, JS, and images
+└─ docker-compose.yml          # Docker Compose configuration
 ```
 
 ---
 
-## 🚀 Kom igång (Build & Run)
+## 🚀 Getting Started (Build & Run)
 
-Projektet kan köras på två sätt:
+The project can be run in two ways:
 
-- **Docker Compose** – för att köra projektets olika delar som en samlad miljö.
-- **DevContainers** – för utveckling i separata och reproducerbara utvecklingsmiljöer.
+- **Docker Compose** – to run the different parts of the project as a single environment.
+- **DevContainers** – for development in separate and reproducible development environments.
 
-### Förutsättningar
+### Prerequisites
 
 - Docker Desktop
-- JetBrains Rider (rekommenderas) eller Visual Studio Code
+- JetBrains Rider (recommended) or Visual Studio Code
 - SQL Server
 
-### 🐳 Alternativ 1 – Docker Compose
+### 🐳 Option 1 – Docker Compose
 
-1. Klona arkivet till din lokala maskin.
-2. Kontrollera att SQL Server är tillgänglig och att anslutningssträngen är korrekt konfigurerad.
-3. Starta projektet med Docker Compose:
+1. Clone the repository to your local machine.
+2. Make sure SQL Server is available and that the connection string is configured correctly.
+3. Start the project with Docker Compose:
 
 ```bash
 docker compose up --build
 ```
 
-4. När containrarna har startat kan applikationen nås via de portar som anges i `docker-compose.yml`.
+4. Once the containers have started, the application can be accessed through the ports specified in `docker-compose.yml`.
 
-> Kontrollera `docker-compose.yml` för aktuella portar och miljövariabler.
+> Check `docker-compose.yml` for the current ports and environment variables.
 
-### 🛠️ Alternativ 2 – DevContainers
+### 🛠️ Option 2 – DevContainers
 
-Projektet innehåller separata DevContainer-konfigurationer för `DLDA.API` och `DLDA.GUI`.
+The project contains separate DevContainer configurations for `DLDA.API` and `DLDA.GUI`.
 
-#### Starta API
+#### Start the API
 
-1. Öppna mappen `DLDA.API` i Rider eller Visual Studio Code.
-2. Välj **Reopen in Container** / **Start DevContainer**.
-3. Kontrollera anslutningssträngen i:
+1. Open the `DLDA.API` folder in Rider or Visual Studio Code.
+2. Select **Reopen in Container** / **Start DevContainer**.
+3. Check the connection string in:
 
 ```text
 DLDA.API/appsettings.json
 ```
 
-4. Kontrollera att `ConnectionStrings` pekar mot rätt SQL Server-instans.
-5. Kör API-projektet.
+4. Make sure `ConnectionStrings` points to the correct SQL Server instance.
+5. Run the API project.
 
-API:et och Swagger startar på:
+The API and Swagger are available at:
 
 ```text
 http://localhost:5001/swagger
 ```
 
-#### Starta GUI
+#### Start the GUI
 
-1. Öppna mappen `DLDA.GUI` i en separat fönsterinstans.
-2. Välj **Reopen in Container** / **Start DevContainer**.
-3. Kör GUI-projektet.
+1. Open the `DLDA.GUI` folder in a separate window.
+2. Select **Reopen in Container** / **Start DevContainer**.
+3. Run the GUI project.
 
-Webbapplikationen startar på:
+The web application is available at:
 
 ```text
 http://localhost:5000
 ```
 
-### Skapa testdata
+### Create Test Data
 
-När API:et är igång kan Swagger användas för att skapa grundläggande testdata.
+Once the API is running, Swagger can be used to create basic test data.
 
-Följande utvecklings-endpoints kan användas:
+The following development endpoints are available:
 
 ```text
 POST /api/Auth/dev-update-admin
@@ -203,56 +203,56 @@ POST /api/Auth/dev-seed-questions
 POST /api/Auth/dev-seed-users
 ```
 
-Endpoints används för att bland annat skapa en administratör, lägga in skattningsfrågor samt skapa testpatient och testpersonal.
+These endpoints can be used to create an administrator, seed assessment questions, and create test patient and staff users.
 
-> **Obs:** Dessa endpoints är avsedda för utvecklingsmiljön och bör inte exponeras i en produktionsmiljö.
+> **Note:** These endpoints are intended for the development environment and should not be exposed in a production environment.
 
 ---
 
-## 🔐 Användarroller & Säkerhet
+## 🔐 User Roles & Security
 
-Projektet använder rollbaserad åtkomst för att skilja mellan olika typer av användare.
+The project uses role-based access control to distinguish between different types of users.
 
-### Roller
+### Roles
 
-- **Admin** – Hanterar användare och skattningsfrågor.
-- **Staff** – Kan arbeta med patienter och följa deras skattningar.
-- **Patient** – Kan genomföra sina egna skattningar.
+- **Admin** – Manages users and assessment questions.
+- **Staff** – Can work with patients and track their assessments.
+- **Patient** – Can complete their own assessments.
 
-### Säkerhetslösningar
+### Security Measures
 
 - **RBAC (Role-Based Access Control)**  
-  En anpassad `RoleAuthorizeAttribute` styr åtkomst baserat på användarens roll:
+  A custom `RoleAuthorizeAttribute` controls access based on the user's role:
   - Admin
   - Staff
   - Patient
 
-- **Lösenordssäkerhet**  
-  Använder **BCrypt.Net** för hashing och verifiering av lösenord.
+- **Password Security**  
+  Uses **BCrypt.Net** for password hashing and verification.
 
 - **Session State**  
-  Användar-ID och roll används i sessionen för att hantera den inloggade användaren.
+  The user ID and role are stored in the session to manage the authenticated user.
 
-- **CORS-policy**  
-  API:et är konfigurerat för att begränsa vilka klienter som får kommunicera med API:et.
-
----
-
-## ⚙️ Funktioner
-
-- **Inloggningssystem** – Autentisering och rollhantering.
-- **Digitala formulär** – Interaktiva skattningsformulär för DLDA.
-- **Patientöversikt** – Personal kan se och följa patienters resultat.
-- **Statistik och uppföljning** – Visualisering av förändringar över tid.
-- **Jämförelse mellan patient och personal** – Visar skillnader mellan skattningar.
-- **Administrationspanel** – Hantering av användare och frågor (CRUD).
-- **Responsiv design** – Anpassat för både mobil och desktop.
+- **CORS Policy**  
+  The API is configured to restrict which clients are allowed to communicate with it.
 
 ---
 
-## 🧱 Arkitektur
+## ⚙️ Features
 
-Projektet består av en separat MVC-applikation och ett Web API.
+- **Login System** – Authentication and role management.
+- **Digital Forms** – Interactive assessment forms for DLDA.
+- **Patient Overview** – Staff can view and track patient results.
+- **Statistics and Follow-up** – Visualization of changes over time.
+- **Patient vs. Staff Comparison** – Shows differences between assessments.
+- **Administration Panel** – Management of users and questions (CRUD).
+- **Responsive Design** – Adapted for both mobile and desktop.
+
+---
+
+## 🧱 Architecture
+
+The project consists of a separate MVC application and a Web API.
 
 ```text
 ┌─────────────────┐
@@ -274,90 +274,90 @@ Projektet består av en separat MVC-applikation och ett Web API.
 └─────────────────┘
 ```
 
-- **DLDA.GUI** – Ansvarar för presentation, användarflöden och kommunikation med API:et.
-- **DLDA.API** – Ansvarar för API-endpoints, autentisering, affärslogik och databaskommunikation.
-- **SQL Server** – Används för lagring av användare, frågor och skattningsresultat.
+- **DLDA.GUI** – Handles presentation, user flows, and communication with the API.
+- **DLDA.API** – Handles API endpoints, authentication, business logic, and database communication.
+- **SQL Server** – Used to store users, questions, and assessment results.
 
-Kommunikationen mellan GUI och API sker via `HttpClient`. Dataåtkomst i API:et hanteras med Entity Framework Core.
+Communication between the GUI and API is handled through `HttpClient`. Data access in the API is managed with Entity Framework Core.
 
 ---
 
-## 🧩 Tekniska koncept som används
+## 🧩 Technical Concepts Used
 
-| Område | Implementation | Förklaring |
+| Area | Implementation | Description |
 |:---|:---|:---|
-| **Framework** | .NET 9 / ASP.NET Core | Grund för API och webbapplikation |
-| **Frontend** | ASP.NET Core MVC / Razor | Webbgränssnitt och användarflöden |
-| **Backend** | ASP.NET Core Web API | API och backendlogik |
-| **Development Environment** | Docker / DevContainers | Isolerade och reproducerbara utvecklingsmiljöer |
-| **Security** | RBAC & BCrypt | Hanterar roller och lösenord |
-| **API Communication** | HttpClient | Kommunikation mellan GUI och API |
-| **Data Access** | EF Core / SQL Server | ORM och databashantering |
-| **API Documentation** | Swagger | Dokumentation och testning av API-endpoints |
-| **Architecture** | MVC + API | Separation mellan presentation och backend |
+| **Framework** | .NET 9 / ASP.NET Core | Foundation for the API and web application |
+| **Frontend** | ASP.NET Core MVC / Razor | Web interface and user flows |
+| **Backend** | ASP.NET Core Web API | API and backend logic |
+| **Development Environment** | Docker / DevContainers | Isolated and reproducible development environments |
+| **Security** | RBAC & BCrypt | Handles roles and passwords |
+| **API Communication** | HttpClient | Communication between the GUI and API |
+| **Data Access** | EF Core / SQL Server | ORM and database management |
+| **API Documentation** | Swagger | Documentation and testing of API endpoints |
+| **Architecture** | MVC + API | Separation between presentation and backend |
 
 ---
 
-## 👥 Projektgrupp & Kontext
+## 👥 Project Team & Context
 
-Detta projekt utvecklades som en del av kursen:
+This project was developed as part of the course:
 
-**Projektarbete och projektmetodik (7,5 hp)**  
+**Project Work and Project Methodology (7.5 credits)**  
 (*Work and Project Methodology, 7.5 credits*)
 
-Projektet genomfördes i en grupp om sju studenter där vi tillsammans planerade, utvecklade och levererade en fungerande prototyp.
+The project was completed by a team of seven students, where we jointly planned, developed, and delivered a working prototype.
 
-### 👨‍💻 Min roll
+### 👨‍💻 My Role
 
-Jag hade rollen som **projektledare och backendutvecklare**.
+I served as **project manager and backend developer**.
 
-Som projektledare ansvarade jag bland annat för:
+As project manager, I was responsible for:
 
-- Tolkning av projektdirektiv och planering av projektets initiala arbete.
-- Fördelning av roller och uppgifter inom gruppen.
-- Tidsplanering och uppföljning av projektets milstolpar.
-- Kommunikation inom gruppen och kontakt med uppdragsgivare.
-- Identifiering och hantering av tekniska och praktiska risker.
+- Interpreting the project brief and planning the initial project work.
+- Assigning roles and tasks within the team.
+- Scheduling and tracking project milestones.
+- Communication within the team and with the client.
+- Identifying and managing technical and practical risks.
 
-Som backendutvecklare arbetade jag främst med:
+As a backend developer, I primarily worked on:
 
-- Inloggning och användarroller.
-- Frågestrukturer och quizflöde.
-- Statistik och resultatvisning.
-- Personalens bedömningsflöden.
-- Databasstruktur och databaskopplingar.
-- Controllers, services och DTO:er i backend.
-- Tekniska vägval, felsökning och implementation.
+- Authentication and user roles.
+- Question structures and quiz flow.
+- Statistics and result presentation.
+- Staff assessment workflows.
+- Database structure and database connections.
+- Controllers, services, and DTOs in the backend.
+- Technical decisions, troubleshooting, and implementation.
 
-Jag var även delaktig i framtagningen av wireframes i Figma och arbetade med tekniska lösningar för bland annat PDF-generering och användarupplevelse.
+I also contributed to creating wireframes in Figma and worked on technical solutions for areas such as PDF generation and user experience.
 
-### 🎯 Fokus i projektet
+### 🎯 Project Focus
 
-Projektarbetet omfattade bland annat:
+The project work included:
 
-- Projektplanering och tidsplanering.
-- Riskanalys och hantering av potentiella problem.
-- Ansvarsfördelning och samarbete inom gruppen.
-- Löpande uppföljning och iteration av lösningen.
-- Dokumentation, presentation och slutleverans.
+- Project planning and scheduling.
+- Risk analysis and management of potential issues.
+- Responsibility allocation and collaboration within the team.
+- Ongoing follow-up and iteration of the solution.
+- Documentation, presentation, and final delivery.
 
-### 💡 Erfarenheter
+### 💡 Experience Gained
 
-Projektet gav praktisk erfarenhet av:
+The project provided practical experience in:
 
-- Projektledning och arbete i utvecklingsteam.
-- Utveckling med separerad frontend och backend.
-- ASP.NET Core MVC och Web API.
-- API-baserad kommunikation.
-- Docker och DevContainers.
-- Grupparbete, problemlösning och tekniska beslut.
-- Att koppla tekniska lösningar till verksamhetens behov.
+- Project management and working in development teams.
+- Developing with a separated frontend and backend.
+- ASP.NET Core MVC and Web API.
+- API-based communication.
+- Docker and DevContainers.
+- Teamwork, problem-solving, and technical decision-making.
+- Connecting technical solutions to business needs.
 
 ---
 
 ## 📜 License
 
-Detta projekt distribueras under **MIT License**.
+This project is distributed under the **MIT License**.
 
 ```text
 MIT License
@@ -385,8 +385,8 @@ SOFTWARE.
 
 ---
 
-## 🤖 AI-assistans
+## 🤖 AI Assistance
 
-AI-verktyg som **ChatGPT** och **Gemini** användes som stöd under utvecklingen, främst för idéarbete, felsökning, refaktorering och dokumentation.
+AI tools such as **ChatGPT** and **Gemini** were used as support during development, primarily for brainstorming, troubleshooting, refactoring, and documentation.
 
-AI-genererad kod granskades, anpassades och testades manuellt innan den inkluderades i projektet. Projektgruppen ansvarar för den slutliga implementationen och funktionaliteten.
+AI-generated code was reviewed, adapted, and manually tested before being included in the project. The project team is responsible for the final implementation and functionality.
