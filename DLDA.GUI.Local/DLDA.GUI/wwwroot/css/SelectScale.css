@@ -1,4 +1,11 @@
-﻿/* Grundstil för alla val */
+/**
+ * Stylesheet for the patient rating scale selection view.
+ * Transforms standard radio buttons into large, interactive visual cards to maximize 
+ * touch target areas and provide clear visual affordances. This UX pattern is specifically 
+ * designed to reduce cognitive load and accommodate patients with impaired motor skills 
+ * or varying levels of digital literacy in a psychiatric care context.
+ */
+
 .scale-option {
     position: relative;
     text-align: center;
@@ -22,7 +29,6 @@
         transform: scale(1.05);
     }
 
-/* När en skala är vald */
 input[name="selectedScale"]:checked + label.scale-option {
     border: 3px solid #198754;
     background-color: #e9f6ef;
@@ -30,16 +36,17 @@ input[name="selectedScale"]:checked + label.scale-option {
     transform: scale(1.01);
 }
 
-    /* Vald – checkmark i hörnet */
+    /* Utilizes a unicode text character rather than an emoji to guarantee consistent 
+       rendering and accurate color application across varying operating systems and browsers. */
     input[name="selectedScale"]:checked + label.scale-option::after {
-        content: "\2714"; /* detta är ✔ som text, inte emoji */
+        content: "\2714"; 
         position: absolute;
         top: 10px;
         right: 16px;
         font-size: 1.5rem;
         color: #198754;
         font-weight: 900;
-        font-family: Arial, sans-serif; /* säkerställer textstil */
+        font-family: Arial, sans-serif; 
     }
 
 .scale-option {
@@ -52,11 +59,10 @@ input[name="selectedScale"]:checked + label.scale-option {
 
     .scale-option img {
         width: 100%;
-        max-width: 300px; /* eller t.ex. 250px */
+        max-width: 300px; 
         height: auto;
         display: block;
         margin: 0 auto;
         aspect-ratio: 4 / 3;
         object-fit: contain;
     }
-
