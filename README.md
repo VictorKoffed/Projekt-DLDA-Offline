@@ -1,4 +1,4 @@
-# 🌐 Projekt DLDA Offline
+# 🌐 Projekt DLDA
 
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=flat&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
 [![Docker](https://img.shields.io/badge/Docker-DevContainers-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
@@ -8,7 +8,7 @@
 
 ## 📝 Introduktion
 
-**DLDA Offline** är en webbaserad prototyp som digitaliserar det psykiatriska skattningsverktyget **DLDA (Daily Life Dialogue Assessment in Psychiatric Care)**.
+**DLDA** är en webbaserad prototyp som digitaliserar det psykiatriska skattningsverktyget **DLDA (Daily Life Dialogue Assessment in Psychiatric Care)**.
 
 Projektet består av en ASP.NET Core MVC-applikation och ett separat Web API som tillsammans hanterar användargränssnitt, autentisering, skattningar och datahantering. Systemet använder Entity Framework Core och SQL Server för lagring och körs i en Docker-baserad miljö.
 
